@@ -7,17 +7,18 @@ using static EduManagementLab.Core.Entities.Course;
 
 namespace EduManagementLab.Web.Pages.Courses
 {
-    public class EditModel : PageModel
+    public class EditCourseInfoModel : PageModel
     {
         private readonly CourseService _courseService;
 
-        public EditModel(CourseService courseService)
+        public EditCourseInfoModel(CourseService courseService)
         {
             _courseService = courseService;
         }
+
         [BindProperty]
         [Required]
-        public Guid CourserId { get; set; }
+        public Guid CourseId { get; set; }
         [BindProperty]
         [Required]
         public string Code { get; set; }
@@ -26,27 +27,16 @@ namespace EduManagementLab.Web.Pages.Courses
         public string Name { get; set; }
         [BindProperty]
         public string? Description { get; set; }
-        [BindProperty]
-        [Required]
-        public DateTime StartDate { get; set; }
-        [BindProperty]
-        [Required]
-        public DateTime EndDate { get; set; }
-        [BindProperty]
-        [Required]
-        public List<Membership>? Memberships { get; set; }
 
         public async Task<IActionResult> OnGetAsync(Guid id)
         {
             try
             {
                 var course = _courseService.GetCourse(id);
-                CourserId = course.Id;
+                CourseId = course.Id;
                 Code = course.Code;
                 Name = course.Name;
                 Description = course.Description;
-                StartDate = course.StartDate;
-                EndDate = course.EndDate;   
 
                 return Page();
             }
@@ -65,10 +55,10 @@ namespace EduManagementLab.Web.Pages.Courses
 
             try
             {
-                _courseService.UpdateCourseInfo(UserId, Displayname, FirstName, LastName);
+                _courseService.UpdateCourseInfo(CourseId, Code, Name, Description);
                 return RedirectToPage("./Index");
             }
-            catch (UserNotFoundException ex)
+            catch (CourseNotFoundException ex)
             {
                 ModelState.AddModelError(String.Empty, ex.Message);
                 return Page();
