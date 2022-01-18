@@ -20,7 +20,6 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetCourses")]
         public ActionResult<IEnumerable<Course>> GetCourses()
         {
             return Ok(_courseService.GetCourses().ToList());
@@ -28,7 +27,7 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpGet]
-        [Route("GetCourse/{id}")]
+        [Route("{id}")]
         public ActionResult<Course> GetCourse(Guid id)
         {
             try
@@ -45,7 +44,6 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPost]
-        [Route("AddCourse")]
         public ActionResult<Course> AddCourse(AddCourseModel addCourse)
         {
             var course = _courseService.CreateCourse(addCourse.Code, addCourse.Name, addCourse.Description, addCourse.StartDate, addCourse.EndDate);
@@ -53,7 +51,7 @@ namespace EduManagementLab.Api.Controllers
         }
 
 
-        [HttpPut()]
+        [HttpPatch()]
         [Route("{id}/UpdateCourseInfo")]
         public ActionResult<Course> UpdateCourseInfo(UpdateCourseInfoModel updateCourseInfo)
         {
@@ -68,7 +66,7 @@ namespace EduManagementLab.Api.Controllers
             }
 
         }
-        [HttpPut()]
+        [HttpPatch()]
         [Route("{id}/UpdateCoursePeriod")]
         public ActionResult<Course> UpdateCoursePeriod(UpdateCoursePeriodModel updateCoursePeriod)
         {
