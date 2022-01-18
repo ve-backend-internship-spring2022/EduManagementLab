@@ -27,7 +27,7 @@ namespace EduManagementLab.Web.Pages.Courses
             catch (CourseNotFoundException ex)
             {
                 ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
 
@@ -41,7 +41,7 @@ namespace EduManagementLab.Web.Pages.Courses
             catch (CourseNotFoundException ex)
             {
                 ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
     }

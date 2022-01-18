@@ -33,7 +33,7 @@ namespace EduManagementLab.Web.Pages.Users
             catch (UserNotFoundException ex)
             {
                 ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
 
@@ -47,7 +47,7 @@ namespace EduManagementLab.Web.Pages.Users
             catch (UserNotFoundException ex)
             {
                 ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
     }

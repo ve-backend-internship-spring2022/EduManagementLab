@@ -43,7 +43,7 @@ namespace EduManagementLab.Web.Pages.Courses
             catch (CourseNotFoundException ex)
             {
                 ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
         public async Task<IActionResult> OnPostAsync()
@@ -61,7 +61,7 @@ namespace EduManagementLab.Web.Pages.Courses
             catch (CourseNotFoundException ex)
             {
                 ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
     }
