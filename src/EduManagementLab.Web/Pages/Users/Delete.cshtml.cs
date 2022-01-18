@@ -30,9 +30,8 @@ namespace EduManagementLab.Web.Pages.Users
                 User = _userService.GetUser(id);
                 return Page();
             }
-            catch (UserNotFoundException ex)
+            catch (UserNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
                 return NotFound();
             }
         }
@@ -44,9 +43,8 @@ namespace EduManagementLab.Web.Pages.Users
                 _userService.DeleteUser(id);
                 return RedirectToPage("./Index");
             }
-            catch (UserNotFoundException ex)
+            catch (UserNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
                 return NotFound();
             }
         }

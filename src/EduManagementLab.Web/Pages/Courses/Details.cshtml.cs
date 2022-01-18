@@ -24,9 +24,8 @@ namespace EduManagementLab.Web.Pages.Courses
                 Course = _courseService.GetCourse(id);
                 return Page();
             }
-            catch (CourseNotFoundException ex)
+            catch (CourseNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
                 return NotFound();
             }
         }

@@ -38,9 +38,8 @@ namespace EduManagementLab.Web.Pages.Courses
                 EndDate = course.EndDate;
                 return Page();
             }
-            catch (CourseNotFoundException ex)
+            catch (CourseNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
                 return NotFound();
             }
         }
@@ -56,9 +55,8 @@ namespace EduManagementLab.Web.Pages.Courses
                 _courseService.UpdateCoursePeriod(CourseId, StartDate, EndDate);
                 return RedirectToPage("./Index");
             }
-            catch (CourseNotFoundException ex)
+            catch (CourseNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
                 return NotFound();
             }
         }
