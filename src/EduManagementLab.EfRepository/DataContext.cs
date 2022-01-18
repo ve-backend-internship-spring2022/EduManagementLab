@@ -11,5 +11,6 @@ namespace EduManagementLab.EfRepository
         
         public DbSet<User> Users { get; set; }
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Course.Membership> CourseMemberships { get; set; }
     }
 }
