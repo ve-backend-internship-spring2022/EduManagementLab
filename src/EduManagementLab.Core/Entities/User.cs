@@ -18,5 +18,7 @@ namespace EduManagementLab.Core.Entities
         public string LastName { get; set; }
         [Required]
         public string Email { get; set; }
+
+        public List<Course.Membership>? CourseMemperships { get; set; }
     }
 }
