@@ -17,12 +17,6 @@ builder.Services.AddTransient<CourseService>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
-//using (var scope = app.Services.CreateScope())
-//{
-//    var serviceProvide = scope.ServiceProvider;
-//    var dbContext = serviceProvide.GetRequiredService<DataContext>();
-//    DevTestData.Seed(dbContext);
-//}
 
     // Configure the HTTP request pipeline.
     if (!app.Environment.IsDevelopment())
