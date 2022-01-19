@@ -39,10 +39,9 @@ namespace EduManagementLab.Web.Pages.Users
 
                 return Page();
             }
-            catch (UserNotFoundException ex)
+            catch (UserNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
 
         }
@@ -61,10 +60,9 @@ namespace EduManagementLab.Web.Pages.Users
                 _userService.UpdateEmail(UserId, Email);
                 return RedirectToPage("./Index");
             }
-            catch (UserNotFoundException ex)
+            catch (UserNotFoundException)
             {
-                ModelState.AddModelError(String.Empty,ex.Message);
-                return Page();
+                return NotFound();
             }
         }
     }
