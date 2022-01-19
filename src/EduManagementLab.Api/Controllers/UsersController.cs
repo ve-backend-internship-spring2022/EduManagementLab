@@ -18,12 +18,15 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(List<User>), StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<User>> GetUsers()
         {
             return Ok(_userService.GetUsers().ToList());
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{id}")]
         public ActionResult<User> GetUser(Guid id)
         {
@@ -39,6 +42,7 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(User), StatusCodes.Status201Created)]
         public ActionResult<User> AddUser(AddUserModel addUser)
         {
             var user = _userService.CreateUser(addUser.DisplayName, addUser.FirstName, addUser.LastName, addUser.Email);
@@ -46,6 +50,8 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{id}/UpdateName")]
         public ActionResult<User> UpdateName(UpdateNameModel updateName)
         {
@@ -61,6 +67,8 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{id}/UpdateEmail")]
         public ActionResult<User> UpdateEmail(UpdateEmailModel updateEmail)
         {
@@ -75,6 +83,8 @@ namespace EduManagementLab.Api.Controllers
             }
         }
         [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{id}")]
         public ActionResult DeleteUser(Guid id)
         {

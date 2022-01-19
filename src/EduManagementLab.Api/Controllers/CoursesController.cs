@@ -20,6 +20,7 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(List<Course>), StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<Course>> GetCourses()
         {
             return Ok(_courseService.GetCourses().ToList());
@@ -27,6 +28,8 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpGet]
+        [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{id}")]
         public ActionResult<Course> GetCourse(Guid id)
         {
@@ -44,6 +47,7 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPost]
+        [ProducesResponseType(typeof(Course), StatusCodes.Status201Created)]
         public ActionResult<Course> AddCourse(AddCourseModel addCourse)
         {
             var course = _courseService.CreateCourse(addCourse.Code, addCourse.Name, addCourse.Description, addCourse.StartDate, addCourse.EndDate);
@@ -52,6 +56,8 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPatch()]
+        [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{id}/UpdateCourseInfo")]
         public ActionResult<Course> UpdateCourseInfo(UpdateCourseInfoModel updateCourseInfo)
         {
@@ -67,6 +73,8 @@ namespace EduManagementLab.Api.Controllers
 
         }
         [HttpPatch()]
+        [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{id}/UpdateCoursePeriod")]
         public ActionResult<Course> UpdateCoursePeriod(UpdateCoursePeriodModel updateCoursePeriod)
         {
@@ -82,6 +90,8 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult DeleteCourse(Guid id)
         {
             try
