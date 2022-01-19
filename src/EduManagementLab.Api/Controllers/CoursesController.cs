@@ -130,12 +130,12 @@ namespace EduManagementLab.Api.Controllers
 
         }
         [HttpGet]
-        [Route("{courseId}/GetCourseMemberships")]
-        public ActionResult<IEnumerable<Course.Membership>> GetCourseMemberships(Guid courseId)
+        [Route("{id}/GetCourseMemberships")]
+        public ActionResult<IEnumerable<Course.Membership>> GetCourseMemberships(Guid id)
         {
             try
             {
-                var courseMembership = _courseService.GetCourse(courseId).Memperships;
+                var courseMembership = _courseService.GetCourse(id).Memperships;
                 return Ok(courseMembership);
             }
             catch (CourseNotFoundException)
