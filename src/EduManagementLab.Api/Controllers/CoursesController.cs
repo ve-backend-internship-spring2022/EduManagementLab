@@ -1,7 +1,10 @@
 ﻿using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Services;
+using EduManagementLab.EfRepository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,10 +16,12 @@ namespace EduManagementLab.Api.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly CourseService _courseService;
+        private readonly UserService _userService;
 
-        public CoursesController(CourseService courseService)
+        public CoursesController(CourseService courseService, UserService userService)
         {
             _courseService = courseService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -66,6 +71,8 @@ namespace EduManagementLab.Api.Controllers
             }
 
         }
+
+
         [HttpPatch()]
         [Route("{id}/UpdateCoursePeriod")]
         public ActionResult<Course> UpdateCoursePeriod(UpdateCoursePeriodModel updateCoursePeriod)
@@ -81,6 +88,7 @@ namespace EduManagementLab.Api.Controllers
             }
         }
 
+
         [HttpDelete("{id}")]
         public ActionResult DeleteCourse(Guid id)
         {
@@ -94,6 +102,38 @@ namespace EduManagementLab.Api.Controllers
                 return NotFound();
             }
         }
+
+
+        [HttpPost]
+        [Route("{id}/AddCourseMembership")]
+        public ActionResult<Course> AddCourseMembership(Guid id, Guid userId, DateTime enrolledDate)
+        {
+            try
+            {
+                var course = _courseService.CreateCourseMembership(id, userId, enrolledDate);
+                return Ok(course);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+        }
+        [HttpGet]
+        [Route("{courseId}/GetCourseMemberships")]
+        public ActionResult<IEnumerable<Course.Membership>> GetCourseMemberships(Guid courseId)
+        {
+            try
+            {
+                var courseMembership = _courseService.GetCourse(courseId).Memperships;
+                return Ok(courseMembership);
+            }
+            catch (CourseNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
 
     }
     public class AddCourseModel
@@ -126,4 +166,39 @@ namespace EduManagementLab.Api.Controllers
         [Required]
         public DateTime EndDate { get; set; }
     }
+    //public class MembershipModel
+    //{
+    //    public Guid Id { get; set; }
+    //    public CourseModel? Course { get; set; }
+    //    [Required]
+    //    public Guid CourseId { get; set; }
+    //    public UserModel? User { get; set; }
+    //    [Required]
+    //    public Guid UserId { get; set; }
+    //    [Required]
+    //    public DateTime EnrolledDate { get; set; }
+    //}
+    //public class UserModel
+    //{
+    //    [Required]
+    //    public string Displayname { get; set; }
+    //    [Required]
+    //    public string FirstName { get; set; }
+    //    [Required]
+    //    public string LastName { get; set; }
+    //    [Required]
+    //    public string Email { get; set; }
+    //}
+    //public class CourseModel
+    //{
+    //    [Required]
+    //    public string Code { get; set; }
+    //    [Required]
+    //    public string Name { get; set; }
+    //    public string? Description { get; set; }
+    //    [Required]
+    //    public DateTime StartDate { get; set; }
+    //    [Required]
+    //    public DateTime EndDate { get; set; }
+    //}
 }

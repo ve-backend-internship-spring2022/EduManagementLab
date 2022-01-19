@@ -68,5 +68,34 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Courses.Remove(course);
             _unitOfWork.Complete();
         }
+        public Course CreateCourseMembership(Guid id, Guid userId, DateTime enrolledDate)
+        {
+            var course = GetCourse(id);
+
+            if (!course.Memperships.Any(c => c.UserId == userId))
+            {
+                course.Memperships.Add(new Course.Membership()
+                {
+                    Id = Guid.NewGuid(),
+                    CourseId = id,
+                    UserId = userId,
+                    EnrolledDate = enrolledDate
+                });
+            }
+            _unitOfWork.Courses.Update(course);
+            _unitOfWork.Complete();
+
+            return course;
+        }
+        public Course RemoveCourseMembership(Guid courseId, Guid userId)
+        {
+            var course = GetCourse(courseId);
+            if (course.Memperships.Any(c => c.UserId == userId))
+            {
+                var membership = course.Memperships.Find(c => c.UserId == userId);
+                course.Memperships.Remove(membership);
+            }
+            return course;
+        }
     }
 }
