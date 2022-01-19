@@ -114,7 +114,7 @@ namespace EduManagementLab.Api.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPatch()]
         [Route("{id}/AddCourseMembership")]
         public ActionResult<Course> AddCourseMembership(Guid id, Guid userId, DateTime enrolledDate)
         {

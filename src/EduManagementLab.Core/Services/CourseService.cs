@@ -82,7 +82,7 @@ namespace EduManagementLab.Core.Services
                     EnrolledDate = enrolledDate
                 });
             }
-            _unitOfWork.Courses.Update(course);               
+            _unitOfWork.Courses.Update(course);
             _unitOfWork.Complete();
 
             return course;
