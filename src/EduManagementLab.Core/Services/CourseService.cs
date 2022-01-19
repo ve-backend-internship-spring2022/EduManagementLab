@@ -76,7 +76,6 @@ namespace EduManagementLab.Core.Services
             {
                 course.Memperships.Add(new Course.Membership()
                 {
-                    Id = Guid.NewGuid(),
                     CourseId = courseId,
                     UserId = userId,
                     EnrolledDate = enrolledDate

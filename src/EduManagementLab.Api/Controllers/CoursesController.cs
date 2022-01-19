@@ -121,7 +121,7 @@ namespace EduManagementLab.Api.Controllers
             try
             {
                 var course = _courseService.CreateCourseMembership(id, userId, enrolledDate);
-                return Ok(course);
+                return Ok(JsonConvert.SerializeObject(course, Formatting.Indented));
             }
             catch (Exception e)
             {
