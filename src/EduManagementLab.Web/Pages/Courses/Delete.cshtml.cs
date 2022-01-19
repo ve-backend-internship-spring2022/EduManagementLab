@@ -24,10 +24,9 @@ namespace EduManagementLab.Web.Pages.Courses
                 Course = _courseService.GetCourse(id);
                 return Page();
             }
-            catch (CourseNotFoundException ex)
+            catch (CourseNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
 
@@ -38,10 +37,9 @@ namespace EduManagementLab.Web.Pages.Courses
                 _courseService.DeleteCourse(id);
                 return RedirectToPage("./Index");
             }
-            catch (CourseNotFoundException ex)
+            catch (CourseNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
     }

@@ -40,10 +40,9 @@ namespace EduManagementLab.Web.Pages.Courses
 
                 return Page();
             }
-            catch (CourseNotFoundException ex)
+            catch (CourseNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
         public async Task<IActionResult> OnPostAsync()
@@ -58,10 +57,9 @@ namespace EduManagementLab.Web.Pages.Courses
                 _courseService.UpdateCourseInfo(CourseId, Code, Name, Description);
                 return RedirectToPage("./Index");
             }
-            catch (CourseNotFoundException ex)
+            catch (CourseNotFoundException)
             {
-                ModelState.AddModelError(String.Empty, ex.Message);
-                return Page();
+                return NotFound();
             }
         }
     }
