@@ -176,39 +176,4 @@ namespace EduManagementLab.Api.Controllers
         [Required]
         public DateTime EndDate { get; set; }
     }
-    //public class MembershipModel
-    //{
-    //    public Guid Id { get; set; }
-    //    public CourseModel? Course { get; set; }
-    //    [Required]
-    //    public Guid CourseId { get; set; }
-    //    public UserModel? User { get; set; }
-    //    [Required]
-    //    public Guid UserId { get; set; }
-    //    [Required]
-    //    public DateTime EnrolledDate { get; set; }
-    //}
-    //public class UserModel
-    //{
-    //    [Required]
-    //    public string Displayname { get; set; }
-    //    [Required]
-    //    public string FirstName { get; set; }
-    //    [Required]
-    //    public string LastName { get; set; }
-    //    [Required]
-    //    public string Email { get; set; }
-    //}
-    //public class CourseModel
-    //{
-    //    [Required]
-    //    public string Code { get; set; }
-    //    [Required]
-    //    public string Name { get; set; }
-    //    public string? Description { get; set; }
-    //    [Required]
-    //    public DateTime StartDate { get; set; }
-    //    [Required]
-    //    public DateTime EndDate { get; set; }
-    //}
 }
