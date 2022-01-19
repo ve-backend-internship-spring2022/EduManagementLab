@@ -121,7 +121,7 @@ namespace EduManagementLab.Api.Controllers
             try
             {
                 var course = _courseService.CreateCourseMembership(id, userId, enrolledDate);
-                return Ok(JsonConvert.SerializeObject(course, Formatting.Indented));
+                return Ok(course);
             }
             catch (Exception e)
             {
@@ -141,6 +141,20 @@ namespace EduManagementLab.Api.Controllers
             catch (CourseNotFoundException)
             {
                 return NotFound();
+            }
+        }
+        [HttpDelete]
+        [Route("{id}/DeleteCourseMembership")]
+        public ActionResult<Course> DeleteCourseMembership(Guid id, Guid userId)
+        {
+            try
+            {
+                var courseMembership = _courseService.RemoveCourseMembership(id, userId);
+                return Ok(courseMembership);
+            }
+            catch (Exception e)
+            {
+                return NotFound(e.Message);
             }
         }
 
