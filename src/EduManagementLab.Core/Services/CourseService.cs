@@ -70,7 +70,7 @@ namespace EduManagementLab.Core.Services
 
         public Course CreateCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
-            var course = GetCourse(courseId);
+            var course = GetCourse(courseId, true);
 
             if (!course.Memperships.Any(c => c.UserId == userId))
             {
@@ -82,7 +82,7 @@ namespace EduManagementLab.Core.Services
                 });
             }
             _unitOfWork.Courses.Update(course);
-
+            _unitOfWork.Complete();
             return course;
         }
         public Course RemoveCourseMembership(Guid courseId, Guid userId)
