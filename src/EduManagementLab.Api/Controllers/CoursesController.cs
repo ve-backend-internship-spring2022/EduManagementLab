@@ -115,12 +115,12 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPatch()]
-        [Route("{id}/AddCourseMembership")]
-        public ActionResult<Course> AddCourseMembership(Guid id, Guid userId, DateTime enrolledDate)
+        [Route("{courseId}/AddCourseMembership")]
+        public ActionResult<Course> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             try
             {
-                var course = _courseService.CreateCourseMembership(id, userId, enrolledDate);
+                var course = _courseService.CreateCourseMembership(courseId, userId, enrolledDate);
                 return Ok(course);
             }
             catch (Exception e)
@@ -130,12 +130,12 @@ namespace EduManagementLab.Api.Controllers
 
         }
         [HttpGet]
-        [Route("{id}/GetCourseMemberships")]
-        public ActionResult<IEnumerable<Course.Membership>> GetCourseMemberships(Guid id)
+        [Route("{courseId}/GetCourseMemberships")]
+        public ActionResult<List<Course.Membership>> GetCourseMemberships(Guid courseId, bool includeMembership, bool includeUser)
         {
             try
             {
-                var courseMembership = _courseService.GetCourse(id).Memperships;
+                var courseMembership = _courseService.GetCourseIncludeMemberships(courseId, includeMembership, includeUser).Memperships.ToList();
                 return Ok(courseMembership);
             }
             catch (CourseNotFoundException)
@@ -144,12 +144,12 @@ namespace EduManagementLab.Api.Controllers
             }
         }
         [HttpDelete]
-        [Route("{id}/DeleteCourseMembership")]
-        public ActionResult<Course> DeleteCourseMembership(Guid id, Guid userId)
+        [Route("{courseId}/DeleteCourseMembership")]
+        public ActionResult<Course> DeleteCourseMembership(Guid courseId, Guid userId, bool includeMemebrship, bool includeUser)
         {
             try
             {
-                var courseMembership = _courseService.RemoveCourseMembership(id, userId);
+                var courseMembership = _courseService.RemoveCourseMembership(courseId, userId, includeMemebrship, includeUser);
                 return Ok(courseMembership);
             }
             catch (Exception e)

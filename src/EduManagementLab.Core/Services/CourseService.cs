@@ -40,7 +40,6 @@ namespace EduManagementLab.Core.Services
             }
             return course;
         }
-
         public Course UpdateCourseInfo(Guid id, string code, string name, string description)
         {
             var course = GetCourse(id);
@@ -68,6 +67,16 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Courses.Remove(course);
             _unitOfWork.Complete();
         }
+        public Course GetCourseIncludeMemberships(Guid courseId, bool includeMembership, bool includeUser)
+        {
+            var course = _unitOfWork.Courses.GetCourseIncludeMemberships(courseId, includeMembership, includeUser);
+            if (course == null)
+            {
+                throw new CourseNotFoundException(courseId);
+            }
+            return course;
+        }
+
         public Course CreateCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             var course = GetCourse(courseId);
@@ -85,9 +94,9 @@ namespace EduManagementLab.Core.Services
 
             return course;
         }
-        public Course RemoveCourseMembership(Guid courseId, Guid userId)
+        public Course RemoveCourseMembership(Guid courseId, Guid userId, bool includeMembership, bool includeUser)
         {
-            var course = GetCourse(courseId);
+            var course = _unitOfWork.Courses.GetCourseIncludeMemberships(courseId, includeMembership, includeUser);
             if (course.Memperships.Any(c => c.UserId == userId && c.CourseId == courseId))
             {
                 var membership = course.Memperships.Find(c => c.UserId == userId && c.CourseId == courseId);
