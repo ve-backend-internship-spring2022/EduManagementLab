@@ -129,13 +129,15 @@ namespace EduManagementLab.Api.Controllers
             }
 
         }
+
+
         [HttpGet]
         [Route("{courseId}/GetCourseMemberships")]
-        public ActionResult<List<Course.Membership>> GetCourseMemberships(Guid courseId, bool includeMembership, bool includeUser)
+        public ActionResult<List<Course.Membership>> GetCourseMemberships(Guid courseId)
         {
             try
             {
-                var courseMembership = _courseService.GetCourseIncludeMemberships(courseId, includeMembership, includeUser).Memperships.ToList();
+                var courseMembership = _courseService.GetCourse(courseId, true).Memperships.ToList();
                 return Ok(courseMembership);
             }
             catch (CourseNotFoundException)
@@ -143,13 +145,15 @@ namespace EduManagementLab.Api.Controllers
                 return NotFound();
             }
         }
+
+
         [HttpDelete]
         [Route("{courseId}/DeleteCourseMembership")]
-        public ActionResult<Course> DeleteCourseMembership(Guid courseId, Guid userId, bool includeMemebrship, bool includeUser)
+        public ActionResult<Course> DeleteCourseMembership(Guid courseId, Guid userId)
         {
             try
             {
-                var courseMembership = _courseService.RemoveCourseMembership(courseId, userId, includeMemebrship, includeUser);
+                var courseMembership = _courseService.RemoveCourseMembership(courseId, userId);
                 return Ok(courseMembership);
             }
             catch (Exception e)

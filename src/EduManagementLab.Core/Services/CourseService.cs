@@ -31,9 +31,9 @@ namespace EduManagementLab.Core.Services
             return course;
         }
 
-        public Course GetCourse(Guid id)
+        public Course GetCourse(Guid id, bool includeMembershipUsers = false)
         {
-            var course = _unitOfWork.Courses.GetById(id);
+            var course = _unitOfWork.Courses.GetCourse(id, includeMembershipUsers);
             if (course == null)
             {
                 throw new CourseNotFoundException(id);
@@ -67,15 +67,6 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Courses.Remove(course);
             _unitOfWork.Complete();
         }
-        public Course GetCourseIncludeMemberships(Guid courseId, bool includeMembership, bool includeUser)
-        {
-            var course = _unitOfWork.Courses.GetCourseIncludeMemberships(courseId, includeMembership, includeUser);
-            if (course == null)
-            {
-                throw new CourseNotFoundException(courseId);
-            }
-            return course;
-        }
 
         public Course CreateCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
@@ -94,9 +85,9 @@ namespace EduManagementLab.Core.Services
 
             return course;
         }
-        public Course RemoveCourseMembership(Guid courseId, Guid userId, bool includeMembership, bool includeUser)
+        public Course RemoveCourseMembership(Guid courseId, Guid userId)
         {
-            var course = _unitOfWork.Courses.GetCourseIncludeMemberships(courseId, includeMembership, includeUser);
+            var course = _unitOfWork.Courses.GetCourse(courseId, true);
             if (course.Memperships.Any(c => c.UserId == userId && c.CourseId == courseId))
             {
                 var membership = course.Memperships.Find(c => c.UserId == userId && c.CourseId == courseId);
