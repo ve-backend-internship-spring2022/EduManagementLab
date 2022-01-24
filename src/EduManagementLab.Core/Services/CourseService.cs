@@ -31,16 +31,15 @@ namespace EduManagementLab.Core.Services
             return course;
         }
 
-        public Course GetCourse(Guid id)
+        public Course GetCourse(Guid id, bool includeMembershipUsers = false)
         {
-            var course = _unitOfWork.Courses.GetById(id);
+            var course = _unitOfWork.Courses.GetCourse(id, includeMembershipUsers);
             if (course == null)
             {
                 throw new CourseNotFoundException(id);
             }
             return course;
         }
-
         public Course UpdateCourseInfo(Guid id, string code, string name, string description)
         {
             var course = GetCourse(id);
@@ -67,6 +66,36 @@ namespace EduManagementLab.Core.Services
             var course = GetCourse(id);
             _unitOfWork.Courses.Remove(course);
             _unitOfWork.Complete();
+        }
+
+        public Course CreateCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
+        {
+            var course = GetCourse(courseId, true);
+
+            if (!course.Memperships.Any(c => c.UserId == userId))
+            {
+                course.Memperships.Add(new Course.Membership()
+                {
+                    CourseId = courseId,
+                    UserId = userId,
+                    EnrolledDate = enrolledDate
+                });
+            }
+            _unitOfWork.Courses.Update(course);
+            _unitOfWork.Complete();
+            return course;
+        }
+        public Course RemoveCourseMembership(Guid courseId, Guid userId)
+        {
+            var course = _unitOfWork.Courses.GetCourse(courseId, true);
+            if (course.Memperships.Any(c => c.UserId == userId && c.CourseId == courseId))
+            {
+                var membership = course.Memperships.Find(c => c.UserId == userId && c.CourseId == courseId);
+                course.Memperships.Remove(membership);
+            }
+            _unitOfWork.Courses.Update(course);
+            _unitOfWork.Complete();
+            return course;
         }
     }
 }

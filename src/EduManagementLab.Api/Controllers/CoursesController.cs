@@ -1,7 +1,10 @@
 ﻿using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Services;
+using EduManagementLab.EfRepository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,10 +16,12 @@ namespace EduManagementLab.Api.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly CourseService _courseService;
+        private readonly UserService _userService;
 
-        public CoursesController(CourseService courseService)
+        public CoursesController(CourseService courseService, UserService userService)
         {
             _courseService = courseService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -72,6 +77,8 @@ namespace EduManagementLab.Api.Controllers
             }
 
         }
+
+
         [HttpPatch()]
         [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -89,6 +96,7 @@ namespace EduManagementLab.Api.Controllers
             }
         }
 
+
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -104,6 +112,56 @@ namespace EduManagementLab.Api.Controllers
                 return NotFound();
             }
         }
+
+
+        [HttpPatch()]
+        [Route("{courseId}/AddCourseMembership")]
+        public ActionResult<Course> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
+        {
+            try
+            {
+                var course = _courseService.CreateCourseMembership(courseId, userId, enrolledDate);
+                return Ok(course);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("{courseId}/GetCourseMemberships")]
+        public ActionResult<List<Course.Membership>> GetCourseMemberships(Guid courseId)
+        {
+            try
+            {
+                var courseMembership = _courseService.GetCourse(courseId, true).Memperships.ToList();
+                return Ok(courseMembership);
+            }
+            catch (CourseNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+
+        [HttpDelete]
+        [Route("{courseId}/DeleteCourseMembership")]
+        public ActionResult<Course> DeleteCourseMembership(Guid courseId, Guid userId)
+        {
+            try
+            {
+                var courseMembership = _courseService.RemoveCourseMembership(courseId, userId);
+                return Ok(courseMembership);
+            }
+            catch (Exception e)
+            {
+                return NotFound(e.Message);
+            }
+        }
+
 
     }
     public class AddCourseModel
