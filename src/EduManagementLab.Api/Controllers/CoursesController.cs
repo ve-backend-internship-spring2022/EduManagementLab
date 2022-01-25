@@ -115,7 +115,7 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPost()]
-        [Route("{courseId}/Membership")]
+        [Route("{courseId}/Membership/{userId}")]
         public ActionResult<Course> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             try
@@ -139,6 +139,28 @@ namespace EduManagementLab.Api.Controllers
             {
                 var courseMembership = _courseService.GetCourse(courseId, true).Memperships.ToList();
                 return Ok(courseMembership);
+            }
+            catch (CourseNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        [Route("{courseId}/Membership/{userId}")]
+        public ActionResult<List<Course.Membership>> GetCourseMembership(Guid courseId, Guid userId)
+        {
+            try
+            {
+                var courseMembership = _courseService.GetCourse(courseId, true).Memperships.ToList();
+                if (courseMembership.Any(u => u.UserId == userId))
+                {
+                    return Ok(courseMembership.FirstOrDefault(u => u.UserId == userId));
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             catch (CourseNotFoundException)
             {
