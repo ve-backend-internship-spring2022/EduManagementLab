@@ -18,22 +18,37 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<User>), StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<User>> GetUsers()
-        {
-            return Ok(_userService.GetUsers().ToList());
-        }
-
-        [HttpGet]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}")]
-        public ActionResult<User> GetUser(Guid id)
+        [ProducesResponseType(typeof(List<SimpleUserModel>), StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<SimpleUserModel>> GetUsers()
         {
             try
             {
-                var user = _userService.GetUser(id);
-                return Ok(user);
+                var userlist = _userService.GetUsers().ToList();
+                var simpleUserList = new List<SimpleUserModel>();
+
+                foreach (var user in userlist)
+                {
+                    simpleUserList.Add(UserToSimpleUser(user));
+                }
+
+                return Ok(simpleUserList);
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound();
+            }     
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(SimpleUserModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Route("{userId}")]
+        public ActionResult<SimpleUserModel> GetUser(Guid userId)
+        {
+            try
+            {
+                var user = _userService.GetUser(userId);
+                return Ok(UserToSimpleUser(user));
             }
             catch (UserNotFoundException)
             {
@@ -42,23 +57,23 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(User), StatusCodes.Status201Created)]
-        public ActionResult<User> AddUser(AddUserModel addUser)
+        [ProducesResponseType(typeof(SimpleUserModel), StatusCodes.Status201Created)]
+        public ActionResult<SimpleUserModel> AddUser(SimpleUserModel addUser)
         {
             var user = _userService.CreateUser(addUser.DisplayName, addUser.FirstName, addUser.LastName, addUser.Email);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, UserToSimpleUser(user));
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SimpleUserModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}/UpdateName")]
-        public ActionResult<User> UpdateName(UpdateNameModel updateName)
+        [Route("{userId}/UpdateName")]
+        public ActionResult<SimpleUserModel> UpdateName(UpdateNameModel updateName)
         {
             try
             {
                 var user = _userService.UpdateName(updateName.Id, updateName.DisplayName, updateName.FirstName, updateName.LastName);
-                return Ok(user);
+                return Ok(UserToSimpleUser(user));
             }
             catch (UserNotFoundException)
             {
@@ -67,15 +82,15 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SimpleUserModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}/UpdateEmail")]
-        public ActionResult<User> UpdateEmail(UpdateEmailModel updateEmail)
+        [Route("{userId}/UpdateEmail")]
+        public ActionResult<SimpleUserModel> UpdateEmail(UpdateEmailModel updateEmail)
         {
             try
             {
                 var user = _userService.UpdateEmail(updateEmail.Id, updateEmail.Email);
-                return Ok(user);
+                return Ok(UserToSimpleUser(user));
             }
             catch (UserNotFoundException)
             {
@@ -85,12 +100,12 @@ namespace EduManagementLab.Api.Controllers
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}")]
-        public ActionResult DeleteUser(Guid id)
+        [Route("{userid}")]
+        public ActionResult DeleteUser(Guid userId)
         {
             try
             {
-                _userService.DeleteUser(id);
+                _userService.DeleteUser(userId);
                 return Ok();
             }
             catch (UserNotFoundException)
@@ -99,7 +114,20 @@ namespace EduManagementLab.Api.Controllers
             }
         }
 
-        public class AddUserModel
+        private SimpleUserModel UserToSimpleUser(User user)
+        {
+            var simpleUser = new SimpleUserModel()
+            {
+                DisplayName = user.Displayname,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email
+            };
+
+            return simpleUser;
+        }
+
+        public class SimpleUserModel
         {
             [Required]
             public string DisplayName { get; set; }
