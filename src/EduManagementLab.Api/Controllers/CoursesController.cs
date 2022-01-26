@@ -114,8 +114,8 @@ namespace EduManagementLab.Api.Controllers
         }
 
 
-        [HttpPatch()]
-        [Route("{courseId}/AddCourseMembership")]
+        [HttpPost()]
+        [Route("{courseId}/Membership")]
         public ActionResult<Course> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             try
@@ -132,7 +132,7 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpGet]
-        [Route("{courseId}/GetCourseMemberships")]
+        [Route("{courseId}/Memberships")]
         public ActionResult<List<Course.Membership>> GetCourseMemberships(Guid courseId)
         {
             try
@@ -148,7 +148,7 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpDelete]
-        [Route("{courseId}/DeleteCourseMembership")]
+        [Route("{courseId}/Membership")]
         public ActionResult<Course> DeleteCourseMembership(Guid courseId, Guid userId)
         {
             try

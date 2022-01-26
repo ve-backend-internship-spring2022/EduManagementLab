@@ -28,6 +28,7 @@ The EFRepository project is a collection-like interface to the data layer that p
 
 The Api project is a public application programming interface. The API endpoints are described by the OpenAPI specification and Swagger UI.
 
+
 ### Web
 
 The Web project is a web interface for education management.
