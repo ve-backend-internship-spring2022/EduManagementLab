@@ -130,6 +130,21 @@ namespace EduManagementLab.Api.Controllers
 
         }
 
+        [HttpPut]
+        [Route("{courseId}/UpdateMembership/{userId}")]
+        public ActionResult<Course> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, UpdateMembershipEnrolledDateModel MembershipEnrolledDate)
+        {
+            try
+            {
+                var courseMembership = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate.EnrolledDate);
+                return Ok(courseMembership);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
 
         [HttpGet]
         [Route("{courseId}/Memberships")]
@@ -215,5 +230,14 @@ namespace EduManagementLab.Api.Controllers
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+    }
+    public class UpdateMembershipEnrolledDateModel
+    {
+        [Required]
+        public Guid CourseId { get; set; }
+        [Required]
+        public Guid UserId { get; set; }
+        [Required]
+        public DateTime EnrolledDate { get; set; }
     }
 }

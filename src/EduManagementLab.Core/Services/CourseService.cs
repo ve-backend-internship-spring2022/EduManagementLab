@@ -102,9 +102,9 @@ namespace EduManagementLab.Core.Services
         {
             var course = GetCourse(courseId, true);
 
-            if (!course.Memperships.Any(c => c.UserId == userId))
+            if (course.Memperships.Any(c => c.UserId == userId && c.CourseId == courseId))
             {
-                var membership = course.Memperships.FirstOrDefault(u => u.UserId == userId);
+                var membership = course.Memperships.FirstOrDefault(u => u.UserId == userId && u.CourseId == courseId);
                 membership.EnrolledDate = enrolledDate;
             }
             _unitOfWork.Courses.Update(course);
