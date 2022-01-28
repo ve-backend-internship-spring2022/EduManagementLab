@@ -18,20 +18,20 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<SimpleUserModel>), StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<SimpleUserModel>> GetUsers()
+        [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<UserDto>> GetUsers()
         {
             try
             {
                 var userlist = _userService.GetUsers().ToList();
-                var simpleUserList = new List<SimpleUserModel>();
+                var userDtoList = new List<UserDto>();
 
                 foreach (var user in userlist)
                 {
-                    simpleUserList.Add(UserToSimpleUser(user));
+                    userDtoList.Add(ToDto(user));
                 }
 
-                return Ok(simpleUserList);
+                return Ok(userDtoList);
             }
             catch (UserNotFoundException)
             {
@@ -40,15 +40,15 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(SimpleUserModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{userId}")]
-        public ActionResult<SimpleUserModel> GetUser(Guid userId)
+        public ActionResult<UserDto> GetUser(Guid userId)
         {
             try
             {
                 var user = _userService.GetUser(userId);
-                return Ok(UserToSimpleUser(user));
+                return Ok(ToDto(user));
             }
             catch (UserNotFoundException)
             {
@@ -57,23 +57,23 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(SimpleUserModel), StatusCodes.Status201Created)]
-        public ActionResult<SimpleUserModel> AddUser(SimpleUserModel addUser)
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
+        public ActionResult<UserDto> AddUser(CreateUserRequest createUserRequest)
         {
-            var user = _userService.CreateUser(addUser.DisplayName, addUser.FirstName, addUser.LastName, addUser.Email);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, UserToSimpleUser(user));
+            var user = _userService.CreateUser(createUserRequest.DisplayName, createUserRequest.FirstName, createUserRequest.LastName, createUserRequest.Email);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, ToDto(user));
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(SimpleUserModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{userId}/UpdateName")]
-        public ActionResult<SimpleUserModel> UpdateName(UpdateNameModel updateName)
+        public ActionResult<UserDto> UpdateName(UpdateUserNameRequest updateUserNameRequest)
         {
             try
             {
-                var user = _userService.UpdateName(updateName.Id, updateName.DisplayName, updateName.FirstName, updateName.LastName);
-                return Ok(UserToSimpleUser(user));
+                var user = _userService.UpdateName(updateUserNameRequest.Id, updateUserNameRequest.DisplayName, updateUserNameRequest.FirstName, updateUserNameRequest.LastName);
+                return Ok(ToDto(user));
             }
             catch (UserNotFoundException)
             {
@@ -82,15 +82,15 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(SimpleUserModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{userId}/UpdateEmail")]
-        public ActionResult<SimpleUserModel> UpdateEmail(UpdateEmailModel updateEmail)
+        public ActionResult<UserDto> UpdateEmail(UpdateUserEmailRequest updateUserEmailRequest)
         {
             try
             {
-                var user = _userService.UpdateEmail(updateEmail.Id, updateEmail.Email);
-                return Ok(UserToSimpleUser(user));
+                var user = _userService.UpdateEmail(updateUserEmailRequest.Id, updateUserEmailRequest.Email);
+                return Ok(ToDto(user));
             }
             catch (UserNotFoundException)
             {
@@ -114,20 +114,37 @@ namespace EduManagementLab.Api.Controllers
             }
         }
 
-        private SimpleUserModel UserToSimpleUser(User user)
+        private static UserDto ToDto(User user)
         {
-            var simpleUser = new SimpleUserModel()
+            if (user != null)
             {
-                DisplayName = user.Displayname,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email
-            };
-
-            return simpleUser;
+                return new UserDto
+                {
+                    Id = user.Id,
+                    DisplayName = user.Displayname,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email
+                };
+            }
+            return null;
         }
 
-        public class SimpleUserModel
+        public class UserDto
+        {
+            [Required]
+            public Guid Id { get; set; }
+            [Required]
+            public string DisplayName { get; set; }
+            [Required]
+            public string FirstName { get; set; }
+            [Required]
+            public string LastName { get; set; }
+            [Required]
+            public string Email { get; set; }
+        }
+
+        public class CreateUserRequest
         {
             [Required]
             public string DisplayName { get; set; }
@@ -139,7 +156,7 @@ namespace EduManagementLab.Api.Controllers
             public string Email { get; set; }
         }
 
-        public class UpdateNameModel
+        public class UpdateUserNameRequest
         {
             [Required]
             public Guid Id { get; set; }
@@ -151,7 +168,7 @@ namespace EduManagementLab.Api.Controllers
             public string LastName { get; set; }
         }
 
-        public class UpdateEmailModel
+        public class UpdateUserEmailRequest
         {
             [Required]
             public Guid Id { get; set; }

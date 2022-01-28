@@ -25,20 +25,20 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<SimpleCourseModel>), StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<SimpleCourseModel>> GetCourses()
+        [ProducesResponseType(typeof(List<CourseDto>), StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<CourseDto>> GetCourses()
         {
             try
             {
                 var Courselist = _courseService.GetCourses().ToList();
-                var simpleCourseList = new List<SimpleCourseModel>();
+                var courseDtoList = new List<CourseDto>();
 
                 foreach (var course in Courselist)
                 {
-                    simpleCourseList.Add(CourseToSimpleCourse(course));
+                    courseDtoList.Add(ToDto(course));
                 }
 
-                return Ok(simpleCourseList);
+                return Ok(courseDtoList);
             }
             catch (UserNotFoundException)
             {
@@ -48,15 +48,15 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpGet]
-        [ProducesResponseType(typeof(SimpleCourseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{courseId}")]
-        public ActionResult<SimpleCourseModel> GetCourse(Guid courseId)
+        public ActionResult<CourseDto> GetCourse(Guid courseId)
         {
             try
             {
                 var course = _courseService.GetCourse(courseId);
-                return Ok(CourseToSimpleCourse(course));
+                return Ok(ToDto(course));
             }
             catch (CourseNotFoundException)
             {
@@ -67,24 +67,24 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPost]
-        [ProducesResponseType(typeof(SimpleCourseModel), StatusCodes.Status201Created)]
-        public ActionResult<SimpleCourseModel> AddCourse(SimpleCourseModel addCourse)
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status201Created)]
+        public ActionResult<CourseDto> AddCourse(CreateCourseRequest createCourseRequest)
         {
-            var course = _courseService.CreateCourse(addCourse.Code, addCourse.Name, addCourse.Description, addCourse.StartDate, addCourse.EndDate);
-            return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, CourseToSimpleCourse(course));
+            var course = _courseService.CreateCourse(createCourseRequest.Code, createCourseRequest.Name, createCourseRequest.Description, createCourseRequest.StartDate, createCourseRequest.EndDate);
+            return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, ToDto(course));
         }
 
 
         [HttpPatch()]
-        [ProducesResponseType(typeof(SimpleCourseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{courseId}/UpdateCourseInfo")]
-        public ActionResult<SimpleCourseModel> UpdateCourseInfo(UpdateCourseInfoModel updateCourseInfo)
+        public ActionResult<CourseDto> UpdateCourseInfo(UpdateCourseInfoRequest updateCourseInfoRequest)
         {
             try
             {
-                var course = _courseService.UpdateCourseInfo(updateCourseInfo.Id, updateCourseInfo.Code, updateCourseInfo.Name, updateCourseInfo.Description);
-                return Ok(CourseToSimpleCourse(course));
+                var course = _courseService.UpdateCourseInfo(updateCourseInfoRequest.Id, updateCourseInfoRequest.Code, updateCourseInfoRequest.Name, updateCourseInfoRequest.Description);
+                return Ok(ToDto(course));
             }
             catch (CourseNotFoundException)
             {
@@ -95,15 +95,15 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPatch()]
-        [ProducesResponseType(typeof(SimpleCourseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{courseId}/UpdateCoursePeriod")]
-        public ActionResult<SimpleCourseModel> UpdateCoursePeriod(UpdateCoursePeriodModel updateCoursePeriod)
+        public ActionResult<CourseDto> UpdateCoursePeriod(UpdateCoursePeriodRequest updateCoursePeriodRequest)
         {
             try
             {
-                var course = _courseService.UpdateCoursePeriod(updateCoursePeriod.Id, updateCoursePeriod.StartDate, updateCoursePeriod.EndDate);
-                return Ok(CourseToSimpleCourse(course));
+                var course = _courseService.UpdateCoursePeriod(updateCoursePeriodRequest.Id, updateCoursePeriodRequest.StartDate, updateCoursePeriodRequest.EndDate);
+                return Ok(ToDto(course));
             }
             catch (CourseNotFoundException)
             {
@@ -113,7 +113,7 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpDelete("{courseId}")]
-        [ProducesResponseType(typeof(SimpleCourseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult DeleteCourse(Guid courseId)
         {
@@ -130,13 +130,14 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPost()]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [Route("{courseId}/Membership")]
         public ActionResult<Course> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             try
             {
                 var course = _courseService.CreateCourseMembership(courseId, userId, enrolledDate);
-                return Ok(course);
+                return Ok(ToDto(course));
             }
             catch (Exception e)
             {
@@ -176,20 +177,39 @@ namespace EduManagementLab.Api.Controllers
                 return NotFound(e.Message);
             }
         }
-        private SimpleCourseModel CourseToSimpleCourse(Course course)
-        {
-            var simpleCourse = new SimpleCourseModel()
-            {
-                Code = course.Code,
-                Name = course.Name,
-                Description = course.Description,
-                StartDate = course.StartDate,
-                EndDate = course.EndDate
-            };
 
-            return simpleCourse;
+        private static CourseDto ToDto(Course course)
+        {
+            if (course != null)
+            {
+                return new CourseDto
+                {
+                    Id = course.Id,
+                    Code = course.Code,
+                    Name = course.Name,
+                    Description = course.Description,
+                    StartDate = course.StartDate,
+                    EndDate = course.EndDate
+                };
+            }
+            return null;
         }
-        public class SimpleCourseModel
+
+        public class CourseDto
+        {
+            [Required]
+            public Guid Id { get; set; }
+            [Required]
+            public string Code { get; set; }
+            [Required]
+            public string Name { get; set; }
+            public string? Description { get; set; }
+            [Required]
+            public DateTime StartDate { get; set; }
+            [Required]
+            public DateTime EndDate { get; set; }
+        }
+        public class CreateCourseRequest
         {
             [Required]
             public string Code { get; set; }
@@ -201,7 +221,7 @@ namespace EduManagementLab.Api.Controllers
             [Required]
             public DateTime EndDate { get; set; }
         }
-        public class UpdateCourseInfoModel
+        public class UpdateCourseInfoRequest
         {
             public Guid Id { get; set; }
             [Required]
@@ -211,7 +231,7 @@ namespace EduManagementLab.Api.Controllers
             public string? Description { get; set; }
 
         }
-        public class UpdateCoursePeriodModel
+        public class UpdateCoursePeriodRequest
         {
             public Guid Id { get; set; }
             [Required]
