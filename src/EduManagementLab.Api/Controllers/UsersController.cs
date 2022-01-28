@@ -3,6 +3,7 @@ using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 
 namespace EduManagementLab.Api.Controllers
 {
@@ -11,10 +12,12 @@ namespace EduManagementLab.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserService _userService;
+        private readonly IMapper _mapper;
 
-        public UsersController(UserService userService)
+        public UsersController(UserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,7 +31,7 @@ namespace EduManagementLab.Api.Controllers
 
                 foreach (var user in userlist)
                 {
-                    userDtoList.Add(ToDto(user));
+                    userDtoList.Add(_mapper.Map<UserDto>(user));
                 }
 
                 return Ok(userDtoList);
@@ -48,7 +51,7 @@ namespace EduManagementLab.Api.Controllers
             try
             {
                 var user = _userService.GetUser(userId);
-                return Ok(ToDto(user));
+                return Ok(_mapper.Map<UserDto>(user));
             }
             catch (UserNotFoundException)
             {
@@ -61,7 +64,7 @@ namespace EduManagementLab.Api.Controllers
         public ActionResult<UserDto> AddUser(CreateUserRequest createUserRequest)
         {
             var user = _userService.CreateUser(createUserRequest.DisplayName, createUserRequest.FirstName, createUserRequest.LastName, createUserRequest.Email);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, ToDto(user));
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, _mapper.Map<UserDto>(user));
         }
 
         [HttpPost]
@@ -73,7 +76,7 @@ namespace EduManagementLab.Api.Controllers
             try
             {
                 var user = _userService.UpdateName(updateUserNameRequest.Id, updateUserNameRequest.DisplayName, updateUserNameRequest.FirstName, updateUserNameRequest.LastName);
-                return Ok(ToDto(user));
+                return Ok(_mapper.Map<UserDto>(user));
             }
             catch (UserNotFoundException)
             {
@@ -90,7 +93,7 @@ namespace EduManagementLab.Api.Controllers
             try
             {
                 var user = _userService.UpdateEmail(updateUserEmailRequest.Id, updateUserEmailRequest.Email);
-                return Ok(ToDto(user));
+                return Ok(_mapper.Map<UserDto>(user));
             }
             catch (UserNotFoundException)
             {
@@ -113,26 +116,8 @@ namespace EduManagementLab.Api.Controllers
                 return NotFound();
             }
         }
-
-        private static UserDto ToDto(User user)
-        {
-            if (user != null)
-            {
-                return new UserDto
-                {
-                    Id = user.Id,
-                    DisplayName = user.Displayname,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email
-                };
-            }
-            return null;
-        }
-
         public class UserDto
         {
-            [Required]
             public Guid Id { get; set; }
             [Required]
             public string DisplayName { get; set; }
@@ -175,5 +160,15 @@ namespace EduManagementLab.Api.Controllers
             [Required]
             public string Email { get; set; }
         }
+
+        public class CourseAutoMapperProfile : Profile
+        {
+            public CourseAutoMapperProfile()
+            {
+                CreateMap<User, UserDto>();
+            }
+        }
+
+
     }
 }

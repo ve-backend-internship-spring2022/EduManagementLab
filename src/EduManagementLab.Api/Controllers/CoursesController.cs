@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,11 +18,13 @@ namespace EduManagementLab.Api.Controllers
     {
         private readonly CourseService _courseService;
         private readonly UserService _userService;
+        private readonly IMapper _mapper;
 
-        public CoursesController(CourseService courseService, UserService userService)
+        public CoursesController(CourseService courseService, UserService userService, IMapper mapper)
         {
             _courseService = courseService;
             _userService = userService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -35,7 +38,7 @@ namespace EduManagementLab.Api.Controllers
 
                 foreach (var course in Courselist)
                 {
-                    courseDtoList.Add(ToDto(course));
+                    courseDtoList.Add(_mapper.Map<CourseDto>(course));
                 }
 
                 return Ok(courseDtoList);
@@ -56,7 +59,7 @@ namespace EduManagementLab.Api.Controllers
             try
             {
                 var course = _courseService.GetCourse(courseId);
-                return Ok(ToDto(course));
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (CourseNotFoundException)
             {
@@ -71,7 +74,7 @@ namespace EduManagementLab.Api.Controllers
         public ActionResult<CourseDto> AddCourse(CreateCourseRequest createCourseRequest)
         {
             var course = _courseService.CreateCourse(createCourseRequest.Code, createCourseRequest.Name, createCourseRequest.Description, createCourseRequest.StartDate, createCourseRequest.EndDate);
-            return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, ToDto(course));
+            return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, _mapper.Map<CourseDto>(course));
         }
 
 
@@ -84,7 +87,7 @@ namespace EduManagementLab.Api.Controllers
             try
             {
                 var course = _courseService.UpdateCourseInfo(updateCourseInfoRequest.Id, updateCourseInfoRequest.Code, updateCourseInfoRequest.Name, updateCourseInfoRequest.Description);
-                return Ok(ToDto(course));
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (CourseNotFoundException)
             {
@@ -103,7 +106,7 @@ namespace EduManagementLab.Api.Controllers
             try
             {
                 var course = _courseService.UpdateCoursePeriod(updateCoursePeriodRequest.Id, updateCoursePeriodRequest.StartDate, updateCoursePeriodRequest.EndDate);
-                return Ok(ToDto(course));
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (CourseNotFoundException)
             {
@@ -132,12 +135,12 @@ namespace EduManagementLab.Api.Controllers
         [HttpPost()]
         [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [Route("{courseId}/Membership")]
-        public ActionResult<Course> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
+        public ActionResult<CourseDto> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             try
             {
                 var course = _courseService.CreateCourseMembership(courseId, userId, enrolledDate);
-                return Ok(ToDto(course));
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (Exception e)
             {
@@ -178,26 +181,8 @@ namespace EduManagementLab.Api.Controllers
             }
         }
 
-        private static CourseDto ToDto(Course course)
-        {
-            if (course != null)
-            {
-                return new CourseDto
-                {
-                    Id = course.Id,
-                    Code = course.Code,
-                    Name = course.Name,
-                    Description = course.Description,
-                    StartDate = course.StartDate,
-                    EndDate = course.EndDate
-                };
-            }
-            return null;
-        }
-
         public class CourseDto
         {
-            [Required]
             public Guid Id { get; set; }
             [Required]
             public string Code { get; set; }
@@ -238,6 +223,14 @@ namespace EduManagementLab.Api.Controllers
             public DateTime StartDate { get; set; }
             [Required]
             public DateTime EndDate { get; set; }
+        }
+
+        public class UserAutoMapperProfile : Profile
+        {
+            public UserAutoMapperProfile()
+            {
+                CreateMap<Course, CourseDto>();
+            }
         }
     }
 }
