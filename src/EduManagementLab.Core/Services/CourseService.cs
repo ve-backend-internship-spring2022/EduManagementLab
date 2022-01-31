@@ -97,5 +97,19 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return course;
         }
+
+        public Course UpdateMembershipEnrolledDate(Guid courseId, Guid userId, DateTime enrolledDate)
+        {
+            var course = GetCourse(courseId, true);
+
+            if (course.Memperships.Any(c => c.UserId == userId && c.CourseId == courseId))
+            {
+                var membership = course.Memperships.FirstOrDefault(u => u.UserId == userId && u.CourseId == courseId);
+                membership.EnrolledDate = enrolledDate;
+            }
+            _unitOfWork.Courses.Update(course);
+            _unitOfWork.Complete();
+            return course;
+        }
     }
 }

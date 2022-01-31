@@ -149,6 +149,21 @@ namespace EduManagementLab.Api.Controllers
 
         }
 
+        [HttpPut]
+        [Route("{courseId}/Memberships/{userId}")]
+        public ActionResult<Course> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
+        {
+            try
+            {
+                var courseMembership = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
+                return Ok(courseMembership);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
 
         [HttpGet]
         [Route("{courseId}/Memberships")]
@@ -158,6 +173,28 @@ namespace EduManagementLab.Api.Controllers
             {
                 var courseMembership = _courseService.GetCourse(courseId, true).Memperships.ToList();
                 return Ok(courseMembership);
+            }
+            catch (CourseNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        [Route("{courseId}/Memberships/{userId}")]
+        public ActionResult<List<Course.Membership>> GetCourseMemberships(Guid courseId, Guid userId)
+        {
+            try
+            {
+                var courseMembership = _courseService.GetCourse(courseId, true).Memperships.ToList();
+                if (courseMembership.Any(u => u.UserId == userId))
+                {
+                    return Ok(courseMembership.FirstOrDefault(u => u.UserId == userId));
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             catch (CourseNotFoundException)
             {
