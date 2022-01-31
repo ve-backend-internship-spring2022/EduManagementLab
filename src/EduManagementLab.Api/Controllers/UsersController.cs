@@ -3,6 +3,7 @@ using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 
 namespace EduManagementLab.Api.Controllers
 {
@@ -11,29 +12,46 @@ namespace EduManagementLab.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserService _userService;
+        private readonly IMapper _mapper;
 
-        public UsersController(UserService userService)
+        public UsersController(UserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<User>), StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<User>> GetUsers()
-        {
-            return Ok(_userService.GetUsers().ToList());
-        }
-
-        [HttpGet]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}")]
-        public ActionResult<User> GetUser(Guid id)
+        [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<UserDto>> GetUsers()
         {
             try
             {
-                var user = _userService.GetUser(id);
-                return Ok(user);
+                var userlist = _userService.GetUsers().ToList();
+                var userDtoList = new List<UserDto>();
+
+                foreach (var user in userlist)
+                {
+                    userDtoList.Add(_mapper.Map<UserDto>(user));
+                }
+
+                return Ok(userDtoList);
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound();
+            }     
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Route("{userId}")]
+        public ActionResult<UserDto> GetUser(Guid userId)
+        {
+            try
+            {
+                var user = _userService.GetUser(userId);
+                return Ok(_mapper.Map<UserDto>(user));
             }
             catch (UserNotFoundException)
             {
@@ -42,23 +60,23 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(User), StatusCodes.Status201Created)]
-        public ActionResult<User> AddUser(AddUserModel addUser)
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
+        public ActionResult<UserDto> AddUser(CreateUserRequest createUserRequest)
         {
-            var user = _userService.CreateUser(addUser.DisplayName, addUser.FirstName, addUser.LastName, addUser.Email);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            var user = _userService.CreateUser(createUserRequest.DisplayName, createUserRequest.FirstName, createUserRequest.LastName, createUserRequest.Email);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, _mapper.Map<UserDto>(user));
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}/UpdateName")]
-        public ActionResult<User> UpdateName(UpdateNameModel updateName)
+        [Route("{userId}/UpdateName")]
+        public ActionResult<UserDto> UpdateName(UpdateUserNameRequest updateUserNameRequest)
         {
             try
             {
-                var user = _userService.UpdateName(updateName.Id, updateName.DisplayName, updateName.FirstName, updateName.LastName);
-                return Ok(user);
+                var user = _userService.UpdateName(updateUserNameRequest.Id, updateUserNameRequest.DisplayName, updateUserNameRequest.FirstName, updateUserNameRequest.LastName);
+                return Ok(_mapper.Map<UserDto>(user));
             }
             catch (UserNotFoundException)
             {
@@ -67,15 +85,15 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}/UpdateEmail")]
-        public ActionResult<User> UpdateEmail(UpdateEmailModel updateEmail)
+        [Route("{userId}/UpdateEmail")]
+        public ActionResult<UserDto> UpdateEmail(UpdateUserEmailRequest updateUserEmailRequest)
         {
             try
             {
-                var user = _userService.UpdateEmail(updateEmail.Id, updateEmail.Email);
-                return Ok(user);
+                var user = _userService.UpdateEmail(updateUserEmailRequest.Id, updateUserEmailRequest.Email);
+                return Ok(_mapper.Map<UserDto>(user));
             }
             catch (UserNotFoundException)
             {
@@ -85,12 +103,12 @@ namespace EduManagementLab.Api.Controllers
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}")]
-        public ActionResult DeleteUser(Guid id)
+        [Route("{userid}")]
+        public ActionResult DeleteUser(Guid userId)
         {
             try
             {
-                _userService.DeleteUser(id);
+                _userService.DeleteUser(userId);
                 return Ok();
             }
             catch (UserNotFoundException)
@@ -98,8 +116,20 @@ namespace EduManagementLab.Api.Controllers
                 return NotFound();
             }
         }
+        public class UserDto
+        {
+            public Guid Id { get; set; }
+            [Required]
+            public string DisplayName { get; set; }
+            [Required]
+            public string FirstName { get; set; }
+            [Required]
+            public string LastName { get; set; }
+            [Required]
+            public string Email { get; set; }
+        }
 
-        public class AddUserModel
+        public class CreateUserRequest
         {
             [Required]
             public string DisplayName { get; set; }
@@ -111,7 +141,7 @@ namespace EduManagementLab.Api.Controllers
             public string Email { get; set; }
         }
 
-        public class UpdateNameModel
+        public class UpdateUserNameRequest
         {
             [Required]
             public Guid Id { get; set; }
@@ -123,12 +153,22 @@ namespace EduManagementLab.Api.Controllers
             public string LastName { get; set; }
         }
 
-        public class UpdateEmailModel
+        public class UpdateUserEmailRequest
         {
             [Required]
             public Guid Id { get; set; }
             [Required]
             public string Email { get; set; }
         }
+
+        public class CourseAutoMapperProfile : Profile
+        {
+            public CourseAutoMapperProfile()
+            {
+                CreateMap<User, UserDto>();
+            }
+        }
+
+
     }
 }

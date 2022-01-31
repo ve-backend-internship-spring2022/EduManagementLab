@@ -2,6 +2,8 @@ using EduManagementLab.Core.Interfaces;
 using EduManagementLab.Core.Services;
 using EduManagementLab.EfRepository;
 using Microsoft.EntityFrameworkCore;
+using static EduManagementLab.Api.Controllers.UsersController;
+using static EduManagementLab.Api.Controllers.CoursesController;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<CourseService>();
+builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(CourseAutoMapperProfile).Assembly);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
