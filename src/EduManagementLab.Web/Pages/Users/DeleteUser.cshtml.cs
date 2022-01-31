@@ -12,11 +12,11 @@ using EduManagementLab.Core.Exceptions;
 
 namespace EduManagementLab.Web.Pages.Users
 {
-    public class DeleteModel : PageModel
+    public class DeleteUserModel : PageModel
     {
         private readonly UserService _userService;
 
-        public DeleteModel(UserService userService)
+        public DeleteUserModel(UserService userService)
         {
             _userService = userService;
         }

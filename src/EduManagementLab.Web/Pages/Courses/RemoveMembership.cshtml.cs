@@ -6,36 +6,40 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EduManagementLab.Web.Pages.Courses
 {
-    public class DeleteModel : PageModel
+    public class RemoveMembershipModel : PageModel
     {
         private readonly CourseService _courseService;
+        private readonly UserService _userService;
 
-        public DeleteModel(CourseService courseService)
+        public RemoveMembershipModel(CourseService courseService, UserService userService)
         {
             _courseService = courseService;
+            _userService = userService; 
         }
 
         public Course Course { get; set; }
-
-        public async Task<IActionResult> OnGetAsync(Guid id)
+        public User User { get; set; }
+        public async Task<IActionResult> OnGetAsync(Guid userId)
         {
             try
             {
-                Course = _courseService.GetCourse(id);
+                User = _userService.GetUser(userId);
+
                 return Page();
             }
-            catch (CourseNotFoundException)
+            catch (UserNotFoundException)
             {
                 return NotFound();
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(Guid id)
+        public async Task<IActionResult> OnPostAsync(Guid courseId, Guid userId)
         {
             try
             {
-                _courseService.DeleteCourse(id);
-                return RedirectToPage("./Index");
+                _courseService.RemoveCourseMembership(courseId, userId);
+
+                return RedirectToPage("./Details", new { courseId = courseId });
             }
             catch (CourseNotFoundException)
             {
