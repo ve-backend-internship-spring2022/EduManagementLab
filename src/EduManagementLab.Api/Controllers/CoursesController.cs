@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,31 +18,48 @@ namespace EduManagementLab.Api.Controllers
     {
         private readonly CourseService _courseService;
         private readonly UserService _userService;
+        private readonly IMapper _mapper;
 
-        public CoursesController(CourseService courseService, UserService userService)
+        public CoursesController(CourseService courseService, UserService userService, IMapper mapper)
         {
             _courseService = courseService;
             _userService = userService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<Course>), StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<Course>> GetCourses()
-        {
-            return Ok(_courseService.GetCourses().ToList());
-        }
-
-
-        [HttpGet]
-        [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}")]
-        public ActionResult<Course> GetCourse(Guid id)
+        [ProducesResponseType(typeof(List<CourseDto>), StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<CourseDto>> GetCourses()
         {
             try
             {
-                var course = _courseService.GetCourse(id);
-                return Ok(course);
+                var Courselist = _courseService.GetCourses().ToList();
+                var courseDtoList = new List<CourseDto>();
+
+                foreach (var course in Courselist)
+                {
+                    courseDtoList.Add(_mapper.Map<CourseDto>(course));
+                }
+
+                return Ok(courseDtoList);
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+
+        [HttpGet]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Route("{courseId}")]
+        public ActionResult<CourseDto> GetCourse(Guid courseId)
+        {
+            try
+            {
+                var course = _courseService.GetCourse(courseId);
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (CourseNotFoundException)
             {
@@ -52,24 +70,24 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPost]
-        [ProducesResponseType(typeof(Course), StatusCodes.Status201Created)]
-        public ActionResult<Course> AddCourse(AddCourseModel addCourse)
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status201Created)]
+        public ActionResult<CourseDto> AddCourse(CreateCourseRequest createCourseRequest)
         {
-            var course = _courseService.CreateCourse(addCourse.Code, addCourse.Name, addCourse.Description, addCourse.StartDate, addCourse.EndDate);
-            return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, course);
+            var course = _courseService.CreateCourse(createCourseRequest.Code, createCourseRequest.Name, createCourseRequest.Description, createCourseRequest.StartDate, createCourseRequest.EndDate);
+            return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, _mapper.Map<CourseDto>(course));
         }
 
 
         [HttpPatch()]
-        [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}/UpdateCourseInfo")]
-        public ActionResult<Course> UpdateCourseInfo(UpdateCourseInfoModel updateCourseInfo)
+        [Route("{courseId}/UpdateCourseInfo")]
+        public ActionResult<CourseDto> UpdateCourseInfo(UpdateCourseInfoRequest updateCourseInfoRequest)
         {
             try
             {
-                var course = _courseService.UpdateCourseInfo(updateCourseInfo.Id, updateCourseInfo.Code, updateCourseInfo.Name, updateCourseInfo.Description);
-                return Ok(course);
+                var course = _courseService.UpdateCourseInfo(updateCourseInfoRequest.Id, updateCourseInfoRequest.Code, updateCourseInfoRequest.Name, updateCourseInfoRequest.Description);
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (CourseNotFoundException)
             {
@@ -80,15 +98,15 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPatch()]
-        [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}/UpdateCoursePeriod")]
-        public ActionResult<Course> UpdateCoursePeriod(UpdateCoursePeriodModel updateCoursePeriod)
+        [Route("{courseId}/UpdateCoursePeriod")]
+        public ActionResult<CourseDto> UpdateCoursePeriod(UpdateCoursePeriodRequest updateCoursePeriodRequest)
         {
             try
             {
-                var course = _courseService.UpdateCoursePeriod(updateCoursePeriod.Id, updateCoursePeriod.StartDate, updateCoursePeriod.EndDate);
-                return Ok(course);
+                var course = _courseService.UpdateCoursePeriod(updateCoursePeriodRequest.Id, updateCoursePeriodRequest.StartDate, updateCoursePeriodRequest.EndDate);
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (CourseNotFoundException)
             {
@@ -97,14 +115,14 @@ namespace EduManagementLab.Api.Controllers
         }
 
 
-        [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(Course), StatusCodes.Status200OK)]
+        [HttpDelete("{courseId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult DeleteCourse(Guid id)
+        public ActionResult DeleteCourse(Guid courseId)
         {
             try
             {
-                _courseService.DeleteCourse(id);
+                _courseService.DeleteCourse(courseId);
                 return Ok();
             }
             catch (CourseNotFoundException)
@@ -115,13 +133,14 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPost()]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [Route("{courseId}/Membership")]
-        public ActionResult<Course> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
+        public ActionResult<CourseDto> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             try
             {
                 var course = _courseService.CreateCourseMembership(courseId, userId, enrolledDate);
-                return Ok(course);
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (Exception e)
             {
@@ -162,36 +181,56 @@ namespace EduManagementLab.Api.Controllers
             }
         }
 
+        public class CourseDto
+        {
+            public Guid Id { get; set; }
+            [Required]
+            public string Code { get; set; }
+            [Required]
+            public string Name { get; set; }
+            public string? Description { get; set; }
+            [Required]
+            public DateTime StartDate { get; set; }
+            [Required]
+            public DateTime EndDate { get; set; }
+        }
+        public class CreateCourseRequest
+        {
+            [Required]
+            public string Code { get; set; }
+            [Required]
+            public string Name { get; set; }
+            public string? Description { get; set; }
+            [Required]
+            public DateTime StartDate { get; set; }
+            [Required]
+            public DateTime EndDate { get; set; }
+        }
+        public class UpdateCourseInfoRequest
+        {
+            public Guid Id { get; set; }
+            [Required]
+            public string Code { get; set; }
+            [Required]
+            public string Name { get; set; }
+            public string? Description { get; set; }
 
-    }
-    public class AddCourseModel
-    {
-        [Required]
-        public string Code { get; set; }
-        [Required]
-        public string Name { get; set; }
-        public string? Description { get; set; }
-        [Required]
-        public DateTime StartDate { get; set; }
-        [Required]
-        public DateTime EndDate { get; set; }
-    }
-    public class UpdateCourseInfoModel
-    {
-        public Guid Id { get; set; }
-        [Required]
-        public string Code { get; set; }
-        [Required]
-        public string Name { get; set; }
-        public string? Description { get; set; }
+        }
+        public class UpdateCoursePeriodRequest
+        {
+            public Guid Id { get; set; }
+            [Required]
+            public DateTime StartDate { get; set; }
+            [Required]
+            public DateTime EndDate { get; set; }
+        }
 
-    }
-    public class UpdateCoursePeriodModel
-    {
-        public Guid Id { get; set; }
-        [Required]
-        public DateTime StartDate { get; set; }
-        [Required]
-        public DateTime EndDate { get; set; }
+        public class UserAutoMapperProfile : Profile
+        {
+            public UserAutoMapperProfile()
+            {
+                CreateMap<Course, CourseDto>();
+            }
+        }
     }
 }
