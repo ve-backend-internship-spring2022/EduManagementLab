@@ -134,7 +134,7 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpPost()]
         [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
-        [Route("{courseId}/Membership")]
+        [Route("{courseId}/Memberships")]
         public ActionResult<CourseDto> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             try
@@ -204,7 +204,7 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpDelete]
-        [Route("{courseId}/Membership")]
+        [Route("{courseId}/Memberships/{userId}")]
         public ActionResult<Course> DeleteCourseMembership(Guid courseId, Guid userId)
         {
             try
