@@ -150,12 +150,12 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPut]
-        [Route("{courseId}/UpdateMembership/{userId}")]
-        public ActionResult<Course> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, UpdateMembershipEnrolledDateModel MembershipEnrolledDate)
+        [Route("{courseId}/Memberships/{userId}")]
+        public ActionResult<Course> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
         {
             try
             {
-                var courseMembership = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate.EnrolledDate);
+                var courseMembership = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
                 return Ok(courseMembership);
             }
             catch (Exception e)
@@ -181,8 +181,8 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
-        [Route("{courseId}/Membership/{userId}")]
-        public ActionResult<List<Course.Membership>> GetCourseMembership(Guid courseId, Guid userId)
+        [Route("{courseId}/Memberships/{userId}")]
+        public ActionResult<List<Course.Membership>> GetCourseMemberships(Guid courseId, Guid userId)
         {
             try
             {
