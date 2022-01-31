@@ -192,25 +192,20 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<MembershipDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{courseId}/Memberships/{userId}")]
-        public ActionResult<List<MembershipDto>> GetCourseMemberships(Guid courseId, Guid userId)
+        public ActionResult<MembershipDto> GetCourseMembership(Guid courseId, Guid userId)
         {
             try
             {
                 var membershipList = _courseService.GetCourse(courseId, true).Memperships.ToList();
+               
                 if (membershipList.Any(u => u.UserId == userId))
                 {
+                    var selectedMembership = membershipList.FirstOrDefault(u => u.UserId == userId);
 
-                    var membershipDtoList = new List<MembershipDto>();
-
-                    foreach (var membership in membershipList)
-                    {
-                        membershipDtoList.Add(_mapper.Map<MembershipDto>(membership));
-                    }
-
-                    return Ok(membershipDtoList.FirstOrDefault(u => u.UserId == userId));
+                    return Ok(_mapper.Map<MembershipDto>(selectedMembership));
                 }
                 else
                 {
@@ -257,7 +252,6 @@ namespace EduManagementLab.Api.Controllers
 
         public class MembershipDto
         {
-            public Guid Id { get; set; }
             [Required]
             public Guid CourseId { get; set; }
             [Required]
