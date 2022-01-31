@@ -44,10 +44,10 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                <a asp-page="./EditName" asp-route-id="@item.Id">Edit Name</a> |
-                <a asp-page="./ChangeEmail" asp-route-id="@item.Id">Change email</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                @*<a asp-page="./EditName" asp-route-userId="@item.Id">Edit Name</a> |
+                <a asp-page="./ChangeEmail" asp-route-userId="@item.Id">Change email</a> |*@
+                <a asp-page="./Details" asp-route-userId="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-userId="@item.Id">Delete</a>
             </td>
         </tr>
 }

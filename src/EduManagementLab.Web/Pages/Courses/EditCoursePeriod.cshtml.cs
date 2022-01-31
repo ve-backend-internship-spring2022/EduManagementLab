@@ -53,7 +53,7 @@ namespace EduManagementLab.Web.Pages.Courses
             try
             {
                 _courseService.UpdateCoursePeriod(CourseId, StartDate, EndDate);
-                return RedirectToPage("./Index");
+                return RedirectToPage("./Details");
             }
             catch (CourseNotFoundException)
             {

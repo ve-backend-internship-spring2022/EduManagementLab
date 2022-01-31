@@ -5,46 +5,157 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>@Model.Course.Name</h1>
 
-<div>
-    <h4>Course</h4>
+    <div>
+        <div class="row">
+            <div class="col-md-7 text-md-left"><h4>Course details</h4></div>
+            <div class="col-md-5 text-md-end"><a asp-page="./EditCourseInfo" asp-route-id="@Model.Course.Id">Edit course info</a> | <a asp-page="./EditCoursePeriod" asp-route-id="@Model.Course.Id">Edit course period</a></div>
+        </div>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Course.Code)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Course.Code)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Course.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Course.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Course.Description)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Course.Description)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Course.StartDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Course.StartDate)
+            </dd>
+             <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Course.EndDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Course.EndDate)
+            </dd>
+        </dl>
+    </div>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Course.Code)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Course.Code)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Course.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Course.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Course.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Course.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Course.StartDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Course.StartDate)
-        </dd>
-         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Course.EndDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Course.EndDate)
-        </dd>
-    </dl>
-</div>
+    @*using id atm as course is null*@
+    <div class="row">
+        <div class="col-md-10"><h4>Students enrolled in this course</h4></div>
+        @*Modal pop up*@
+        <div class="col-md-2 text-md-end">
+            <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#create">
+                Add membership
+            </button>
+            <div class="modal fade" id="create" tabindex="-1" aria-labelledby="create" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" id="create">Add Course Membership</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-md-start">
+                            <form method="post" class="row g-3" enctype="multipart/form-data" asp-route-courseId="@Model.Course.Id">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <label asp-for="Input.DisplayName" class="control-label"></label>
+                                    <input asp-for="Input.DisplayName" class="form-control" />
+                                    <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Input.FirstName" class="control-label"></label>
+                                    <input asp-for="Input.FirstName" class="form-control" />
+                                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Input.LastName" class="control-label"></label>
+                                    <input asp-for="Input.LastName" class="form-control" />
+                                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Input.Email" class="control-label"></label>
+                                    <input asp-for="Input.Email" class="form-control" />
+                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Add to course" class="btn btn-primary" />
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                                @*<div class="col-12 text-center">
+                                    <input type="submit" value="Add to course" class="btn btn-primary" />
+                                    <button type="submit" class="btn btn-secondary">Add to course</button>
+                                    <button type="button" class="btn btn-secondary m-2" data-bs-dismiss="modal">Cancel</button>
+                                </div>*@
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Course.Memperships[0].User.Displayname)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Course.Memperships[0].User.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Course.Memperships[0].User.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Course.Memperships[0].User.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Course.Memperships[0].EnrolledDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Course.Memperships != null)
+            {
+                @foreach (var courseMembership in Model.Course.Memperships)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.User.Displayname)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.User.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.User.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.User.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.EnrolledDate)
+                        </td>
+                        <td>
+                            <a asp-page="../Users/Details" asp-route-userId="@courseMembership.UserId">Details</a> |
+                            <a asp-page="./RemoveMembership" asp-route-userId="@courseMembership.UserId" asp-route-courseId="@courseMembership.CourseId">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+               <h4>No enrollment in this course!</h4> 
+            }
+        </tbody>
+    </table>
 <div>
-    <a asp-page="./EditCourseInfo" asp-route-id="@Model.Course.Id">Edit course info</a> |
-    <a asp-page="./EditCoursePeriod" asp-route-id="@Model.Course.Id">Edit course period</a> |
-    <a asp-page="./Index">Back to List</a>
+    <a asp-page="./Index">Back to course list</a>
 </div>

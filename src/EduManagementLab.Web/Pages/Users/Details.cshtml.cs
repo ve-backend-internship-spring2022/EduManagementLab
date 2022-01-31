@@ -14,21 +14,56 @@ namespace EduManagementLab.Web.Pages.Users
 {
     public class DetailsModel : PageModel
     {
-        private readonly UserService _userService;
+        private readonly UserService _userService; 
+        private readonly CourseService _courseService;
 
-        public DetailsModel(UserService userService)
+        public DetailsModel(UserService userService, CourseService courseService)
         {
             _userService = userService;
+            _courseService = courseService;
         }
 
+        public List<Course.Membership>? CourseList { get; set; }
         public User User { get; set; }
+        public Course Course { get; set; }
+        public CourseItem CourseListItem { get; set; }
+        public class CourseItem
+        {
+            public Guid courseId { get; set; }
+            public string Code { get; set; }
+            public string Name { get; set; }
+            public DateTime StartDate { get; set; }
+            public DateTime EndDate { get; set; }
+        }
 
-        public async Task<IActionResult> OnGetAsync(Guid id)
+        public async Task<IActionResult> OnGetAsync(Guid userId)
         {
             try
             {
-                User = _userService.GetUser(id);
+                User = _userService.GetUser(userId);
+                CourseList = _courseService.GetUserCourses(User.Id).ToList();
+
                 return Page();
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        //TODO: Add Search function to find course
+        public async Task<IActionResult> OnPostAsync(Guid courseId, Guid userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            try
+            {
+                Course = _courseService.GetCourse(courseId);
+
+                return RedirectToPage("./Details", new { userI = userId });
             }
             catch (UserNotFoundException)
             {
