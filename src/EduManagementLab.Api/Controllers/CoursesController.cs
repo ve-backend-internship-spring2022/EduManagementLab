@@ -154,14 +154,14 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpPut]
         [Route("{courseId}/Memberships/{userId}")]
-        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Course> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
+        public ActionResult<CourseDto> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
         {
             try
             {
-                var courseMembership = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
-                return Ok(_mapper.Map<MembershipDto>(courseMembership));
+                var course = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (Exception e)
             {
