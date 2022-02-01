@@ -30,6 +30,7 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(List<CourseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<CourseDto>> GetCourses()
         {
             try
@@ -75,7 +76,7 @@ namespace EduManagementLab.Api.Controllers
         public ActionResult<CourseDto> AddCourse(CreateCourseRequest createCourseRequest)
         {
             var course = _courseService.CreateCourse(createCourseRequest.Code, createCourseRequest.Name, createCourseRequest.Description, createCourseRequest.StartDate, createCourseRequest.EndDate);
-            return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, _mapper.Map<CourseDto>(course));
+            return CreatedAtAction(nameof(GetCourse), new { courseId = course.Id }, _mapper.Map<CourseDto>(course));
         }
 
 
@@ -134,7 +135,7 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPost()]
-        [Route("{courseId}/Membership")]
+        [Route("{courseId}/Memberships")]
         [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<CourseDto> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
@@ -153,12 +154,14 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpPut]
         [Route("{courseId}/Memberships/{userId}")]
+        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Course> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
         {
             try
             {
                 var courseMembership = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
-                return Ok(courseMembership);
+                return Ok(_mapper.Map<MembershipDto>(courseMembership));
             }
             catch (Exception e)
             {
@@ -222,7 +225,7 @@ namespace EduManagementLab.Api.Controllers
         [HttpDelete]
         [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{courseId}/Membership")]
+        [Route("{courseId}/Memberships/{userId}")]
         public ActionResult<MembershipDto> DeleteCourseMembership(Guid courseId, Guid userId)
         {
             try

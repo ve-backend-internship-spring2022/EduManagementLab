@@ -22,6 +22,7 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<UserDto>> GetUsers()
         {
             try
@@ -64,7 +65,7 @@ namespace EduManagementLab.Api.Controllers
         public ActionResult<UserDto> AddUser(CreateUserRequest createUserRequest)
         {
             var user = _userService.CreateUser(createUserRequest.DisplayName, createUserRequest.FirstName, createUserRequest.LastName, createUserRequest.Email);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, _mapper.Map<UserDto>(user));
+            return CreatedAtAction(nameof(GetUser), new { userId = user.Id }, _mapper.Map<UserDto>(user));
         }
 
         [HttpPost]
