@@ -11,6 +11,27 @@ namespace EduManagementLab.EfRepository.Repositories
         {
             _context = context;
         }
+
+        public IEnumerable<Course.Membership>? GetUserCourses(Guid userId)
+        {
+            return _context.Courses
+                .Include(m => m.Memperships)
+                .ThenInclude(u => u.User)
+                .Where(m => m.Memperships.Any(p => p.UserId == userId))
+                .Select(c => new Course.Membership()
+                {
+                    Course = new Course()
+                    {
+                        Id = c.Id,
+                        Code = c.Code,
+                        Name = c.Name,
+                        Description = c.Description,
+                        StartDate = c.StartDate,
+                        EndDate = c.EndDate,
+                    },
+                });
+        }
+
         public Course? GetCourse(Guid courseId, bool includeMembershipUsers)
         {
             if (includeMembershipUsers == true)

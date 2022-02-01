@@ -40,6 +40,16 @@ namespace EduManagementLab.Core.Services
             }
             return course;
         }
+        public IEnumerable<Course.Membership> GetUserCourses(Guid userId)
+        {
+            var userCourses = _unitOfWork.Courses.GetUserCourses(userId);
+            if (userCourses == null)
+            {
+                throw new UserNotFoundException(userId);
+            }
+            return userCourses;
+        }
+
         public Course UpdateCourseInfo(Guid id, string code, string name, string description)
         {
             var course = GetCourse(id);
