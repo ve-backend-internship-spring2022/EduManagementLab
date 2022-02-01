@@ -23,11 +23,11 @@ namespace EduManagementLab.Web.Pages.Users
 
         public User User { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(Guid id)
+        public async Task<IActionResult> OnGetAsync(Guid userId)
         {
             try
             {
-                User = _userService.GetUser(id);
+                User = _userService.GetUser(userId);
                 return Page();
             }
             catch (UserNotFoundException)
@@ -36,11 +36,11 @@ namespace EduManagementLab.Web.Pages.Users
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(Guid id)
+        public async Task<IActionResult> OnPostAsync(Guid userId)
         {
             try
             {
-                _userService.DeleteUser(id);
+                _userService.DeleteUser(userId);
                 return RedirectToPage("./Index");
             }
             catch (UserNotFoundException)
