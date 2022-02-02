@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -29,6 +30,7 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(List<CourseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<CourseDto>> GetCourses()
         {
             try
@@ -74,7 +76,7 @@ namespace EduManagementLab.Api.Controllers
         public ActionResult<CourseDto> AddCourse(CreateCourseRequest createCourseRequest)
         {
             var course = _courseService.CreateCourse(createCourseRequest.Code, createCourseRequest.Name, createCourseRequest.Description, createCourseRequest.StartDate, createCourseRequest.EndDate);
-            return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, _mapper.Map<CourseDto>(course));
+            return CreatedAtAction(nameof(GetCourse), new { courseId = course.Id }, _mapper.Map<CourseDto>(course));
         }
 
 
@@ -133,8 +135,9 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpPost()]
-        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [Route("{courseId}/Memberships")]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<CourseDto> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             try
@@ -151,12 +154,14 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpPut]
         [Route("{courseId}/Memberships/{userId}")]
-        public ActionResult<Course> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<CourseDto> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
         {
             try
             {
-                var courseMembership = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
-                return Ok(courseMembership);
+                var course = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (Exception e)
             {
@@ -166,13 +171,22 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpGet]
+        [ProducesResponseType(typeof(List<MembershipDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{courseId}/Memberships")]
-        public ActionResult<List<Course.Membership>> GetCourseMemberships(Guid courseId)
+        public ActionResult<List<MembershipDto>> GetCourseMemberships(Guid courseId)
         {
             try
             {
-                var courseMembership = _courseService.GetCourse(courseId, true).Memperships.ToList();
-                return Ok(courseMembership);
+                var membershipList = _courseService.GetCourse(courseId, true).Memperships.ToList();
+                var membershipDtoList = new List<MembershipDto>();
+
+                foreach (var membership in membershipList)
+                {
+                    membershipDtoList.Add(_mapper.Map<MembershipDto>(membership));
+                }
+
+                return Ok(membershipDtoList);
             }
             catch (CourseNotFoundException)
             {
@@ -181,15 +195,20 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{courseId}/Memberships/{userId}")]
-        public ActionResult<List<Course.Membership>> GetCourseMemberships(Guid courseId, Guid userId)
+        public ActionResult<MembershipDto> GetCourseMembership(Guid courseId, Guid userId)
         {
             try
             {
-                var courseMembership = _courseService.GetCourse(courseId, true).Memperships.ToList();
-                if (courseMembership.Any(u => u.UserId == userId))
+                var membershipList = _courseService.GetCourse(courseId, true).Memperships.ToList();
+               
+                if (membershipList.Any(u => u.UserId == userId))
                 {
-                    return Ok(courseMembership.FirstOrDefault(u => u.UserId == userId));
+                    var selectedMembership = membershipList.FirstOrDefault(u => u.UserId == userId);
+
+                    return Ok(_mapper.Map<MembershipDto>(selectedMembership));
                 }
                 else
                 {
@@ -204,13 +223,15 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpDelete]
+        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{courseId}/Memberships/{userId}")]
-        public ActionResult<Course> DeleteCourseMembership(Guid courseId, Guid userId)
+        public ActionResult<MembershipDto> DeleteCourseMembership(Guid courseId, Guid userId)
         {
             try
             {
                 var courseMembership = _courseService.RemoveCourseMembership(courseId, userId);
-                return Ok(courseMembership);
+                return Ok(_mapper.Map<MembershipDto>(courseMembership));
             }
             catch (Exception e)
             {
@@ -230,6 +251,16 @@ namespace EduManagementLab.Api.Controllers
             public DateTime StartDate { get; set; }
             [Required]
             public DateTime EndDate { get; set; }
+        }
+
+        public class MembershipDto
+        {
+            [Required]
+            public Guid CourseId { get; set; }
+            [Required]
+            public Guid UserId { get; set; }
+            [Required]
+            public DateTime EnrolledDate { get; set; }
         }
         public class CreateCourseRequest
         {
@@ -267,6 +298,7 @@ namespace EduManagementLab.Api.Controllers
             public UserAutoMapperProfile()
             {
                 CreateMap<Course, CourseDto>();
+                CreateMap<Course.Membership, MembershipDto>();
             }
         }
     }
