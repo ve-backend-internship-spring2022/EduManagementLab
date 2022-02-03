@@ -43,14 +43,20 @@ namespace EduManagementLab.Web.Pages.Users
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return Page();
+                try
+                {
+                    _userService.CreateUser(Displayname, FirstName, LastName, Email);
+                    return RedirectToPage("./Index");
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("Email", "User already exist");
+                    return Page();
+                }
             }
-
-            _userService.CreateUser(Displayname, FirstName, LastName, Email);
-
-            return RedirectToPage("./Index");
+            return Page();
         }
     }
 }

@@ -27,11 +27,15 @@ namespace EduManagementLab.Core.Services
         public User CreateUser(string displayname, string firstName, string lastName, string email)
         {
             var user = new User() { Displayname = displayname, FirstName = firstName, LastName = lastName, Email = email };
+            var allUsers = GetUsers();
+            if (allUsers.Any(x => x.Email == email))
+            {
+                throw new Exception();
+            }
             _unitOfWork.Users.Add(user);
             _unitOfWork.Complete();
             return user;
         }
-
         public User GetUser(Guid id)
         {
             var user = _unitOfWork.Users.GetById(id);

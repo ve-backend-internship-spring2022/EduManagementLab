@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using EduManagementLab.Core.Services;
 using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Exceptions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EduManagementLab.Web.Pages.Users
 {
@@ -24,17 +25,9 @@ namespace EduManagementLab.Web.Pages.Users
         }
 
         public List<Course.Membership>? CourseList { get; set; }
+        public SelectList CourseListItems { get; set; }
         public User User { get; set; }
         public Course Course { get; set; }
-        public CourseItem CourseListItem { get; set; }
-        public class CourseItem
-        {
-            public Guid courseId { get; set; }
-            public string Code { get; set; }
-            public string Name { get; set; }
-            public DateTime StartDate { get; set; }
-            public DateTime EndDate { get; set; }
-        }
 
         public async Task<IActionResult> OnGetAsync(Guid userId)
         {
@@ -42,6 +35,9 @@ namespace EduManagementLab.Web.Pages.Users
             {
                 User = _userService.GetUser(userId);
                 CourseList = _courseService.GetUserCourses(User.Id).ToList();
+
+                CourseListItems = new SelectList(_courseService.GetCourses()
+                    .Where(s => !CourseList.Any(x => x.Course.Name == s.Name)), "Id", "Name");
 
                 return Page();
             }
@@ -52,7 +48,7 @@ namespace EduManagementLab.Web.Pages.Users
         }
 
         //TODO: Add Search function to find course
-        public async Task<IActionResult> OnPostAsync(Guid courseId, Guid userId)
+        public async Task<IActionResult> OnPostAsync(Guid Id, Guid userId)
         {
             if (!ModelState.IsValid)
             {
@@ -61,9 +57,8 @@ namespace EduManagementLab.Web.Pages.Users
 
             try
             {
-                Course = _courseService.GetCourse(courseId);
-
-                return RedirectToPage("./Details", new { userI = userId });
+                _courseService.CreateCourseMembership(Id, userId, DateTime.Now);
+                return RedirectToPage("./Details", new { userId = userId });
             }
             catch (UserNotFoundException)
             {
