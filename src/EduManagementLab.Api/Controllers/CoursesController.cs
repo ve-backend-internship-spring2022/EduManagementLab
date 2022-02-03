@@ -293,9 +293,9 @@ namespace EduManagementLab.Api.Controllers
             public DateTime EndDate { get; set; }
         }
 
-        public class UserAutoMapperProfile : Profile
+        public class CourseAutoMapperProfile : Profile
         {
-            public UserAutoMapperProfile()
+            public CourseAutoMapperProfile()
             {
                 CreateMap<Course, CourseDto>();
                 CreateMap<Course.Membership, MembershipDto>();
