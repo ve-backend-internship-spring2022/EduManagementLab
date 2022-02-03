@@ -20,7 +20,7 @@ namespace EduManagementLab.Api.Tests.Controllers
                 .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-        private readonly MapperConfiguration _config = new MapperConfiguration(cfg => cfg.AddProfile<CoursesController.UserAutoMapperProfile>());
+        private readonly MapperConfiguration _config = new MapperConfiguration(cfg => cfg.AddProfile<CoursesController.CourseAutoMapperProfile>());
 
         private readonly DataContext _dataContext;
         private readonly UnitOfWork _unitOfWork;

@@ -162,9 +162,9 @@ namespace EduManagementLab.Api.Controllers
             public string Email { get; set; }
         }
 
-        public class CourseAutoMapperProfile : Profile
+        public class UserAutoMapperProfile : Profile
         {
-            public CourseAutoMapperProfile()
+            public UserAutoMapperProfile()
             {
                 CreateMap<User, UserDto>();
             }
