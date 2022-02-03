@@ -1,8 +1,17 @@
-﻿@page
+﻿@page 
 @model EduManagementLab.Web.Pages.Courses.DetailsModel
-
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Details";
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 }
 
 <h1>@Model.Course.Name</h1>
@@ -63,7 +72,9 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body text-md-start">
-                            <form method="post" class="row g-3" enctype="multipart/form-data" asp-route-courseId="@Model.Course.Id">
+                            @Html.AntiForgeryToken()        
+                            <h5 class="text-center">Create a new user</h5>
+                            <form method="post" class="row g-3" asp-route-courseId="@Model.Course.Id" asp-page-handler="NewUser">
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <div class="form-group">
                                     <label asp-for="Input.DisplayName" class="control-label"></label>
@@ -85,15 +96,36 @@
                                     <input asp-for="Input.Email" class="form-control" />
                                     <span asp-validation-for="Input.Email" class="text-danger"></span>
                                 </div>
-                                <div class="form-group">
-                                    <input type="submit" value="Add to course" class="btn btn-primary" />
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                                <div class="form-group text-center">
+                                    <input type="submit" value="Add to course" class="btn btn-primary"/>
                                 </div>
-                                @*<div class="col-12 text-center">
-                                    <input type="submit" value="Add to course" class="btn btn-primary" />
-                                    <button type="submit" class="btn btn-secondary">Add to course</button>
-                                    <button type="button" class="btn btn-secondary m-2" data-bs-dismiss="modal">Cancel</button>
-                                </div>*@
+                            </form>
+                            @if (ViewData["Input.Email"] != null)
+                                {
+                                    <script type="text/javascript">
+                                        $(function () {
+                                            $('#create').modal('show');
+                                        });
+                                    </script>
+                                }
+
+                            <br/><h5 class="text-center">or</h5><br/>
+                            <hr/>
+
+                            <h5 class="text-center">Find an existing user</h5>
+                            <form method="post" asp-route-courseId="@Model.Course.Id" asp-page-handler="ExistingUser" id="existingUserForm" class="text-center">
+                                <div class="form-group">
+                                    <select id="Users" name="Id" asp-items="@Model.UserListItems">
+                                        <option value="0">--Select User--</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="Email"/>
+                                <br/>
+                                <br/>
+                                <div class="form-group text-center">
+                                    <input id="submitValue" class="btn btn-primary" type="submit" value="Add to course"/>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                </div>
                             </form>
                         </div>
                     </div>

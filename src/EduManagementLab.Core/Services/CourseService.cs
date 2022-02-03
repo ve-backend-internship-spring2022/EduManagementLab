@@ -26,6 +26,11 @@ namespace EduManagementLab.Core.Services
         public Course CreateCourse(string code, string name, string description, DateTime startDate, DateTime endDate)
         {
             var course = new Course() { Code = code, Name = name, Description = description, StartDate = startDate, EndDate = endDate };
+            var allCourses = GetCourses();
+            if (allCourses.Any(x => x.Code == code || x.Name == name))
+            {
+                throw new Exception();
+            }
             _unitOfWork.Courses.Add(course);
             _unitOfWork.Complete();
             return course;

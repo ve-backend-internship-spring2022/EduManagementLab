@@ -1,3 +1,4 @@
+using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,6 +15,7 @@ namespace EduManagementLab.Web.Pages.Courses
             _courseService = courseService;
         }
 
+        public Course Course { get; set; }
         [BindProperty]
         [Required]
         public string Code { get; set; }
@@ -21,7 +23,6 @@ namespace EduManagementLab.Web.Pages.Courses
         [Required]
         public string Name { get; set; }
         [BindProperty]
-        [Required]
         public string? Description { get; set; }
         [BindProperty]
         [Required]
@@ -37,14 +38,20 @@ namespace EduManagementLab.Web.Pages.Courses
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return Page();
+                try
+                {
+                    _courseService.CreateCourse(Code, Name, Description, StartDate, EndDate);
+                    return RedirectToPage("./Index");
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError(String.Empty, "Course code/name already exist");
+                    return Page();
+                }
             }
-
-            _courseService.CreateCourse(Code, Name, Description, StartDate, EndDate);
-
-            return RedirectToPage("./Index");
+            return Page();
         }
     }
 }
