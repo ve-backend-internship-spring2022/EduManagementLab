@@ -27,7 +27,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         private readonly CourseService _courseService;
         private readonly UserService _userService;
         private readonly CoursesController _coursesController;
-        
+
         DataContext CreateContext() => new DataContext(_contextOptions);
         UnitOfWork CreateUnitOfWork() => new UnitOfWork(_dataContext);
         CourseService CreateCourseService() => new CourseService(_unitOfWork);
@@ -42,9 +42,19 @@ namespace EduManagementLab.Api.Tests.Controllers
             _dataContext.Database.EnsureDeleted();
             _dataContext.Database.EnsureCreated();
 
-            _dataContext.AddRange(
-                new Course { Id = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), Code = "AAA", Name = "CourseNameOne", Description = "CourseDescriptionOne", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue },
-                new Course { Id = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), Code = "BBB", Name = "CourseNameTwo", Description = "CourseDescriptionTwo", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue });
+            Course course1 = new Course { Id = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), Code = "AAA", Name = "CourseNameOne", Description = "CourseDescriptionOne", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
+            Course course2 = new Course { Id = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), Code = "BBB", Name = "CourseNameTwo", Description = "CourseDescriptionTwo", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
+
+            User user1 = new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), Displayname = "DisplaynameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne"  };
+            User user2 = new User { Id = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F"), Displayname = "DisplaynameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameOne", LastName = "LastNameTwo" };
+
+            Course.Membership membership1 = new Course.Membership { Id = Guid.Parse("9C1BA350-62EC-4A90-BD85-647CD15159ED"), Course = course1, CourseId = course1.Id, User = user1, UserId = user1.Id, EnrolledDate = DateTime.MinValue };
+            Course.Membership membership2 = new Course.Membership { Id = Guid.Parse("5901AAC8-445A-4A7B-984A-F9C0916CA2A6"), Course = course2, CourseId = course2.Id, User = user2, UserId = user2.Id, EnrolledDate = DateTime.MinValue };
+
+            _dataContext.AddRange(          
+                course1, course2,
+                user1, user2,
+                membership1, membership2);
 
             _dataContext.SaveChanges();
 
@@ -57,7 +67,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetCourses_ReturnsOkResult()
+        public void GetCourses_ReturnsOkObjectResult()
         {
             var okResult = _coursesController.GetCourses();
 
@@ -76,7 +86,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetCourse_ExistingGuidPassed_ReturnsOkResult()
+        public void GetCourse_ExistingGuidPassed_ReturnsOkObjectResult()
         {
             var result = _coursesController.GetCourse(Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"));
 
@@ -102,15 +112,15 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void AddCourse_ValidObjectPassed_ReturnsCreatedResponse()
+        public void AddCourse_ValidObjectPassed_ReturnsCreatedAtActionResult()
         {
             var testCreateCourseRequest = new CoursesController.CreateCourseRequest()
             {
-              Code = "TEST",
-              Name = "CourseNameTest",
-              Description = "CourseDescriptionTest",
-              StartDate = DateTime.Now,
-              EndDate = DateTime.Now,
+                Code = "TEST",
+                Name = "CourseNameTest",
+                Description = "CourseDescriptionTest",
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now,
             };
 
             var createdResponse = _coursesController.AddCourse(testCreateCourseRequest);
@@ -119,7 +129,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void AddCourse_ValidObjectPassed_ReturnedResponseHasCreatedItem()
+        public void AddCourse_ValidObjectPassed_ReturnsResponseHasCreatedItem()
         {
             var testCreateCourseRequest = new CoursesController.CreateCourseRequest()
             {
@@ -156,7 +166,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void UpdateCourseInfo_ExistingObjectIdPassed_ReturnsOkResult()
+        public void UpdateCourseInfo_ExistingObjectIdPassed_ReturnsOkObjectResult()
         {
             var testUpdateCourseInfoRequest = new CoursesController.UpdateCourseInfoRequest()
             {
@@ -209,7 +219,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void UpdateCoursePeriod_ExistingObjectIdPassed_ReturnsOkResult()
+        public void UpdateCoursePeriod_ExistingObjectIdPassed_ReturnsOkObjectResult()
         {
             var testUpdateCoursePeriodRequest = new CoursesController.UpdateCoursePeriodRequest()
             {
@@ -244,6 +254,225 @@ namespace EduManagementLab.Api.Tests.Controllers
             Assert.IsType<CourseDto>(item);
             Assert.Equal(DateTime.MinValue, item.StartDate);
         }
+
+        [Fact]
+        public void DeleteCourse_UnknownObjectIdPassed_ReturnsNotFoundResult()
+        {
+            var testCourseId = Guid.NewGuid();
+
+            var deleteResponse = _coursesController.DeleteCourse(testCourseId);
+
+            Assert.IsType<NotFoundResult>(deleteResponse);
+        }
+
+        [Fact]
+        public void DeleteCourse_ExistingObjectIdPassed_ReturnsOkResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+
+            var deleteResponse = _coursesController.DeleteCourse(testCourseId);
+
+            Assert.IsType<OkResult>(deleteResponse);
+        }
+
+        [Fact]
+        public void AddCourseMembership_ValidObjectPassed_ReturnsOkObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.NewGuid();
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var addMembershipResponse = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+
+            Assert.IsType<OkObjectResult>(addMembershipResponse.Result);
+        }
+
+        [Fact]
+        public void AddCourseMembership_UnknownObjectPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.NewGuid();
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var addMembershipResponse = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+
+            Assert.IsType<BadRequestObjectResult>(addMembershipResponse.Result);
+        }
+
+        [Fact]
+        public void AddCourseMembership_ValidObjectPassed_ReturnsUpdatedObject()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.NewGuid();
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var addMembershipResponse = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+
+            var updateResult = addMembershipResponse.Result as OkObjectResult;
+
+            var item = updateResult.Value as CourseDto;
+
+            Assert.IsType<CourseDto>(item);
+            Assert.Equal(item.Id, testCourseId);
+        }
+
+        [Fact]
+        public void UpdateCourseMembershipEnrolledDate_UnknownObjectPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.NewGuid();
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var updateMembershipResponse = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
+
+            Assert.IsType<BadRequestObjectResult>(updateMembershipResponse.Result);
+        }
+
+        [Fact]
+        public void UpdateCourseMembershipEnrolledDate_ValidObjectPassed_ReturnsOkObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.NewGuid();
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var updateMembershipResponse = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
+
+            Assert.IsType<OkObjectResult>(updateMembershipResponse.Result);
+        }
+
+        [Fact]
+        public void UpdateCourseMembershipEnrolledDate_ValidObjectPassed_ReturnsUpdatedObject()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.NewGuid();
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var updateMembershipResponse = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
+
+            var updateResult = updateMembershipResponse.Result as OkObjectResult;
+
+            var item = updateResult.Value as CourseDto;
+
+            Assert.IsType<CourseDto>(item);
+            Assert.Equal(item.Id, testCourseId);
+        }
+
+        [Fact]
+        public void GetCourseMemberships_UnknownObjectPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.NewGuid();
+
+            var getMembershipsResponse = _coursesController.GetCourseMemberships(testCourseId);
+
+            Assert.IsType<NotFoundResult>(getMembershipsResponse.Result);
+        }
+
+        [Fact]
+        public void GetCourseMemberships_ValidObjectPassed_ReturnsOkObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+
+            var getMembershipsResponse = _coursesController.GetCourseMemberships(testCourseId);
+
+            Assert.IsType<OkObjectResult>(getMembershipsResponse.Result);
+        }
+
+        [Fact]
+        public void GetCourseMemberships_ValidObjectPassed_ReturnsCorrectMemberships()
+        {
+
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+
+            var getMembershipsResponse = _coursesController.GetCourseMemberships(testCourseId);
+
+            var okResult = getMembershipsResponse.Result as OkObjectResult;
+
+            var items = Assert.IsType<List<MembershipDto>>(okResult.Value);
+            Assert.Equal(1, items.Count);
+            Assert.Equal(Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), items[0].CourseId);
+        }
+
+        [Fact]
+        public void GetCourseMembership_UnknownCourseIdPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+
+            var getMembershipResponse = _coursesController.GetCourseMembership(testCourseId, testUserId);
+
+            Assert.IsType<NotFoundResult>(getMembershipResponse.Result);
+        }
+
+        [Fact]
+        public void GetCourseMembership_UnknownUserIdPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.NewGuid();
+
+            var getMembershipResponse = _coursesController.GetCourseMembership(testCourseId, testUserId);
+
+            Assert.IsType<NotFoundResult>(getMembershipResponse.Result);
+        }
+
+        [Fact]
+        public void GetCourseMembership_ValidObjectPassed_ReturnsOkObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+
+            var getMembershipResponse = _coursesController.GetCourseMembership(testCourseId, testUserId);
+
+            Assert.IsType<OkObjectResult>(getMembershipResponse.Result);
+        }
+
+        [Fact]
+        public void GetCourseMembership_ValidObjectPassed_ReturnsCorrectMembership()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+
+            var getMembershipResponse = _coursesController.GetCourseMembership(testCourseId, testUserId);
+
+            var okResult = getMembershipResponse.Result as OkObjectResult;
+
+            var item = Assert.IsType<MembershipDto>(okResult.Value);
+            Assert.Equal(Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), item.CourseId);
+        }
+
+        [Fact]
+        public void DeleteCourseMembership_UnknownObjectPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.NewGuid();
+
+            var getMembershipResponse = _coursesController.DeleteCourseMembership(testCourseId, testUserId);
+
+            Assert.IsType<NotFoundObjectResult>(getMembershipResponse.Result);
+        }
+
+        [Fact]
+        public void DeleteCourseMembership_ValidObjectPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+
+            var getMembershipResponse = _coursesController.DeleteCourseMembership(testCourseId, testUserId);
+
+            Assert.IsType<NotFoundObjectResult>(getMembershipResponse.Result);
+        }
+
+        [Fact]
+        public void DeleteCourseMembership_ValidObjectPassed_ReturnsCorrectMembership()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+
+            var deleteMembershipResponse = _coursesController.DeleteCourseMembership(testCourseId, testUserId);
+
+            var okObjectResult = deleteMembershipResponse.Result as OkObjectResult;
+
+            var item = Assert.IsType<CourseDto>(okObjectResult.Value);
+            Assert.Equal(Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), item.Id);
+        }
     }
 }
-    

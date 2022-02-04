@@ -223,15 +223,15 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpDelete]
-        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)] 
         [Route("{courseId}/Memberships/{userId}")]
-        public ActionResult<MembershipDto> DeleteCourseMembership(Guid courseId, Guid userId)
+        public ActionResult<CourseDto> DeleteCourseMembership(Guid courseId, Guid userId)
         {
             try
             {
-                var courseMembership = _courseService.RemoveCourseMembership(courseId, userId);
-                return Ok(_mapper.Map<MembershipDto>(courseMembership));
+                var course = _courseService.RemoveCourseMembership(courseId, userId);
+                return Ok(_mapper.Map<CourseDto>(course));
             }
             catch (Exception e)
             {
