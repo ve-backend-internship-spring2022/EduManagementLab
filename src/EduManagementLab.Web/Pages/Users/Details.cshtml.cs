@@ -47,7 +47,6 @@ namespace EduManagementLab.Web.Pages.Users
             }
         }
 
-        //TODO: Add Search function to find course
         public async Task<IActionResult> OnPostAsync(Guid Id, Guid userId)
         {
             if (!ModelState.IsValid)

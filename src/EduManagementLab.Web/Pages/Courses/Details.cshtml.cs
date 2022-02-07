@@ -44,17 +44,21 @@ namespace EduManagementLab.Web.Pages.Courses
         {
             try
             {
-                Course = _courseService.GetCourse(courseId, true);
-
-                UserListItems = new SelectList(_userService.GetUsers()
-                    .Where(s => !Course.Memperships.Any(x => x.User.Email == s.Email)), "Id", "Email");
-
+                PopulateProperties(courseId);
                 return Page();
             }
             catch (CourseNotFoundException)
             {
                 return NotFound();
             }
+        }
+
+        private void PopulateProperties(Guid courseId)
+        {
+            Course = _courseService.GetCourse(courseId, true);
+
+            UserListItems = new SelectList(_userService.GetUsers()
+                .Where(s => !Course.Memperships.Any(x => x.User.Email == s.Email)), "Id", "Email");
         }
 
         public async Task<IActionResult> OnPostExistingUserAsync(Guid courseId, Guid Id)
@@ -83,20 +87,19 @@ namespace EduManagementLab.Web.Pages.Courses
 
                     return RedirectToPage("./Details", new { courseId = courseId });
                 }
-                catch (Exception)
+                catch (UserAlreadyExistException)
                 {
                     ModelState.AddModelError("Input.Email", "User already exist");
-                    ViewData["Input.Email"] = !string.IsNullOrEmpty(Input.Email) ? true : false;
-                    OnGetAsync(courseId);
+                    ViewData["ShowCreateModal"] = !string.IsNullOrEmpty(Input.Email) ? true : false;
+                    PopulateProperties(courseId);
                     return Page();
                 }
             }
             else
             {
-                OnGetAsync(courseId);
+                PopulateProperties(courseId);
                 return Page();
             }
-            return RedirectToAction("OnGetAsync");
         }
     }
 }

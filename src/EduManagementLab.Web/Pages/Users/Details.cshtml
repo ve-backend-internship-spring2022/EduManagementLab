@@ -3,10 +3,18 @@
 @{
     ViewData["Title"] = "Details";
 
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script type="text/javascript">
+    function Validate() {
+        var courses = document.getElementById("Courses");
+        var message = document.getElementById("msg");
+        if (courses.value == 0) {
+            message.innerHTML = "Please select a course!";
+            message.style.color = "red";
+            return false;
+        }
+        return true;
+    }
+    </script>
 }
 
 <h1>@Model.User.Displayname</h1>
@@ -66,12 +74,13 @@
                                     <select id="Courses" name="Id" asp-items="@Model.CourseListItems">
                                         <option value="0">--Select Course--</option>
                                     </select>
+                                    <div id="msg"></div>
                                 </div>
                                 <input type="hidden" name="Name"/>
                                 <br/>
                                 <br/>
                                 <div class="form-group text-center">
-                                    <input id="submitValue" class="btn btn-primary" type="submit" value="Add to list"/>
+                                    <input id="submitValue" class="btn btn-primary" type="submit" value="Add to list" onclick="return Validate()"/>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                                 </div>
                             </form>
