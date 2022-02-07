@@ -30,7 +30,7 @@ namespace EduManagementLab.Core.Services
             var allUsers = GetUsers();
             if (allUsers.Any(x => x.Email == email))
             {
-                throw new Exception();
+                throw new UserAlreadyExistException(email);
             }
             _unitOfWork.Users.Add(user);
             _unitOfWork.Complete();

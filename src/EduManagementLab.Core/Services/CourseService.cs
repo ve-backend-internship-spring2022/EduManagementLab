@@ -29,7 +29,7 @@ namespace EduManagementLab.Core.Services
             var allCourses = GetCourses();
             if (allCourses.Any(x => x.Code == code || x.Name == name))
             {
-                throw new Exception();
+                throw new CourseAlreadyExistException();
             }
             _unitOfWork.Courses.Add(course);
             _unitOfWork.Complete();
@@ -50,7 +50,7 @@ namespace EduManagementLab.Core.Services
             var userCourses = _unitOfWork.Courses.GetUserCourses(userId);
             if (userCourses == null)
             {
-                throw new UserNotFoundException(userId);
+                return Enumerable.Empty<Course.Membership>();
             }
             return userCourses;
         }
