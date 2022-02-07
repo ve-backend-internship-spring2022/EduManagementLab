@@ -12,7 +12,7 @@ namespace EduManagementLab.EfRepository.Repositories
             _context = context;
         }
 
-        public IEnumerable<Course.Membership>? GetUserCourses(Guid userId)
+        public IEnumerable<Course.Membership> GetUserCourses(Guid userId)
         {
             return _context.Courses
                 .Include(m => m.Memperships)

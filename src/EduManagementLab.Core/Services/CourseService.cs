@@ -47,12 +47,7 @@ namespace EduManagementLab.Core.Services
         }
         public IEnumerable<Course.Membership> GetUserCourses(Guid userId)
         {
-            var userCourses = _unitOfWork.Courses.GetUserCourses(userId);
-            if (userCourses == null)
-            {
-                return Enumerable.Empty<Course.Membership>();
-            }
-            return userCourses;
+            return _unitOfWork.Courses.GetUserCourses(userId);
         }
 
         public Course UpdateCourseInfo(Guid id, string code, string name, string description)
