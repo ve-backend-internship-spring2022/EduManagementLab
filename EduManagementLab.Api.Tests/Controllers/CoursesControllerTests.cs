@@ -16,7 +16,7 @@ namespace EduManagementLab.Api.Tests.Controllers
     public class CoursesControllerTests
     {
         private readonly DbContextOptions<DataContext> _contextOptions = new DbContextOptionsBuilder<DataContext>()
-                .UseInMemoryDatabase("CourseServiceTest")
+                .UseInMemoryDatabase("CoursesControllerTest")
                 .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
@@ -279,7 +279,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         public void AddCourseMembership_ValidObjectPassed_ReturnsOkObjectResult()
         {
             var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
-            var testUserId = Guid.NewGuid();
+            var testUserId = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F");
             var testEnrollmentDate = DateTime.MinValue;
 
             var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
@@ -288,10 +288,35 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void AddCourseMembership_UnknownObjectPassed_ReturnsBadRequestObjectResult()
+        public void AddCourseMembership_UnknownCoursePassed_ReturnsBadRequestObjectResult()
         {
             var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F");
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+
+            Assert.IsType<BadRequestObjectResult>(response.Result);
+        }
+
+
+        [Fact]
+        public void AddCourseMembership_UnknownUserPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
             var testUserId = Guid.NewGuid();
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+
+            Assert.IsType<BadRequestObjectResult>(response.Result);
+        }
+
+        [Fact]
+        public void AddCourseMembership_ExistingObjectPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
             var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
@@ -303,23 +328,35 @@ namespace EduManagementLab.Api.Tests.Controllers
         public void AddCourseMembership_ValidObjectPassed_ReturnsUpdatedObject()
         {
             var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
-            var testUserId = Guid.NewGuid();
+            var testUserId = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F");
             var testEnrollmentDate = DateTime.MinValue;
 
             var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
 
             var okObjectResult = response.Result as OkObjectResult;
 
-            var item = okObjectResult.Value as CourseDto;
+            var item = okObjectResult.Value as MembershipDto;
 
-            Assert.IsType<CourseDto>(item);
-            Assert.Equal(item.Id, testCourseId);
+            Assert.IsType<MembershipDto>(item);
+            Assert.Equal(item.UserId, Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F"));
         }
 
         [Fact]
-        public void UpdateCourseMembershipEnrolledDate_UnknownObjectPassed_ReturnsBadRequestObjectResult()
+        public void UpdateCourseMembershipEnrolledDate_UnknownCoursePassed_ReturnsBadRequestObjectResult()
         {
             var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var response = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
+
+            Assert.IsType<BadRequestObjectResult>(response.Result);
+        }
+
+        [Fact]
+        public void UpdateCourseMembershipEnrolledDate_UnknownUserPassed_ReturnsBadRequestObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
             var testUserId = Guid.NewGuid();
             var testEnrollmentDate = DateTime.MinValue;
 
@@ -332,7 +369,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         public void UpdateCourseMembershipEnrolledDate_ValidObjectPassed_ReturnsOkObjectResult()
         {
             var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
-            var testUserId = Guid.NewGuid();
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
             var response = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
@@ -344,21 +381,21 @@ namespace EduManagementLab.Api.Tests.Controllers
         public void UpdateCourseMembershipEnrolledDate_ValidObjectPassed_ReturnsUpdatedObject()
         {
             var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
-            var testUserId = Guid.NewGuid();
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
             var response = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
 
             var okObjectResult = response.Result as OkObjectResult;
 
-            var item = okObjectResult.Value as CourseDto;
+            var item = okObjectResult.Value as MembershipDto;
 
-            Assert.IsType<CourseDto>(item);
-            Assert.Equal(item.Id, testCourseId);
+            Assert.IsType<MembershipDto>(item);
+            Assert.Equal(item.UserId, Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"));
         }
 
         [Fact]
-        public void GetCourseMemberships_UnknownObjectPassed_ReturnsBadRequestObjectResult()
+        public void GetCourseMemberships_UnknownObjectPassed_ReturnsNotFoundResult()
         {
             var testCourseId = Guid.NewGuid();
 
@@ -393,7 +430,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetCourseMembership_UnknownCourseIdPassed_ReturnsBadRequestObjectResult()
+        public void GetCourseMembership_UnknownCourseIdPassed_ReturnsNotFoundResult()
         {
             var testCourseId = Guid.NewGuid();
             var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
@@ -404,7 +441,7 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetCourseMembership_UnknownUserIdPassed_ReturnsBadRequestObjectResult()
+        public void GetCourseMembership_UnknownUserIdPassed_ReturnsNotFoundResult()
         {
             var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
             var testUserId = Guid.NewGuid();
@@ -440,10 +477,22 @@ namespace EduManagementLab.Api.Tests.Controllers
         }
 
         [Fact]
-        public void DeleteCourseMembership_UnknownObjectPassed_ReturnsBadRequestObjectResult()
+        public void DeleteCourseMembership_UnknownUserPassed_ReturnsNotFoundObjectResult()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.NewGuid();
+
+            var response = _coursesController.DeleteCourseMembership(testCourseId, testUserId);
+
+            Assert.IsType<NotFoundObjectResult>(response.Result);
+        }
+
+
+        [Fact]
+        public void DeleteCourseMembership_UnknownCoursePassed_ReturnsNotFoundObjectResult()
         {
             var testCourseId = Guid.NewGuid();
-            var testUserId = Guid.NewGuid();
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
 
             var response = _coursesController.DeleteCourseMembership(testCourseId, testUserId);
 
@@ -471,8 +520,8 @@ namespace EduManagementLab.Api.Tests.Controllers
 
             var okObjectResult = response.Result as OkObjectResult;
 
-            var item = Assert.IsType<CourseDto>(okObjectResult.Value);
-            Assert.Equal(Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), item.Id);
+            var item = Assert.IsType<MembershipDto>(okObjectResult.Value);
+            Assert.Equal(Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), item.UserId);
         }
     }
 }

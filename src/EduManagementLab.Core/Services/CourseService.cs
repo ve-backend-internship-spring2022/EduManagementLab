@@ -1,6 +1,7 @@
 ﻿using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Interfaces;
+using EduManagementLab.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,48 +79,76 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
         }
 
-        public Course CreateCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
+        public Course.Membership CreateCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             var course = GetCourse(courseId, true);
+            var user = _unitOfWork.Users.GetById(userId);
 
-            if (!course.Memperships.Any(c => c.UserId == userId))
+            if(course != null)
             {
-                course.Memperships.Add(new Course.Membership()
+                if(user != null)
                 {
-                    CourseId = courseId,
-                    UserId = userId,
-                    EnrolledDate = enrolledDate
-                });
+                    if (!course.Memperships.Any(c => c.UserId == userId))
+                    {
+                        Course.Membership newMembership = new Course.Membership()
+                        {
+                            CourseId = courseId,
+                            UserId = userId,
+                            EnrolledDate = enrolledDate,
+                        };
+
+                        course.Memperships.Add(newMembership);
+
+                        _unitOfWork.Courses.Update(course);
+                        _unitOfWork.Complete();
+                        return newMembership;
+                    }
+                    throw new MembershipAlreadyExistException();
+                }
+                throw new CourseNotFoundException(userId);
             }
-            _unitOfWork.Courses.Update(course);
-            _unitOfWork.Complete();
-            return course;
+            throw new UserNotFoundException(courseId);
         }
-        public Course RemoveCourseMembership(Guid courseId, Guid userId)
+
+    
+        public Course.Membership RemoveCourseMembership(Guid courseId, Guid userId)
         {
             var course = _unitOfWork.Courses.GetCourse(courseId, true);
-            if (course.Memperships.Any(c => c.UserId == userId && c.CourseId == courseId))
+
+            if (course.Memperships.Any(c => c.CourseId == courseId))
             {
-                var membership = course.Memperships.Find(c => c.UserId == userId && c.CourseId == courseId);
-                course.Memperships.Remove(membership);
+                if (course.Memperships.Any(c => c.UserId == userId))
+                {
+                    var membershipToDelete = course.Memperships.Find(c => c.UserId == userId && c.CourseId == courseId);
+                    course.Memperships.Remove(membershipToDelete);
+
+                    _unitOfWork.Courses.Update(course);
+                    _unitOfWork.Complete();
+                    return membershipToDelete;
+                }
+                throw new CourseNotFoundException(userId);
             }
-            _unitOfWork.Courses.Update(course);
-            _unitOfWork.Complete();
-            return course;
+            throw new UserNotFoundException(courseId);
         }
 
-        public Course UpdateMembershipEnrolledDate(Guid courseId, Guid userId, DateTime enrolledDate)
+        public Course.Membership UpdateMembershipEnrolledDate(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             var course = GetCourse(courseId, true);
 
-            if (course.Memperships.Any(c => c.UserId == userId && c.CourseId == courseId))
+            if (course.Memperships.Any(c => c.CourseId == courseId))
             {
-                var membership = course.Memperships.FirstOrDefault(u => u.UserId == userId && u.CourseId == courseId);
-                membership.EnrolledDate = enrolledDate;
+                if (course.Memperships.Any(c => c.UserId == userId))
+                {
+                    var membershipToUpdate = course.Memperships.FirstOrDefault(u => u.UserId == userId && u.CourseId == courseId);
+                    membershipToUpdate.EnrolledDate = enrolledDate;
+
+                    _unitOfWork.Courses.Update(course);
+                    _unitOfWork.Complete();
+                    return membershipToUpdate;
+                }
+                throw new CourseNotFoundException(userId);
             }
-            _unitOfWork.Courses.Update(course);
-            _unitOfWork.Complete();
-            return course;
+            throw new UserNotFoundException(courseId);
         }
     }
 }

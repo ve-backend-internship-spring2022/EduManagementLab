@@ -136,14 +136,15 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpPost()]
         [Route("{courseId}/Memberships")]
-        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<CourseDto> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
+        public ActionResult<MembershipDto> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             try
             {
-                var course = _courseService.CreateCourseMembership(courseId, userId, enrolledDate);
-                return Ok(_mapper.Map<CourseDto>(course));
+                var membership = _courseService.CreateCourseMembership(courseId, userId, enrolledDate);
+                //return Ok(_mapper.Map<MembershipDto>(membership));
+                return CreatedAtAction(nameof(GetCourseMembership), new { courseId = courseId, userId = userId }, _mapper.Map<MembershipDto>(membership));
             }
             catch (Exception e)
             {
@@ -154,14 +155,14 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpPut]
         [Route("{courseId}/Memberships/{userId}")]
-        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<CourseDto> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
+        public ActionResult<MembershipDto> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
         {
             try
             {
-                var course = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
-                return Ok(_mapper.Map<CourseDto>(course));
+                var membership = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
+                return Ok(_mapper.Map<MembershipDto>(membership));
             }
             catch (Exception e)
             {
@@ -223,15 +224,15 @@ namespace EduManagementLab.Api.Controllers
 
 
         [HttpDelete]
-        [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)] 
         [Route("{courseId}/Memberships/{userId}")]
-        public ActionResult<CourseDto> DeleteCourseMembership(Guid courseId, Guid userId)
+        public ActionResult<MembershipDto> DeleteCourseMembership(Guid courseId, Guid userId)
         {
             try
             {
-                var course = _courseService.RemoveCourseMembership(courseId, userId);
-                return Ok(_mapper.Map<CourseDto>(course));
+                var membership = _courseService.RemoveCourseMembership(courseId, userId);
+                return Ok(_mapper.Map<MembershipDto>(membership));
             }
             catch (Exception e)
             {
