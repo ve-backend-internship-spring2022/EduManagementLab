@@ -61,18 +61,18 @@ namespace EduManagementLab.Core.Tests.Services
         }
 
         [Fact]
-        public void GetAllCourses_ReturnsCorrectCourses()
+        public void GetCourses_ReturnsCorrectCourses()
         {
             var fetchedCourses = _courseService.GetCourses();
 
             Assert.Collection(
                 fetchedCourses,
-                b => Assert.Equal("AAA", b.Code),
-                b => Assert.Equal("BBB", b.Code));
+                c => Assert.Equal("AAA", c.Code),
+                c => Assert.Equal("BBB", c.Code));
         }
 
         [Fact]
-        public void AddCourse_ReturnsCorrectCourse()
+        public void CreateCourse_ReturnsCorrectCourse()
         {
             var createdCourse = _courseService.CreateCourse("CCC", "CourseNameThree", "CourseDescriptionThree", DateTime.Today, DateTime.Today);
 
@@ -112,7 +112,7 @@ namespace EduManagementLab.Core.Tests.Services
 
             var fetchedCourses = _courseService.GetCourses();
 
-            Assert.Equal(1 ,fetchedCourses.Count());
+            Assert.Single(fetchedCourses);
         }
 
         [Fact]

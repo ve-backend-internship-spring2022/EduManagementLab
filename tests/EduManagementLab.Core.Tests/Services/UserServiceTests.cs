@@ -7,45 +7,102 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using EduManagementLab.Core.Entities;
 
 namespace EduManagementLab.Core.Tests.Services
 {
     public class UserServiceTests
     {
-        [Fact]
-        public void CreteUpdateAndGetUser()
+        private readonly DbContextOptions<DataContext> _contextOptions = new DbContextOptionsBuilder<DataContext>()
+               .UseInMemoryDatabase("UserServiceTest")
+               .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+               .Options;
+
+        private readonly DataContext _dataContext;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly UserService _userService;
+        DataContext CreateContext() => new DataContext(_contextOptions);
+        UnitOfWork CreateUnitOfWork() => new UnitOfWork(_dataContext);
+        UserService CreateUserService() => new UserService(_unitOfWork);
+
+        public UserServiceTests()
         {
-            //Not optimal to use a real database. Change to mock db?
-            string databaseName = "EduManagementLabDb_Test_CreteUpdateAndGetUser";
-            var dbContextOptions = new DbContextOptionsBuilder<DataContext>()
-                .UseSqlServer(@$"Server=(localdb)\mssqllocaldb;Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true")
-                .Options;
 
-            var dataContext = new DataContext(dbContextOptions);
+            _dataContext = CreateContext();
 
-            dataContext.Database.EnsureDeleted();
-            dataContext.Database.EnsureCreated();
+            _dataContext.Database.EnsureDeleted();
+            _dataContext.Database.EnsureCreated();
 
-            var unitOfWorkCreate = new UnitOfWork(dataContext);
-            var userServiceCreate = new UserService(unitOfWorkCreate);
-            var createdUser = userServiceCreate.CreateUser("Displayname_initial", "FirstName_initial", "LastName_initial", "Email@initial.test");
+            _dataContext.AddRange(
+                 new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), Displayname = "DisplaynameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" },
+                 new User { Id = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F"), Displayname = "DisplaynameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameOne", LastName = "LastNameTwo" }
+                );
 
-            var unitOfWorkUpdate = new UnitOfWork(dataContext);
-            var userServiceUpdate = new UserService(unitOfWorkUpdate);
-            userServiceUpdate.UpdateName(createdUser.Id, "Displayname_changed", "FirstName_changed", "LastName_changed");
-            userServiceUpdate.UpdateEmail(createdUser.Id, "Email@changed.test");
+            _dataContext.SaveChanges();
 
-            var unitOfWorkGet = new UnitOfWork(dataContext);
-            var userServiceGet = new UserService(unitOfWorkGet);
-            var fetchedUser = userServiceGet.GetUser(createdUser.Id);
+            _unitOfWork = CreateUnitOfWork();
+            _userService = CreateUserService();
+        }
 
-            Assert.NotNull(fetchedUser);
-            Assert.Equal("Displayname_changed", createdUser.Displayname);
-            Assert.Equal("FirstName_changed", createdUser.FirstName);
-            Assert.Equal("LastName_changed", createdUser.LastName);
-            Assert.Equal("Email@changed.test", createdUser.Email);
+        [Fact]
+        public void GetUsers_ReturnsCorrectUser()
+        {
+            var fetchedUsers = _userService.GetUsers();
 
-            dataContext.Database.EnsureDeleted();
+            Assert.Collection(
+                fetchedUsers,
+                u => Assert.Equal("DisplaynameOne", u.Displayname),
+                u => Assert.Equal("DisplaynameTwo", u.Displayname));
+        }
+
+        [Fact]
+        public void GetUser_ReturnsCorrectUser()
+        {
+            var fetchedUser = _userService.GetUser(Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"));
+
+            Assert.Equal("DisplaynameOne", fetchedUser.Displayname);
+        }
+
+        [Fact]
+        public void CreateUser_ReturnsCorrectUser()
+        {
+            var createdUser = _userService.CreateUser("DisplaynameThree", "FirstNameThree", "LastNameThree", "EmailThree@Test.com");
+
+            var user = _dataContext.Users.Single(b => b.Displayname == "DisplaynameThree");
+            Assert.Equal("DisplaynameThree", user.Displayname);
+        }
+
+        [Fact]
+        public void UpdateName_ReturnsCorrectUser()
+        {
+            _userService.UpdateName(Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), "DisplaynameChanged", "FirstNameChanged", "LastNameChanged");
+
+            var user = _dataContext.Users.Single(b => b.Id == Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"));
+
+            Assert.NotNull(user);
+            Assert.Equal("DisplaynameChanged", user.Displayname);
+        }
+
+        [Fact]
+        public void UpdateEmail_ReturnsCorrectUser()
+        {
+            _userService.UpdateEmail(Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), "EmailChanged@Test.com");
+
+            var user = _dataContext.Users.Single(b => b.Id == Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"));
+
+            Assert.NotNull(user);
+            Assert.Equal("EmailChanged@Test.com", user.Email);
+        }
+
+        [Fact]
+        public void DeleteUser_DeletesCorrectUser()
+        {
+            _userService.DeleteUser(Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"));
+
+            var fetchedUsers = _userService.GetUsers();
+
+            Assert.Single(fetchedUsers);
         }
     }
 }
