@@ -143,7 +143,6 @@ namespace EduManagementLab.Api.Controllers
             try
             {
                 var membership = _courseService.CreateCourseMembership(courseId, userId, enrolledDate);
-                //return Ok(_mapper.Map<MembershipDto>(membership));
                 return CreatedAtAction(nameof(GetCourseMembership), new { courseId = courseId, userId = userId }, _mapper.Map<MembershipDto>(membership));
             }
             catch (Exception e)
