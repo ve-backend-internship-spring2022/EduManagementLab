@@ -2,6 +2,7 @@
 using Xunit;
 using EduManagementLab.Core.Services;
 using EduManagementLab.EfRepository;
+using EduManagementLab.Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using EduManagementLab.Core.Entities;
@@ -34,12 +35,14 @@ namespace EduManagementLab.Core.Tests.Services
             Course course2 = new Course { Id = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), Code = "BBB", Name = "CourseNameTwo", Description = "CourseDescriptionTwo", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
 
             User user1 = new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), Displayname = "DisplayNameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" };
+            User user2 = new User { Id = Guid.Parse("AC866BEC-3107-4160-9099-2B1328F386C2"), Displayname = "DisplayNameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameTwo", LastName = "LastNameTwo" };
 
             Course.Membership membership1 = new Course.Membership { Id = Guid.Parse("9C1BA350-62EC-4A90-BD85-647CD15159ED"), Course = course2, CourseId = course2.Id, User = user1, UserId = user1.Id, EnrolledDate = DateTime.MinValue };
 
             _dataContext.AddRange(
                 course1, course2,
-                user1);
+                user1, user2,
+                membership1);
 
             _dataContext.SaveChanges();
 
@@ -48,7 +51,7 @@ namespace EduManagementLab.Core.Tests.Services
         }
 
         [Fact]
-        public void GetCourse_ReturnsCorrectCourse()
+        public void GetCourse_ExistingObjectIdPassed_ReturnsCorrectCourse()
         {
             var fetchedCourse = _courseService.GetCourse(Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"));
 
@@ -61,23 +64,41 @@ namespace EduManagementLab.Core.Tests.Services
         }
 
         [Fact]
-        public void GetAllCourses_ReturnsCorrectCourses()
+        public void GetCourse_UnknownObjectIdPassed_ThrowsCourseNotFoundException()
+        {
+            Assert.Throws<CourseNotFoundException>(() => _courseService.GetCourse(Guid.NewGuid()));
+        }
+
+        [Fact]
+        public void GetCourses_ReturnsCorrectCourses()
         {
             var fetchedCourses = _courseService.GetCourses();
 
             Assert.Collection(
                 fetchedCourses,
-                b => Assert.Equal("AAA", b.Code),
-                b => Assert.Equal("BBB", b.Code));
+                c => Assert.Equal("AAA", c.Code),
+                c => Assert.Equal("BBB", c.Code));
         }
 
         [Fact]
-        public void AddCourse_ReturnsCorrectCourse()
+        public void CreateCourse_ReturnsCorrectCourse()
         {
             var createdCourse = _courseService.CreateCourse("CCC", "CourseNameThree", "CourseDescriptionThree", DateTime.Today, DateTime.Today);
 
             var course = _dataContext.Courses.Single(b => b.Code == "CCC");
             Assert.Equal("CCC", course.Code);
+        }
+
+        [Fact]
+        public void CreateCourse_ExistingObjectCodePassed_ThrowsCourseAlreadyExistException()
+        {
+            Assert.Throws<CourseAlreadyExistException>(() => _courseService.CreateCourse("AAA", "CourseNameThree", "CourseDescriptionThree", DateTime.Today, DateTime.Today));
+        }
+
+        [Fact]
+        public void CreateCourse_ExistingObjectNamePassed_ThrowsCourseAlreadyExistException()
+        {
+            Assert.Throws<CourseAlreadyExistException>(() => _courseService.CreateCourse("CCC", "CourseNameOne", "CourseDescriptionThree", DateTime.Today, DateTime.Today));
         }
 
         [Fact]
@@ -112,43 +133,112 @@ namespace EduManagementLab.Core.Tests.Services
 
             var fetchedCourses = _courseService.GetCourses();
 
-            Assert.Equal(1 ,fetchedCourses.Count());
+            Assert.Single(fetchedCourses);
         }
 
         [Fact]
-        public void CreateCourseMembership_ReturnsCorrectCourse()
+        public void CreateCourseMembership_ReturnsCorrectMembership()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+            var testEnrollmentDate = DateTime.MinValue;
+
+            var membership = _courseService.CreateCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+
+            Assert.Equal(Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), membership.CourseId);
+        }
+
+        [Fact]
+        public void CreateCourseMembership_UnknownCourseIdPassed_ThrowsCourseNotFoundException()
+        {
+            var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+            var testEnrollmentDate = DateTime.MinValue;
+
+            Assert.Throws<CourseNotFoundException>(() => _courseService.CreateCourseMembership(testCourseId, testUserId, testEnrollmentDate));
+        }
+
+        [Fact]
+        public void CreateCourseMembership_UnknownUserIdPassed_ThrowsUserNotFoundException()
+        {
+            var testCourseId = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB");
+            var testUserId = Guid.NewGuid();
+            var testEnrollmentDate = DateTime.MinValue;
+
+            Assert.Throws<UserNotFoundException>(() => _courseService.CreateCourseMembership(testCourseId, testUserId, testEnrollmentDate));
+        }
+
+        [Fact]
+        public void CreateCourseMembership_ExistingObjectPassed_ThrowsMembershipAlreadyExistException()
         {
             var testCourseId = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D");
             var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var course = _courseService.CreateCourseMembership(testCourseId, testUserId, testEnrollmentDate);
-
-            Assert.Equal(Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), course.Id);
+            Assert.Throws<MembershipAlreadyExistException>(() => _courseService.CreateCourseMembership(testCourseId, testUserId, testEnrollmentDate));
         }
 
         [Fact]
-        public void RemoveCourseMembership_ReturnsCorrectCourse()
+
+        public void RemoveCourseMembership_ReturnsCorrectMembership()
         {
             var testCourseId = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D");
-            var testUserId = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D");
-           
-            var course = _courseService.RemoveCourseMembership(testCourseId, testUserId);
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
 
-            Assert.Equal(Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), course.Id);
+            var membership = _courseService.RemoveCourseMembership(testCourseId, testUserId);
+
+            Assert.Equal(Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), membership.CourseId);
         }
 
         [Fact]
-        public void UpdateMembershipEnrolledDate_ReturnsCorrectCourse()
+        public void RemoveCourseMembership_UnknownUserId_ThrowsCourseMembershipNotFoundException()
+        {
+            var testCourseId = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D");
+            var testUserId = Guid.NewGuid();
+
+            Assert.Throws<CourseMembershipNotFoundException>(() => _courseService.RemoveCourseMembership(testCourseId, testUserId));
+        }
+
+        [Fact]
+        public void RemoveCourseMembership_UnknownCourseId_ThrowsCourseNotFoundException()
+        {
+            var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+
+            Assert.Throws<CourseNotFoundException>(() => _courseService.RemoveCourseMembership(testCourseId, testUserId));
+        }
+
+
+        [Fact]
+        public void UpdateMembershipEnrolledDate_ReturnsCorrectMembership()
         {
             var testCourseId = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D");
             var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var course = _courseService.CreateCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+            var membership = _courseService.UpdateMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
 
-            Assert.Equal(Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), course.Id);
+            Assert.Equal(Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), membership.CourseId);
         }
 
+        [Fact]
+        public void UpdateMembershipEnrolledDate_UnknownCourseId_ThrowsCourseNotFoundException()
+        {
+            var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+            var testEnrollmentDate = DateTime.MinValue;
+
+            Assert.Throws<CourseNotFoundException>(() => _courseService.UpdateMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate));
+        }
+
+        [Fact]
+        public void UpdateMembershipEnrolledDate_UnknownUserId_ThrowsCourseMembershipNotFoundException()
+        {
+            var testCourseId = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D");
+            var testUserId = Guid.NewGuid();
+            var testEnrollmentDate = DateTime.MinValue;
+
+            Assert.Throws<CourseMembershipNotFoundException>(() => _courseService.UpdateMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate));
+        }
     }
 }
