@@ -21,7 +21,7 @@ namespace EduManagementLab.Core.Services
 
                 if (user == null)
                 {
-                    throw new UserNotFoundException(user.Id);
+                    throw new UserNotFoundException(userId);
                 }
             }
             public static void AgainstNullCourse(Guid courseId, IUnitOfWork unitOfWork)
@@ -30,7 +30,7 @@ namespace EduManagementLab.Core.Services
 
                 if (course == null)
                 {
-                    throw new CourseNotFoundException(course.Id);
+                    throw new CourseNotFoundException(courseId);
                 }
             }
             public static void AgainstDuplicateMembership(Guid courseId, Guid userId, IUnitOfWork unitOfWork)
