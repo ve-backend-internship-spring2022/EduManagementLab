@@ -138,12 +138,12 @@ namespace EduManagementLab.Api.Controllers
         [Route("{courseId}/Memberships")]
         [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<MembershipDto> AddCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
+        public ActionResult<MembershipDto> AddCourseMembership(MembershipDto membershipDto)
         {
             try
             {
-                var membership = _courseService.CreateCourseMembership(courseId, userId, enrolledDate);
-                return CreatedAtAction(nameof(GetCourseMembership), new { courseId = courseId, userId = userId }, _mapper.Map<MembershipDto>(membership));
+                var membership = _courseService.CreateCourseMembership(membershipDto.CourseId, membershipDto.UserId, membershipDto.EnrolledDate);
+                return CreatedAtAction(nameof(GetCourseMembership), new { courseId = membershipDto.CourseId, userId = membershipDto.UserId }, _mapper.Map<MembershipDto>(membership));
             }
             catch (Exception e)
             {
@@ -156,11 +156,11 @@ namespace EduManagementLab.Api.Controllers
         [Route("{courseId}/Memberships/{userId}")]
         [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<MembershipDto> UpdateCourseMembershipEnrolledDate(Guid courseId, Guid userId, DateTime MembershipEnrolledDate)
+        public ActionResult<MembershipDto> UpdateCourseMembershipEnrolledDate(MembershipDto membershipDto)
         {
             try
             {
-                var membership = _courseService.UpdateMembershipEnrolledDate(courseId, userId, MembershipEnrolledDate);
+                var membership = _courseService.UpdateMembershipEnrolledDate(membershipDto.CourseId, membershipDto.UserId, membershipDto.EnrolledDate);
                 return Ok(_mapper.Map<MembershipDto>(membership));
             }
             catch (Exception e)
