@@ -282,7 +282,9 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate };
+
+            var response = _coursesController.AddCourseMembership(membershipDto);
 
             Assert.IsType<CreatedAtActionResult>(response.Result);
         }
@@ -294,7 +296,9 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate };
+
+            var response = _coursesController.AddCourseMembership(membershipDto);
 
             Assert.IsType<BadRequestObjectResult>(response.Result);
         }
@@ -307,7 +311,9 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.NewGuid();
             var testEnrollmentDate = DateTime.MinValue;
 
-            var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate };
+
+            var response = _coursesController.AddCourseMembership(membershipDto);
 
             Assert.IsType<BadRequestObjectResult>(response.Result);
         }
@@ -319,7 +325,9 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate};
+
+            var response = _coursesController.AddCourseMembership(membershipDto);
 
             Assert.IsType<BadRequestObjectResult>(response.Result);
         }
@@ -331,7 +339,9 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var response = _coursesController.AddCourseMembership(testCourseId, testUserId, testEnrollmentDate);
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate };
+
+            var response = _coursesController.AddCourseMembership(membershipDto);
 
             var okObjectResult = response.Result as CreatedAtActionResult;
 
@@ -348,7 +358,9 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var response = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate };
+
+            var response = _coursesController.UpdateCourseMembershipEnrolledDate(membershipDto);
 
             Assert.IsType<BadRequestObjectResult>(response.Result);
         }
@@ -360,7 +372,9 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.NewGuid();
             var testEnrollmentDate = DateTime.MinValue;
 
-            var response = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate };
+
+            var response = _coursesController.UpdateCourseMembershipEnrolledDate(membershipDto);
 
             Assert.IsType<BadRequestObjectResult>(response.Result);
         }
@@ -372,7 +386,9 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var response = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate };
+
+            var response = _coursesController.UpdateCourseMembershipEnrolledDate(membershipDto);
 
             Assert.IsType<OkObjectResult>(response.Result);
         }
@@ -384,7 +400,9 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var response = _coursesController.UpdateCourseMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate);
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate };
+
+            var response = _coursesController.UpdateCourseMembershipEnrolledDate(membershipDto);
 
             var okObjectResult = response.Result as OkObjectResult;
 
