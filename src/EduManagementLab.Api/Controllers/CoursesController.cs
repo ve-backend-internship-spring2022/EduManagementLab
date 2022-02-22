@@ -37,6 +37,7 @@ namespace EduManagementLab.Api.Controllers
         {
             try
             {
+                var claims = User.Claims;
                 var Courselist = _courseService.GetCourses().ToList();
                 var courseDtoList = new List<CourseDto>();
 

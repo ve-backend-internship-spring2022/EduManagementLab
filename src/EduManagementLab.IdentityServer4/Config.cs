@@ -38,12 +38,16 @@ namespace EduManagementLab.IdentityServer
             new Client
             {
                 //OAuth2 
-                ClientId = "EduManagementLabApi",
+                ClientId = "eduManagementLabApi",
                 ClientName = "ASP.NET Core EduManagementLab Api",
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
                 ClientSecrets = new List<Secret> {new Secret("TestEduApi".Sha256())},
-
-                AllowedScopes = new List<string> {"eduManagementLabApi.read"}
+                AllowedScopes = new List<string> {"eduManagementLabApi.read"},
+                AllowedCorsOrigins = new List<string> 
+                {
+                    "https://localhost:7134",
+                    "https://localhost:7243",
+                }
             },
             new Client
             {
@@ -74,7 +78,7 @@ namespace EduManagementLab.IdentityServer
                 //used to define the API that the identity server is protecting 
                 new ApiResource
                 {
-                    Name = "EduManagementLabApi",
+                    Name = "eduManagementLabApi",
                     DisplayName = "EduManagementLab Api",
                     Description = "Allow the application to access EduManagementLab Api on your behalf",
                     Scopes = new List<string> { "eduManagementLabApi.read", "eduManagementLabApi.write"},
@@ -86,20 +90,20 @@ namespace EduManagementLab.IdentityServer
         public static List<TestUser> TestUsers()
         {
             return new List<TestUser>
-        {
-            new TestUser
             {
-                SubjectId = "56892347",
-                Username = "TestUser",
-                Password = "Hej123!",
-                Claims = new List<Claim>
+                new TestUser
                 {
-                    new Claim(JwtClaimTypes.Email, "support@outlook.com"),
-                    new Claim(JwtClaimTypes.Role, "admin"),
-                    new Claim(JwtClaimTypes.WebSite, "https://EduManagementLab.com")
+                    SubjectId = "56892347",
+                    Username = "TestUser",
+                    Password = "Hej123!",
+                    Claims = new List<Claim>
+                    {
+                        new Claim(JwtClaimTypes.Email, "support@outlook.com"),
+                        new Claim(JwtClaimTypes.Role, "admin"),
+                        new Claim(JwtClaimTypes.WebSite, "https://EduManagementLab.com")
+                    }
                 }
-            }
-        };
+            };
 
 
         }

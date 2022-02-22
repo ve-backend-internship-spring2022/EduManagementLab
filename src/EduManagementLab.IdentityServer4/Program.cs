@@ -9,14 +9,21 @@ builder.Services.AddIdentityServer()
         .AddInMemoryApiScopes(Config.ApiScopes())
         .AddTestUsers(Config.TestUsers())
         .AddDeveloperSigningCredential();
-builder.Services.AddRazorPages();
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
 app.UseStaticFiles();
+
 app.UseRouting();
+
+app.UseAuthentication();
+
 app.UseAuthorization();
+
 app.UseIdentityServer();
+
 app.UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute());
 
 app.Run();
