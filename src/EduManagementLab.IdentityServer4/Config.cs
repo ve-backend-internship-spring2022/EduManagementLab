@@ -8,42 +8,34 @@ namespace EduManagementLab.IdentityServer
 {
     public static class Config
     {
-        public static IEnumerable<IdentityResource> IdentityResources()
+        public static IEnumerable<IdentityResource> IdentityResources => new List<IdentityResource>
         {
-            return new[]
-             {
-                new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
-                new IdentityResources.Email(),
-                new IdentityResource
-                {
-                    Name = "role",
-                    UserClaims = new List<string> {"role"}
-                }
-            };
-        }
-        public static IEnumerable<ApiScope> ApiScopes()
-        {
-            return new[]
+            new IdentityResources.OpenId(),
+            new IdentityResources.Profile(),
+            new IdentityResources.Email(),
+            new IdentityResource
             {
-                //used to specify what actions authorized user can perform at the level of the API
-                new ApiScope("eduManagementLabApi.read", "Read Access to EduManagementLab API"),
-                new ApiScope("eduManagementLabApi.write", "Write Access to EduManagementLab API"),
-            };
-        }
-        public static IEnumerable<Client> Clients()
+                Name = "role",
+                UserClaims = new List<string> {"role"}
+            }
+        };
+        public static IEnumerable<ApiScope> ApiScopes => new List<ApiScope>
         {
-            return new List<Client>
+            //used to specify what actions authorized user can perform at the level of the API
+             new ApiScope("eduManagementLabApi.read", "Read Access to EduManagementLab API"),
+             new ApiScope("eduManagementLabApi.write", "Write Access to EduManagementLab API"),
+        };
+        public static IEnumerable<Client> Clients => new List<Client>
         {
             new Client
             {
                 //OAuth2 
                 ClientId = "eduManagementLabApi",
                 ClientName = "ASP.NET Core EduManagementLab Api",
-                AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
                 ClientSecrets = new List<Secret> {new Secret("TestEduApi".Sha256())},
                 AllowedScopes = new List<string> {"eduManagementLabApi.read"},
-                AllowedCorsOrigins = new List<string> 
+                AllowedCorsOrigins = new List<string>
                 {
                     "https://localhost:7134",
                     "https://localhost:7243",
@@ -55,14 +47,17 @@ namespace EduManagementLab.IdentityServer
                 ClientId = "oidcEduWebApp",
                 ClientName = "Sample ASP.NET Core EduLabManagement Web App",
                 ClientSecrets = new List<Secret> {new Secret("TestEduApi".Sha256())},
-
                 AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = new List<string> {"https://localhost:7243/signin-oidc"},
+                RequireClientSecret = true,
+                AlwaysSendClientClaims = true,
+                UpdateAccessTokenClaimsOnRefresh = true,
+                AlwaysIncludeUserClaimsInIdToken = true,
+                RedirectUris = {"https://localhost:7243/signin-oidc"},
+                PostLogoutRedirectUris = { "https://localhost:7243/signout-callback-oidc" },
                 AllowedScopes = new List<string>
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
-                    IdentityServerConstants.StandardScopes.Email,
                     "role",
                     "eduManagementLabApi.read"
                 },
@@ -70,42 +65,33 @@ namespace EduManagementLab.IdentityServer
                 AllowPlainTextPkce = false
             }
         };
-        }
-        public static IEnumerable<ApiResource> ApiResources()
+        public static IEnumerable<ApiResource> ApiResources => new List<ApiResource>
         {
-            return new[]
+            //used to define the API that the identity server is protecting 
+            new ApiResource
             {
-                //used to define the API that the identity server is protecting 
-                new ApiResource
-                {
-                    Name = "eduManagementLabApi",
-                    DisplayName = "EduManagementLab Api",
-                    Description = "Allow the application to access EduManagementLab Api on your behalf",
-                    Scopes = new List<string> { "eduManagementLabApi.read", "eduManagementLabApi.write"},
-                    ApiSecrets = new List<Secret> {new Secret("TestEduApi".Sha256())},
-                    UserClaims = new List<string> {"role"}
-                }
-            };
-        }
-        public static List<TestUser> TestUsers()
+                Name = "eduManagementLabApi",
+                DisplayName = "EduManagementLab Api",
+                Description = "Allow the application to access EduManagementLab Api on your behalf",
+                Scopes = new List<string> { "eduManagementLabApi.read", "eduManagementLabApi.write"},
+                ApiSecrets = new List<Secret> {new Secret("TestEduApi".Sha256())},
+                UserClaims = new List<string> {"role"}
+            }
+        };
+        public static List<TestUser> TestUsers => new List<TestUser>
         {
-            return new List<TestUser>
+            new TestUser
             {
-                new TestUser
+                SubjectId = "56892347",
+                Username = "TestUser",
+                Password = "Hej123!",
+                Claims = new List<Claim>
                 {
-                    SubjectId = "56892347",
-                    Username = "TestUser",
-                    Password = "Hej123!",
-                    Claims = new List<Claim>
-                    {
-                        new Claim(JwtClaimTypes.Email, "support@outlook.com"),
-                        new Claim(JwtClaimTypes.Role, "admin"),
-                        new Claim(JwtClaimTypes.WebSite, "https://EduManagementLab.com")
-                    }
+                    new Claim(JwtClaimTypes.Email, "support@outlook.com"),
+                    new Claim(JwtClaimTypes.Role, "admin"),
+                    new Claim(JwtClaimTypes.WebSite, "https://EduManagementLab.com")
                 }
-            };
-
-
-        }
+            }
+        };
     }
 }

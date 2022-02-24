@@ -5,9 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using static EduManagementLab.Api.Controllers.UsersController;
 using static EduManagementLab.Api.Controllers.CoursesController;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -23,8 +24,8 @@ builder.Services.AddAutoMapper(typeof(CourseAutoMapperProfile).Assembly);
 builder.Services.AddAuthentication("Bearer")
     .AddIdentityServerAuthentication("Bearer", options =>
     {
-        options.ApiName = "eduManagementLabApi";
-        options.Authority = "https://localhost:7243";
+        options.ApiName = configuration["InteractiveServiceSettings:ApiName"];
+        options.Authority = configuration["InteractiveServiceSettings:Authority"];
     });
 
 builder.Services.AddControllers();
@@ -55,8 +56,8 @@ builder.Services.AddSwaggerGen(c =>
         {
             ClientCredentials = new OpenApiOAuthFlow()
             {
-                AuthorizationUrl = new Uri("https://localhost:7243/connect/authorize"),
-                TokenUrl = new Uri("https://localhost:7243/connect/token"),
+                AuthorizationUrl = new Uri(configuration["ClientCredentials:AuthorizationUrl"]),
+                TokenUrl = new Uri(configuration["ClientCredentials:TokenUrl"]),
                 Scopes = new Dictionary<string, string>
                 {
                     { "eduManagementLabApi.read", "Reads the courses" }
@@ -78,16 +79,15 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "EduManagementLab.IdentityServer4 v1");
     });
 }
-app.UseCors("eduManagementLabApiScope");
+app.UseCors();
 
 app.UseHttpsRedirection();
 
 app.UseRouting();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => endpoints.MapControllers());
+app.UseEndpoints(endpoints => endpoints.MapControllers().RequireAuthorization());
 
 app.Run();
