@@ -12,14 +12,17 @@ namespace EduManagementLab.Web.Pages.Courses
     {
         private readonly CourseService _courseService;
         private readonly UserService _userService;
-        public DetailsModel(CourseService courseService, UserService userService)
+        private readonly CourseLineItemService _courseLineItemService;
+        public DetailsModel(CourseService courseService, UserService userService, CourseLineItemService courseLineItemService)
         {
             _courseService = courseService;
             _userService = userService;
+            _courseLineItemService = courseLineItemService;
         }
 
         public Course Course { get; set; }
         public SelectList UserListItems { get; set; }
+        public SelectList LineItemListItems { get; set; }
 
         [BindProperty]
         public DateTime EnrolledDate { get; set; }
@@ -59,6 +62,9 @@ namespace EduManagementLab.Web.Pages.Courses
 
             UserListItems = new SelectList(_userService.GetUsers()
                 .Where(s => !Course.Memperships.Any(x => x.User.Email == s.Email)), "Id", "Email");
+
+            LineItemListItems = new SelectList(_courseLineItemService.GetCourseLineItems()
+               .Where(s => !Course.CourseLineItems.Any(x => x.Name == s.Name)), "Name", "Description");
         }
 
         public async Task<IActionResult> OnPostExistingUserAsync(Guid courseId, Guid Id)
