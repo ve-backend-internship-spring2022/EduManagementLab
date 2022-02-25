@@ -1,6 +1,7 @@
 ﻿using EduManagementLab.Core.Entities;
 using EduManagementLab.EfRepository;
 using EduManagementLab.IdentityServer;
+using EduManagementLab.IdentityServer4.Data;
 using IdentityModel;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
@@ -13,92 +14,45 @@ namespace EduManagementLab.IdentityServer4
 {
     public class SeedData
     {
-        public static void EnsureSeedData(string connectionString)
+        public static void EnsureSeedData(AspNetIdentityServerDbcontext dbContext, ConfigurationDbContext configcontext, UserManager<IdentityUser> usermanager)
         {
-            var services = new ServiceCollection();
-            services.AddLogging();
-            services.AddDbContext<DataContext>(
-                options => options.UseSqlServer(connectionString)
-            );
-
-            //services
-            //    .AddIdentity<User, IdentityRole>()
-            //    .AddEntityFrameworkStores<DataContext>()
-            //    .AddDefaultTokenProviders();
-
-            services.AddOperationalDbContext(
-                options =>
-                {
-                    options.ConfigureDbContext = db =>
-                        db.UseSqlServer(
-                            connectionString,
-                            sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName)
-                        );
-                }
-            );
-            services.AddConfigurationDbContext(
-                options =>
-                {
-                    options.ConfigureDbContext = db =>
-                        db.UseSqlServer(
-                            connectionString,
-                            sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName)
-                        );
-                }
-            );
-
-            var serviceProvider = services.BuildServiceProvider();
-
-            using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            scope.ServiceProvider.GetService<PersistedGrantDbContext>().Database.Migrate();
-
-            var context = scope.ServiceProvider.GetService<ConfigurationDbContext>();
-            context.Database.Migrate();
-
-            EnsureSeedData(context);
-
-            //var ctx = scope.ServiceProvider.GetService<DataContext>();
-            //ctx.Database.Migrate();
-            //EnsureUsers(scope);
+            dbContext.Database.Migrate();
+            EnsureUsers(dbContext, usermanager);
+            EnsureSeedData(configcontext);
         }
 
-        private static void EnsureUsers(IServiceScope scope)
+        private static void EnsureUsers(AspNetIdentityServerDbcontext dbContext, UserManager<IdentityUser> usermanager)
         {
-            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
-            var angella = userMgr.FindByNameAsync("angella").Result;
-            if (angella == null)
+            var angella = new IdentityUser
             {
-                angella = new User
-                {
-                    FirstName = "angellatest",
-                    LastName = "Test",
-                    Displayname = "angella",
-                    Email = "angella.freeman@email.com",
-                };
-                var result = userMgr.CreateAsync(angella, "Pass123$").Result;
+                UserName = "angellatest",
+                Email = "angella.freeman@email.com",
+                EmailConfirmed = true,
+            };
+
+            if (!dbContext.Users.Any(u => u.Email == angella.Email))
+            {                
+                var result = usermanager.CreateAsync(angella, "Pass123$").Result;
                 if (!result.Succeeded)
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
-
-                result =
-                    userMgr.AddClaimsAsync(
-                        angella,
-                        new Claim[]
-                        {
+                result = usermanager.AddClaimsAsync(
+                    angella,
+                    new Claim[]
+                    {
                             new Claim(JwtClaimTypes.Name, "Angella Freeman"),
                             new Claim(JwtClaimTypes.GivenName, "Angella"),
                             new Claim(JwtClaimTypes.FamilyName, "Freeman"),
                             new Claim(JwtClaimTypes.WebSite, "http://angellafreeman.com"),
                             new Claim("location", "somewhere")
-                        }
-                    ).Result;
+                    }).Result;
                 if (!result.Succeeded)
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
             }
+            dbContext.SaveChanges();
         }
 
         private static void EnsureSeedData(ConfigurationDbContext context)

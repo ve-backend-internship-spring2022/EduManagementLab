@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduManagementLab.IdentityServer4.Migrations
 {
     [DbContext(typeof(PersistedGrantDbContext))]
-    [Migration("20220223161321_InitialIdentityServerMigration")]
-    partial class InitialIdentityServerMigration
+    [Migration("20220225113232_InitialIdentityServer")]
+    partial class InitialIdentityServer
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

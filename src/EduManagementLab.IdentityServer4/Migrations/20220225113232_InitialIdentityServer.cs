@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EduManagementLab.IdentityServer4.Migrations
 {
-    public partial class InitialIdentityServerMigration : Migration
+    public partial class InitialIdentityServer : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
