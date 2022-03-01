@@ -15,9 +15,9 @@ namespace EduManagementLab.IdentityServer4
     public class DevTestData
     {
         public static void EnsureSeedData(AspNetIdentityServerDbcontext dbContext, ConfigurationDbContext configcontext, UserManager<IdentityUser> usermanager)
-        {           
+        {
             EnsureUsers(dbContext, usermanager);
-            EnsureSeedData(configcontext);
+            EnsureConfigData(configcontext);
         }
 
         private static void EnsureUsers(AspNetIdentityServerDbcontext dbContext, UserManager<IdentityUser> usermanager)
@@ -53,7 +53,7 @@ namespace EduManagementLab.IdentityServer4
             }
             dbContext.SaveChanges();
         }
-        private static void EnsureSeedData(ConfigurationDbContext context)
+        private static void EnsureConfigData(ConfigurationDbContext context)
         {
             if (!context.Clients.Any())
             {

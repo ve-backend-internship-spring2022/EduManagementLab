@@ -34,14 +34,14 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = builder.Configuration["OpenIdConnect:ClientSecret"];
     options.ResponseType = builder.Configuration["OpenIdConnect:ResponseType"];
 
-    //options.GetClaimsFromUserInfoEndpoint = true;
-    //options.Prompt = "consent";
+    options.GetClaimsFromUserInfoEndpoint = true;
+    options.Prompt = "consent";
 
-    //options.TokenValidationParameters = new TokenValidationParameters
-    //{
-    //    NameClaimType = builder.Configuration["OpenIdConnect:NameClaimType"],
-    //    RoleClaimType = builder.Configuration["OpenIdConnect:RoleClaimType"]
-    //};
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        NameClaimType = builder.Configuration["OpenIdConnect:NameClaimType"],
+        RoleClaimType = builder.Configuration["OpenIdConnect:RoleClaimType"]
+    };
 
     options.SaveTokens = true;
 });
@@ -62,12 +62,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseAuthorization();
+
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapRazorPages();
+    endpoints.MapDefaultControllerRoute();
+    endpoints.MapRazorPages().RequireAuthorization();
 });
 
 app.Run();

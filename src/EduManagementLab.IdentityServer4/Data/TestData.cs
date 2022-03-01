@@ -72,20 +72,5 @@ namespace EduManagementLab.IdentityServer
                 UserClaims = new List<string> {"role"}
             }
         };
-        public static List<TestUser> Users => new List<TestUser>
-        {
-            new TestUser
-            {
-                SubjectId = "56892347",
-                Username = "TestUser",
-                Password = "Hej123!",
-                Claims = new List<Claim>
-                {
-                    new Claim(JwtClaimTypes.Email, "support@outlook.com"),
-                    new Claim(JwtClaimTypes.Role, "admin"),
-                    new Claim(JwtClaimTypes.WebSite, "https://EduManagementLab.com")
-                }
-            }
-        };
     }
 }

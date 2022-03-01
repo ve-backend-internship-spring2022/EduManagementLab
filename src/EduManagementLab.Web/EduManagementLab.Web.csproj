@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="IdentityModel" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EduManagementLab.Core\EduManagementLab.Core.csproj" />
     <ProjectReference Include="..\EduManagementLab.EfRepository\EduManagementLab.EfRepository.csproj" />
+    <ProjectReference Include="..\EduManagementLab.IdentityServer4\EduManagementLab.IdentityServer4.csproj" />
   </ItemGroup>
 
 </Project>
