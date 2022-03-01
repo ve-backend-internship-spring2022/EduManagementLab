@@ -12,11 +12,10 @@ using System.Security.Claims;
 
 namespace EduManagementLab.IdentityServer4
 {
-    public class SeedData
+    public class DevTestData
     {
         public static void EnsureSeedData(AspNetIdentityServerDbcontext dbContext, ConfigurationDbContext configcontext, UserManager<IdentityUser> usermanager)
-        {
-            dbContext.Database.Migrate();
+        {           
             EnsureUsers(dbContext, usermanager);
             EnsureSeedData(configcontext);
         }
@@ -31,7 +30,7 @@ namespace EduManagementLab.IdentityServer4
             };
 
             if (!dbContext.Users.Any(u => u.Email == angella.Email))
-            {                
+            {
                 var result = usermanager.CreateAsync(angella, "Pass123$").Result;
                 if (!result.Succeeded)
                 {
@@ -54,12 +53,11 @@ namespace EduManagementLab.IdentityServer4
             }
             dbContext.SaveChanges();
         }
-
         private static void EnsureSeedData(ConfigurationDbContext context)
         {
             if (!context.Clients.Any())
             {
-                foreach (var client in Config.Clients.ToList())
+                foreach (var client in TestData.Clients.ToList())
                 {
                     context.Clients.Add(client.ToEntity());
                 }
@@ -69,7 +67,7 @@ namespace EduManagementLab.IdentityServer4
 
             if (!context.IdentityResources.Any())
             {
-                foreach (var resource in Config.IdentityResources.ToList())
+                foreach (var resource in TestData.IdentityResources.ToList())
                 {
                     context.IdentityResources.Add(resource.ToEntity());
                 }
@@ -79,7 +77,7 @@ namespace EduManagementLab.IdentityServer4
 
             if (!context.ApiScopes.Any())
             {
-                foreach (var resource in Config.ApiScopes.ToList())
+                foreach (var resource in TestData.ApiScopes.ToList())
                 {
                     context.ApiScopes.Add(resource.ToEntity());
                 }
@@ -89,7 +87,7 @@ namespace EduManagementLab.IdentityServer4
 
             if (!context.ApiResources.Any())
             {
-                foreach (var resource in Config.ApiResources.ToList())
+                foreach (var resource in TestData.ApiResources.ToList())
                 {
                     context.ApiResources.Add(resource.ToEntity());
                 }

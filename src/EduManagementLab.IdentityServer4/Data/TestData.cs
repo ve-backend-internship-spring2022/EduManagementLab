@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace EduManagementLab.IdentityServer
 {
-    public static class Config
+    public static class TestData
     {
         public static IEnumerable<IdentityResource> IdentityResources => new List<IdentityResource>
         {
@@ -39,30 +39,24 @@ namespace EduManagementLab.IdentityServer
                 {
                     "https://localhost:7134",
                     "https://localhost:7243",
+                    "https://localhost:7187"
                 }
             },
             new Client
             {
                 //OpenID Connect
                 ClientId = "oidcEduWebApp",
-                ClientName = "Sample ASP.NET Core EduLabManagement Web App",
-                ClientSecrets = new List<Secret> {new Secret("TestEduApi".Sha256())},
+                ClientName = "ASP.NET Core EduManagementLab Web",
+                ClientSecrets =  {new Secret("TestEduApi".Sha256())},
                 AllowedGrantTypes = GrantTypes.Code,
-                RequireClientSecret = true,
-                AlwaysSendClientClaims = true,
-                UpdateAccessTokenClaimsOnRefresh = true,
-                AlwaysIncludeUserClaimsInIdToken = true,
-                RedirectUris = {"https://localhost:7243/signin-oidc"},
-                PostLogoutRedirectUris = { "https://localhost:7243/signout-callback-oidc" },
+                AllowOfflineAccess = true,
+                RedirectUris = {"https://localhost:5002/signin-oidc"},
+                PostLogoutRedirectUris = { "https://localhost:5002/signout-callback-oidc" },
                 AllowedScopes = new List<string>
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
-                    IdentityServerConstants.StandardScopes.Profile,
-                    "role",
-                    "eduManagementLabApi.read"
-                },
-                RequirePkce = true,
-                AllowPlainTextPkce = false
+                    IdentityServerConstants.StandardScopes.Profile
+                }
             }
         };
         public static IEnumerable<ApiResource> ApiResources => new List<ApiResource>
@@ -78,20 +72,20 @@ namespace EduManagementLab.IdentityServer
                 UserClaims = new List<string> {"role"}
             }
         };
-        //public static List<TestUser> TestUsers => new List<TestUser>
-        //{
-        //    new TestUser
-        //    {
-        //        SubjectId = "56892347",
-        //        Username = "TestUser",
-        //        Password = "Hej123!",
-        //        Claims = new List<Claim>
-        //        {
-        //            new Claim(JwtClaimTypes.Email, "support@outlook.com"),
-        //            new Claim(JwtClaimTypes.Role, "admin"),
-        //            new Claim(JwtClaimTypes.WebSite, "https://EduManagementLab.com")
-        //        }
-        //    }
-        //};
+        public static List<TestUser> Users => new List<TestUser>
+        {
+            new TestUser
+            {
+                SubjectId = "56892347",
+                Username = "TestUser",
+                Password = "Hej123!",
+                Claims = new List<Claim>
+                {
+                    new Claim(JwtClaimTypes.Email, "support@outlook.com"),
+                    new Claim(JwtClaimTypes.Role, "admin"),
+                    new Claim(JwtClaimTypes.WebSite, "https://EduManagementLab.com")
+                }
+            }
+        };
     }
 }
