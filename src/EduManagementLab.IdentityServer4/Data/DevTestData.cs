@@ -1,13 +1,9 @@
-﻿using EduManagementLab.Core.Entities;
-using EduManagementLab.EfRepository;
-using EduManagementLab.IdentityServer;
+﻿using EduManagementLab.IdentityServer;
 using EduManagementLab.IdentityServer4.Data;
 using IdentityModel;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
-using IdentityServer4.EntityFramework.Storage;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace EduManagementLab.IdentityServer4

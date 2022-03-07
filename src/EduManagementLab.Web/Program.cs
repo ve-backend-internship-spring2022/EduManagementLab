@@ -36,7 +36,6 @@ builder.Services.AddAuthentication(options =>
     options.ResponseType = builder.Configuration["OpenIdConnect:ResponseType"];
 
     options.GetClaimsFromUserInfoEndpoint = true;
-    options.Prompt = "consent";
 
     options.TokenValidationParameters = new TokenValidationParameters
     {
