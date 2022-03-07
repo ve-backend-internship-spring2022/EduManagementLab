@@ -12,10 +12,7 @@ namespace EduManagementLab.EfRepository
         public DbSet<User> Users { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Course.Membership> CourseMemberships { get; set; }
-        //Using Entity Ignore self referencing loop
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Course.Membership>().Ignore(c => c.Course);
-        }
+        public DbSet<CourseLineItem> CourseLineItems { get; set; }
+        public DbSet<CourseLineItem.Result> LineItemResults { get; set; }
     }
 }

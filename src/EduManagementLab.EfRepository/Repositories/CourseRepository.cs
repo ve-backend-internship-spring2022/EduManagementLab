@@ -40,7 +40,8 @@ namespace EduManagementLab.EfRepository.Repositories
             }
             else
             {
-                return _context.Courses.FirstOrDefault(c => c.Id == courseId);
+                //return _context.Courses.FirstOrDefault(c => c.Id == courseId);
+                return _context.Courses.Include(m => m.CourseLineItems).FirstOrDefault(m => m.Id == courseId);
             }
         }
     }

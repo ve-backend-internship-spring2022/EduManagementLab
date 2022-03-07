@@ -13,11 +13,13 @@ namespace EduManagementLab.EfRepository
 
             Users = new UserRepository(_context);
             Courses = new CourseRepository(_context);
+            CourseLineItems = new CourseLineItemRepository(_context);
 
         }
 
         public IUserRepository Users { get; private set; }
         public ICourseRepository Courses { get; private set; }
+        public ICourseLineItemRepository CourseLineItems { get; set; }
 
         public int Complete()
         {
