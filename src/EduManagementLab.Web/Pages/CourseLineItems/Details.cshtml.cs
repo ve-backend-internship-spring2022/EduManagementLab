@@ -23,7 +23,9 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
 
         public CourseLineItem CourseLineItem { get; set; }
         public SelectList ResultListItems { get; set; }
-      
+        [BindProperty]
+        public bool IsChecked { get; set; }
+
         public async Task<IActionResult> OnGetAsync(Guid lineItemId)
         {
             try
@@ -36,10 +38,16 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                 return NotFound();
             }
         }
+        public IActionResult OnPost(Guid lineItemId)
+        {
+            _courseLineItemService.UpdateCourseLineItemActive(lineItemId, IsChecked);
+            PopulateProperties(lineItemId);
+            return Page();
+        }
         private void PopulateProperties(Guid lineItemId)
         {
             CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId);
-
+            IsChecked = CourseLineItem.Active;
             ResultListItems = new SelectList(_courseLineItemService.GetLineItemResults(lineItemId));
         }
     }

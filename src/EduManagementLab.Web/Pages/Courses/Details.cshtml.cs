@@ -27,6 +27,8 @@ namespace EduManagementLab.Web.Pages.Courses
         [BindProperty]
         public DateTime EnrolledDate { get; set; }
         [BindProperty]
+        public LineItemInputModel lineItemInput { get; set; }
+        [BindProperty]
         public InputModel Input { get; set; }
         [BindProperties]
         public class InputModel
@@ -41,6 +43,15 @@ namespace EduManagementLab.Web.Pages.Courses
             [Required(ErrorMessage = "Email Required!")]
             [DataType(DataType.EmailAddress, ErrorMessage = "Please type a valid email address")]
             public string Email { get; set; }
+        }
+        public class LineItemInputModel
+        {
+            [Required]
+            public string Name { get; set; }
+            [Required]
+            public string Description { get; set; }
+            [Required]
+            public bool Active { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync(Guid courseId)
@@ -106,6 +117,22 @@ namespace EduManagementLab.Web.Pages.Courses
                 PopulateProperties(courseId);
                 return Page();
             }
+        }
+        public IActionResult OnPostCreateLineItem(Guid courseId)
+        {
+            ICollection<ValidationResult> results = null;
+            if (Validate(lineItemInput, out results))
+            {
+                _courseLineItemService.CreateCourseLineItem(courseId, lineItemInput.Name, lineItemInput.Description, lineItemInput.Active);
+            }
+            PopulateProperties(courseId);
+            return Page();
+        }
+        private bool Validate<T>(T obj, out ICollection<ValidationResult> results)
+        {
+            results = new List<ValidationResult>();
+
+            return Validator.TryValidateObject(obj, new ValidationContext(obj), results, true);
         }
     }
 }
