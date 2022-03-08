@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EduManagementLab.IdentityServer4.Data;
+using EduManagementLab.IdentityServer4;
+using IdentityServer4.EntityFramework.DbContexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,19 @@ builder.Services.AddAuthentication();
 
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+    {
+        var serviceProvider = scope.ServiceProvider;
+        var configcontext = serviceProvider.GetRequiredService<ConfigurationDbContext>();
+        var usermanager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var aspNetdbContext = serviceProvider.GetRequiredService<AspNetIdentityServerDbcontext>();
+
+        DevTestData.EnsureSeedData(aspNetdbContext, configcontext, usermanager);
+    }
+}
 
 app.UseStaticFiles();
 
