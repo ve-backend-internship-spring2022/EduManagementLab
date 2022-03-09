@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduManagementLab.EfRepository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220224212346_AddLineItem")]
-    partial class AddLineItem
+    [Migration("20220308124322_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -89,11 +89,9 @@ namespace EduManagementLab.EfRepository.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -113,7 +111,7 @@ namespace EduManagementLab.EfRepository.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Score")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");

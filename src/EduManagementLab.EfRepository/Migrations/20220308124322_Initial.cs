@@ -41,6 +41,26 @@ namespace EduManagementLab.EfRepository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CourseLineItems",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    CourseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseLineItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CourseLineItems_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CourseMemberships",
                 columns: table => new
                 {
@@ -66,6 +86,37 @@ namespace EduManagementLab.EfRepository.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "LineItemResults",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CourseLineItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Score = table.Column<decimal>(type: "decimal", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LineItemResults", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LineItemResults_CourseLineItems_CourseLineItemId",
+                        column: x => x.CourseLineItemId,
+                        principalTable: "CourseLineItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LineItemResults_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseLineItems_CourseId",
+                table: "CourseLineItems",
+                column: "CourseId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_CourseMemberships_CourseId",
                 table: "CourseMemberships",
@@ -75,6 +126,16 @@ namespace EduManagementLab.EfRepository.Migrations
                 name: "IX_CourseMemberships_UserId",
                 table: "CourseMemberships",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LineItemResults_CourseLineItemId",
+                table: "LineItemResults",
+                column: "CourseLineItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LineItemResults_UserId",
+                table: "LineItemResults",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -83,10 +144,16 @@ namespace EduManagementLab.EfRepository.Migrations
                 name: "CourseMemberships");
 
             migrationBuilder.DropTable(
-                name: "Courses");
+                name: "LineItemResults");
+
+            migrationBuilder.DropTable(
+                name: "CourseLineItems");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Courses");
         }
     }
 }

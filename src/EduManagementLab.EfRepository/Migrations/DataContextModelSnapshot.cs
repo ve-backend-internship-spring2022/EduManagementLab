@@ -87,11 +87,9 @@ namespace EduManagementLab.EfRepository.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -111,7 +109,7 @@ namespace EduManagementLab.EfRepository.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Score")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
