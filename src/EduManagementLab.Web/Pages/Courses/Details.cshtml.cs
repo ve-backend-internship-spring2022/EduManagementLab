@@ -126,7 +126,7 @@ namespace EduManagementLab.Web.Pages.Courses
                 _courseLineItemService.CreateCourseLineItem(courseId, lineItemInput.Name, lineItemInput.Description, lineItemInput.Active);
             }
             PopulateProperties(courseId);
-            return Page();
+            return RedirectToPage("./Details", new { courseId = courseId });
         }
         private bool Validate<T>(T obj, out ICollection<ValidationResult> results)
         {

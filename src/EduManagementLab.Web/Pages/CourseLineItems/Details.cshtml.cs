@@ -40,9 +40,16 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         }
         public IActionResult OnPost(Guid lineItemId)
         {
-            _courseLineItemService.UpdateCourseLineItemActive(lineItemId, IsChecked);
-            PopulateProperties(lineItemId);
-            return Page();
+            try
+            {
+                _courseLineItemService.UpdateCourseLineItemActive(lineItemId, IsChecked);
+                PopulateProperties(lineItemId);
+                return Page();
+            }
+            catch (CourseLineItemNotFoundException)
+            {
+                return NotFound();
+            }
         }
         private void PopulateProperties(Guid lineItemId)
         {

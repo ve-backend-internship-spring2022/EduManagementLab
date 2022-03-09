@@ -34,7 +34,7 @@ namespace EduManagementLab.Web.Pages.Courses
             {
                 var course = _courseService.GetCourse(id);
                 CourseId = course.Id;
-                StartDate = course.StartDate;   
+                StartDate = course.StartDate;
                 EndDate = course.EndDate;
                 return Page();
             }
@@ -53,7 +53,7 @@ namespace EduManagementLab.Web.Pages.Courses
             try
             {
                 _courseService.UpdateCoursePeriod(CourseId, StartDate, EndDate);
-                return RedirectToPage("./Details");
+                return RedirectToPage("./Details", new { CourseId = CourseId });
             }
             catch (CourseNotFoundException)
             {

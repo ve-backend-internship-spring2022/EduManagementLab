@@ -12,11 +12,12 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         {
             _courseLineItemService = courseLineItemService;
         }
-        [Required]
         public Guid Id { get; set; }
         [Required]
+        [BindProperty]
         public string Name { get; set; }
         [Required]
+        [BindProperty]
         public string Description { get; set; }
 
         public void OnGet(Guid id)
@@ -32,7 +33,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             {
                 _courseLineItemService.UpdateCourseLineItemInfo(id, Name, Description);
             }
-            return Page();
+            return RedirectToPage("./Details", new { lineItemId = id });
         }
     }
 }

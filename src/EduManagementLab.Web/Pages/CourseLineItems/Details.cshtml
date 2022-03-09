@@ -1,12 +1,7 @@
 ﻿@page
 @model EduManagementLab.Web.Pages.CourseLineItems.DetailsModel
-@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Details";
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <h1>@Model.CourseLineItem.Name</h1>
 
@@ -18,9 +13,9 @@
             <div class="col-md-5 text-md-end">
                 <form method="post" asp-route-lineItemId="@Model.CourseLineItem.Id">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" onchange="this.form.submit()" type="checkbox" role="switch" aria-checked="true" asp-for="IsChecked" name="IsChecked" value="true" id="flexSwitchCheckDefault">
+                        <input class="form-check-input" style="position:absolute;" onchange="this.form.submit()" type="checkbox" role="switch" aria-checked="true" asp-for="IsChecked" name="IsChecked" value="true" id="flexSwitchCheckDefault">
                         <label class="form-check-label" for="flexSwitchCheckDefault">Active</label> |
-                        <a asp-page="./EditCourseLineItemInfo" asp-route-id="@Model.CourseLineItem.Id">Edit course info</a>
+                        <a asp-page="./EditCourseLineItemInfo" asp-route-id="@Model.CourseLineItem.Id">Edit courselineitem info</a>
                     </div>
                 </form>
             </div>
@@ -44,9 +39,6 @@
     <div class="row justify-content-between">
         <div class="col">
             <h4>Results for this course</h4>
-        </div>
-        <div class="col">
-            <button class="btn btn-primary float-end">Add results</button>
         </div>
     </div>
     <hr />
