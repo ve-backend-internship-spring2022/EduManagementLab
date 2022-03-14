@@ -3,7 +3,7 @@ using IdentityServer4.Models;
 
 namespace EduManagementLab.IdentityServer
 {
-    public static class TestData
+    public static class Config
     {
         public static IEnumerable<IdentityResource> IdentityResources => new List<IdentityResource>
         {

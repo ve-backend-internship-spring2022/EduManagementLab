@@ -1,52 +1,38 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using EduManagementLab.IdentityServer4.Data;
 using EduManagementLab.IdentityServer4;
 using IdentityServer4.EntityFramework.DbContexts;
+using EduManagementLab.Core.Interfaces;
+using EduManagementLab.Core.Services;
+using EduManagementLab.EfRepository;
+using EduManagementLab.IdentityServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var assembly = typeof(Program).Assembly.GetName().Name;
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AspNetIdentityServerDbcontext>(options =>
+builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(connectionString, opt => opt.MigrationsAssembly(assembly)));
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(); 
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<AspNetIdentityServerDbcontext>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<UserService>();
 
 builder.Services.AddIdentityServer()
-    .AddAspNetIdentity<IdentityUser>()
-    .AddConfigurationStore(options =>
-    {
-        options.ConfigureDbContext = b => b.UseSqlServer(connectionString, opt => opt.MigrationsAssembly(assembly));
-    })
-    .AddOperationalStore(options =>
-    {
-        options.ConfigureDbContext = b => b.UseSqlServer(connectionString, opt => opt.MigrationsAssembly(assembly));
-    })
+    //.AddAspNetIdentity<IdentityUser>()
+    .AddInMemoryIdentityResources(Config.IdentityResources)
+    .AddInMemoryApiResources(Config.ApiResources)
+    .AddInMemoryClients(Config.Clients)
+    .AddInMemoryApiScopes(Config.ApiScopes)
+    .AddProfileService<CustomProfileService>()
+    .AddResourceOwnerValidator<CustomResourceOwnerPasswordValidator>()
     .AddDeveloperSigningCredential();
 
 builder.Services.AddAuthentication();
 
-
-
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    using (var scope = builder.Services.BuildServiceProvider().CreateScope())
-    {
-        var serviceProvider = scope.ServiceProvider;
-        var configcontext = serviceProvider.GetRequiredService<ConfigurationDbContext>();
-        var usermanager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
-        var aspNetdbContext = serviceProvider.GetRequiredService<AspNetIdentityServerDbcontext>();
-
-        DevTestData.EnsureSeedData(aspNetdbContext, configcontext, usermanager);
-    }
-}
 
 app.UseStaticFiles();
 
