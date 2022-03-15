@@ -205,12 +205,12 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="modal-title" id="createlineitem">Add Course Membership</h2>
+                        <h2 class="modal-title" id="createlineitem">Add Course Line Item</h2>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-md-start">
                         @Html.AntiForgeryToken()
-                        <h5 class="text-center">Create a new user</h5>
+                        <h5 class="text-center">Create new Course Line Item</h5>
                         <form method="post" asp-route-courseId="@Model.Course.Id" asp-page-handler="CreateLineItem">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">

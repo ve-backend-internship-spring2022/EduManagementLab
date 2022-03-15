@@ -13,9 +13,9 @@ namespace EduManagementLab.Core.Entities
     {
         public Guid Id { get; set; }
         [Required]
-        public string? Code { get; set; }
+        public string Code { get; set; }
         [Required]
-        public string? Name { get; set; }
+        public string Name { get; set; }
         public string? Description { get; set; }
         [Required]
         public DateTime StartDate { get; set; }
