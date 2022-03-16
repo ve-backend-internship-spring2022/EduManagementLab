@@ -21,10 +21,22 @@
                 @Html.DisplayNameFor(model => model.user.UserName)
             </dt>
             <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.user.UserName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.user.FirstName)
+            </dt>
+            <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.user.FirstName)
             </dd>
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.user.LastName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.user.LastName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.user.Email)
             </dt>
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.user.Email)
