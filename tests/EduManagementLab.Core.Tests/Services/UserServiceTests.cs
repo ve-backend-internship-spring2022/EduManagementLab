@@ -45,6 +45,13 @@ namespace EduManagementLab.Core.Tests.Services
             _userService = CreateUserService();
         }
 
+        public void UntamperedHashMatchesText()
+        {
+            //Arrange
+            var message = "John123!";
+
+        }
+
         [Fact]
         public void GetUsers_ReturnsCorrectUser()
         {

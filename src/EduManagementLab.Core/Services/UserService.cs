@@ -4,6 +4,7 @@ using EduManagementLab.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +25,22 @@ namespace EduManagementLab.Core.Services
             return _unitOfWork.Users.GetAll();
         }
 
+        //public static string CreateSalt(int size)
+        //{
+        //    //Generate a cryptographic random number
+        //    RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+        //    byte[] vs = new byte[size];
+        //    rng.GetBytes(vs);
+        //    return Convert.ToBase64String(vs);
+        //}
+
+        public string GenerateHashPassword(string password)
+        {
+            SHA256 sha = SHA256.Create();
+            byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(password);
+            byte[] hash = sha.ComputeHash(inputBytes);
+            return Convert.ToBase64String(hash);
+        }
 
         //TODO: Validate if username and password are right
         public bool ValidateCredentials(string userName, string password)
@@ -31,7 +48,8 @@ namespace EduManagementLab.Core.Services
             var user = GetUserUsername(userName);
             if (user != null)
             {
-                return user.Password.Equals(password);
+                var hashPassword = GenerateHashPassword(password);
+                return user.Password.Equals(hashPassword);
             }
 
             return false;

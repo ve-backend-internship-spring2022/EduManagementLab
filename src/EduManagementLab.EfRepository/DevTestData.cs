@@ -1,4 +1,6 @@
 ﻿using EduManagementLab.Core.Entities;
+using EduManagementLab.Core.Interfaces;
+using EduManagementLab.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,30 +10,31 @@ using System.Threading.Tasks;
 
 namespace EduManagementLab.EfRepository
 {
-    public static class DevTestData
+    public class DevTestData
     {
         public static void Seed(DataContext dataContext)
         {
             var unitOfWork = new UnitOfWork(dataContext);
-            unitOfWork.Users.AddRange(GetDevTestUsers().ToList());
+            unitOfWork.Users.AddRange(GetDevTestUsers(unitOfWork).ToList());
             unitOfWork.Courses.AddRange(GetDevTestCourses().ToList());
             unitOfWork.Complete();
         }
 
-        public static IEnumerable<User> GetDevTestUsers()
+        public static IEnumerable<User> GetDevTestUsers(IUnitOfWork unitOfWork)
         {
+            UserService _userService = new UserService(unitOfWork);
             return new List<User>
             {
-                new User() { Id = Guid.Parse("{106CD9D2-3065-47A8-AC34-85343037534A}"), UserName = "John123" , Password = "Test123!" , Displayname = "Mr John", FirstName = "John", LastName = "Doe", Email = "john.doe@myemail.test" },
-                new User() { Id = Guid.Parse("{BF6DA545-C0A1-49FB-86AC-4BD6B890C3F5}"), UserName = "Anders123" , Password = "Test123!" , Displayname = "Anders S", FirstName = "Anders", LastName = "Svensson", Email = "anders.svensson@myemail.test" },
-                new User() { Id = Guid.Parse("{22C4D8D0-8683-4116-B0FD-8C55B20E900D}"), UserName = "Danni123" , Password = "Test123!" , Displayname = "Danni L", FirstName = "Danni", LastName = "Lorenzo", Email = "dlorenzo2@privacy.gov.au" },
-                new User() { Id = Guid.Parse("{BCCEC9A8-4531-46CA-9D3B-E98229622C11}"), UserName = "Genny123" , Password = "Test123!" , Displayname = "Genny H", FirstName = "Genny", LastName = "Headey", Email = "	gheadey3@google.com.br" },
-                new User() { Id = Guid.Parse("{54915E7F-9CD1-40B6-AD9A-992F6A87A28A}"), UserName = "Connie123" , Password = "Test123!" , Displayname = "Connie A", FirstName = "Connie", LastName = "Annets", Email = "cannets0@adobe.com" },
-                new User() { Id = Guid.Parse("{853EF2AB-C86A-4ECD-A1CD-68B6A15DFE02}"), UserName = "Nevile123" , Password = "Test123!" , Displayname = "Nevile B", FirstName = "Nevile", LastName = "Brimming", Email = "nbrimming2@bigcartel.com" },
-                new User() { Id = Guid.Parse("{F10C5A5B-51D2-4115-9421-6B4D6A6BA60F}"), UserName = "Bo123" , Password = "Test123!" , Displayname = "Bo B", FirstName = "Bo", LastName = "Brombell", Email = "bbrombell1@amazon.co.uk" },
-                new User() { Id = Guid.Parse("{67A0843F-7262-4F05-BB4B-0045F5A6BA96}"), UserName = "Jillayne123" , Password = "Test123!" , Displayname = "Jillayne P", FirstName = "Jillayne", LastName = "Presnell", Email = "jpresnell5@godaddy.com" },
-                new User() { Id = Guid.Parse("{9F60A30C-8BFA-46BB-9F3B-7D32E590FFBE}"), UserName = "Katrinka123" , Password = "Test123!" , Displayname = "Katrinka R", FirstName = "Katrinka", LastName = "Rupert", Email = "krupert9@wordpress.org" },
-                new User() { Id = Guid.Parse("{A764A5A6-C67C-452E-81BF-11984FB538D3}"), UserName = "Seymour123" , Password = "Test123!" , Displayname = "Seymour M", FirstName = "Seymour", LastName = "MacMechan", Email = "smacmechan0@dailymotion.com" }
+                new User() { Id = Guid.Parse("{106CD9D2-3065-47A8-AC34-85343037534A}"), UserName = "John123" , Password = _userService.GenerateHashPassword("John123!") , Displayname = "Mr John", FirstName = "John", LastName = "Doe", Email = "john.doe@myemail.test" },
+                new User() { Id = Guid.Parse("{BF6DA545-C0A1-49FB-86AC-4BD6B890C3F5}"), UserName = "Anders123" , Password = _userService.GenerateHashPassword("Anders123!") , Displayname = "Anders S", FirstName = "Anders", LastName = "Svensson", Email = "anders.svensson@myemail.test" },
+                new User() { Id = Guid.Parse("{22C4D8D0-8683-4116-B0FD-8C55B20E900D}"), UserName = "Danni123" , Password = _userService.GenerateHashPassword("Danni123!") , Displayname = "Danni L", FirstName = "Danni", LastName = "Lorenzo", Email = "dlorenzo2@privacy.gov.au" },
+                new User() { Id = Guid.Parse("{BCCEC9A8-4531-46CA-9D3B-E98229622C11}"), UserName = "Genny123" , Password = _userService.GenerateHashPassword("Genny123!") , Displayname = "Genny H", FirstName = "Genny", LastName = "Headey", Email = "	gheadey3@google.com.br" },
+                new User() { Id = Guid.Parse("{54915E7F-9CD1-40B6-AD9A-992F6A87A28A}"), UserName = "Connie123" , Password = _userService.GenerateHashPassword("Connie123!") , Displayname = "Connie A", FirstName = "Connie", LastName = "Annets", Email = "cannets0@adobe.com" },
+                new User() { Id = Guid.Parse("{853EF2AB-C86A-4ECD-A1CD-68B6A15DFE02}"), UserName = "Nevile123" , Password = _userService.GenerateHashPassword("Nevile123!") , Displayname = "Nevile B", FirstName = "Nevile", LastName = "Brimming", Email = "nbrimming2@bigcartel.com" },
+                new User() { Id = Guid.Parse("{F10C5A5B-51D2-4115-9421-6B4D6A6BA60F}"), UserName = "Bo123" , Password = _userService.GenerateHashPassword("Bo123!") , Displayname = "Bo B", FirstName = "Bo", LastName = "Brombell", Email = "bbrombell1@amazon.co.uk" },
+                new User() { Id = Guid.Parse("{67A0843F-7262-4F05-BB4B-0045F5A6BA96}"), UserName = "Jillayne123" , Password = _userService.GenerateHashPassword("Jillayne123!") , Displayname = "Jillayne P", FirstName = "Jillayne", LastName = "Presnell", Email = "jpresnell5@godaddy.com" },
+                new User() { Id = Guid.Parse("{9F60A30C-8BFA-46BB-9F3B-7D32E590FFBE}"), UserName = "Katrinka123" , Password = _userService.GenerateHashPassword("Katrinka123!") , Displayname = "Katrinka R", FirstName = "Katrinka", LastName = "Rupert", Email = "krupert9@wordpress.org" },
+                new User() { Id = Guid.Parse("{A764A5A6-C67C-452E-81BF-11984FB538D3}"), UserName = "Seymour123" , Password = _userService.GenerateHashPassword("Seymour123!") , Displayname = "Seymour M", FirstName = "Seymour", LastName = "MacMechan", Email = "smacmechan0@dailymotion.com" }
             };
         }
 
