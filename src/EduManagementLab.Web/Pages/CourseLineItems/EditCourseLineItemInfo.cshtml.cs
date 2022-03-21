@@ -16,7 +16,6 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         [Required]
         [BindProperty]
         public string Name { get; set; }
-        [Required]
         [BindProperty]
         public string Description { get; set; }
 
