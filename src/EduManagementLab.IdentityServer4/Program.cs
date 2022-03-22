@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using EduManagementLab.IdentityServer4;
-using IdentityServer4.EntityFramework.DbContexts;
 using EduManagementLab.Core.Interfaces;
 using EduManagementLab.Core.Services;
 using EduManagementLab.EfRepository;
@@ -21,7 +18,6 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<UserService>();
 
 builder.Services.AddIdentityServer()
-    //.AddAspNetIdentity<IdentityUser>()
     .AddInMemoryIdentityResources(Config.IdentityResources)
     .AddInMemoryApiResources(Config.ApiResources)
     .AddInMemoryClients(Config.Clients)

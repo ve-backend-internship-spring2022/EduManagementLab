@@ -34,22 +34,60 @@ namespace EduManagementLab.Core.Tests.Services
             _dataContext.Database.EnsureDeleted();
             _dataContext.Database.EnsureCreated();
 
+            _unitOfWork = CreateUnitOfWork();
+            _userService = CreateUserService();
+
             _dataContext.AddRange(
-                 new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), Displayname = "DisplaynameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" },
-                 new User { Id = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F"), Displayname = "DisplaynameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameOne", LastName = "LastNameTwo" }
+                 new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), UserName = "EmailOne6346", Password = _userService.GenerateHashPassword("EmailOne123"), Displayname = "DisplaynameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" },
+                 new User { Id = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F"), UserName = "EmailTwo3454", Password = _userService.GenerateHashPassword("EmailTwo123"), Displayname = "DisplaynameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameOne", LastName = "LastNameTwo" }
                 );
 
             _dataContext.SaveChanges();
 
-            _unitOfWork = CreateUnitOfWork();
-            _userService = CreateUserService();
         }
 
-        public void UntamperedHashMatchesText()
+        [Fact]
+        public void UntamperedHash_MatchesText()
         {
             //Arrange
-            var message = "John123!";
+            var password = "EmailOne123";
+            var userName = "EmailOne6346";
+            var hash = _userService.GenerateHashPassword(password);
 
+            //Act
+            bool match = _userService.ValidateCredentials(userName, password);
+
+            //Assert
+            Assert.True(match);
+        }
+
+        [Fact]
+        public void TamperedHash_DoesNotMatchText()
+        {
+            var password = "EmailTwo123";
+            var userName = "EmailTwo3454";
+            var hash = "Hejojajo";
+
+            var generatedHash = _userService.GenerateHashPassword(password);
+            var match = _userService.ValidateCredentials(userName, hash);
+            var user = _userService.GetUserUsername(userName);
+
+            Assert.False(match);
+            Assert.NotEqual(hash, generatedHash);
+            Assert.Equal(generatedHash, user.Password);
+        }
+
+        [Fact]
+        public void HashOfTwoDifferentPasswords_DoesNotMatch()
+        {
+            var userName = "John123";
+            var password1 = "John123!";
+            var password2 = "Johnny123!";
+
+            var match1 = _userService.GenerateHashPassword(password1);
+            var match2 = _userService.GenerateHashPassword(password2);
+
+            Assert.True(match1 != match2);
         }
 
         [Fact]

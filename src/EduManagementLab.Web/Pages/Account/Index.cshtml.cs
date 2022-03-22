@@ -2,6 +2,7 @@ using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using IdentityServer4.Extensions;
 
 namespace EduManagementLab.Web.Pages.Account
 {
@@ -23,14 +24,16 @@ namespace EduManagementLab.Web.Pages.Account
             public string LastName { get; set; }
             public string Email { get; set; }
         }
-        public void OnGet(Guid userId)
+        public IActionResult OnGet()
         {
+            var userId = Guid.Parse(User?.GetSubjectId());
             var targetUser = _userService.GetUser(userId);
             user.UserName = targetUser.UserName;
             user.FirstName = targetUser.FirstName;
             user.LastName = targetUser.LastName;
             user.Email = targetUser.Email;
             user.Displayname = targetUser.Displayname;
+            return Page();
         }
     }
 }

@@ -1,13 +1,12 @@
-﻿using EduManagementLab.Core.Services;
-using IdentityServer4.Extensions;
+﻿using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
-namespace EduManagementLab.EfRepository
+namespace EduManagementLab.Core.Services
 {
-    internal class CustomProfileService : IProfileService
+    public class CustomProfileService : IProfileService
     {
         protected readonly ILogger _logger;
 

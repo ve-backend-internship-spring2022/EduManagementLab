@@ -1,8 +1,7 @@
-﻿using EduManagementLab.Core.Services;
-using IdentityModel;
+﻿using IdentityModel;
 using IdentityServer4.Validation;
 
-namespace EduManagementLab.EfRepository
+namespace EduManagementLab.Core.Services
 {
     public class CustomResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator
     {
