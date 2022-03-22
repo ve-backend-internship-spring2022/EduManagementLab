@@ -32,6 +32,10 @@ namespace EduManagementLab.Web.Pages.Courses
         public class InputModel
         {
             public Guid Id { get; set; }
+            [Required]
+            public string Username { get; set; }
+            [Required]
+            public string Password { get; set; }
             [Required(ErrorMessage = "Displayname Required!")]
             public string DisplayName { get; set; }
             [Required(ErrorMessage = "Firstname Required!")]
@@ -88,7 +92,7 @@ namespace EduManagementLab.Web.Pages.Courses
             {
                 try
                 {
-                    var newUser = _userService.CreateUser(Input.DisplayName, Input.FirstName, Input.LastName, Input.Email);
+                    var newUser = _userService.CreateUser(Input.Password, Input.Username, Input.DisplayName, Input.FirstName, Input.LastName, Input.Email);
                     _courseService.CreateCourseMembership(courseId, newUser.Id, DateTime.Now);
 
                     return RedirectToPage("./Details", new { courseId = courseId });

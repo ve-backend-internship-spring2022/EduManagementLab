@@ -49,7 +49,7 @@ namespace EduManagementLab.Core.Services
             if (user != null)
             {
                 var hashPassword = GenerateHashPassword(password);
-                return user.Password.Equals(hashPassword);
+                return user.PasswordHash.Equals(hashPassword);
             }
 
             return false;
@@ -62,9 +62,10 @@ namespace EduManagementLab.Core.Services
             return users.FirstOrDefault(x => x.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
         }
 
-        public User CreateUser(string displayname, string firstName, string lastName, string email)
+        public User CreateUser(string password, string username, string displayname, string firstName, string lastName, string email)
         {
-            var user = new User() { UserName = displayname, FirstName = firstName, LastName = lastName, Email = email };
+            var passwordHash = GenerateHashPassword(password);
+            var user = new User() { UserName = username, Displayname = displayname, PasswordHash = passwordHash, FirstName = firstName, LastName = lastName, Email = email };
             var allUsers = GetUsers();
             if (allUsers.Any(x => x.Email == email))
             {

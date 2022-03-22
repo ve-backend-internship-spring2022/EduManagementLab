@@ -42,7 +42,7 @@ namespace EduManagementLab.Api.Controllers
             catch (UserNotFoundException)
             {
                 return NotFound();
-            }     
+            }
         }
 
         [HttpGet]
@@ -66,7 +66,7 @@ namespace EduManagementLab.Api.Controllers
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
         public ActionResult<UserDto> AddUser(CreateUserRequest createUserRequest)
         {
-            var user = _userService.CreateUser(createUserRequest.DisplayName, createUserRequest.FirstName, createUserRequest.LastName, createUserRequest.Email);
+            var user = _userService.CreateUser(createUserRequest.PasswordHash, createUserRequest.Username, createUserRequest.DisplayName, createUserRequest.FirstName, createUserRequest.LastName, createUserRequest.Email);
             return CreatedAtAction(nameof(GetUser), new { userId = user.Id }, _mapper.Map<UserDto>(user));
         }
 
@@ -134,6 +134,10 @@ namespace EduManagementLab.Api.Controllers
 
         public class CreateUserRequest
         {
+            [Required]
+            public string Username { get; set; }
+            [Required]
+            public string PasswordHash { get; set; }
             [Required]
             public string DisplayName { get; set; }
             [Required]
