@@ -59,20 +59,50 @@
         <tbody>
             @if (Model.CourseLineItem.Results != null)
             {
-                @foreach (var result in Model.CourseLineItem.Results)
+                @foreach (var result in Model.userScoreList)
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => result.User.FirstName)
+                            @Html.DisplayFor(modelItem => result.Firstname)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => result.User.LastName)
+                            @Html.DisplayFor(modelItem => result.Lastname)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => result.Score)
+                            <form asp-page-handler="UpdateScore" asp-route-courseId="@Model.Course.Id"
+                      asp-route-userId="@result.UserId" asp-route-lineItemId="@result.LineItemId">
+                                @if (result.Score != 0)
+                                {
+                                    <input type="number" value="@result.Score" asp-for="Score" />
+                                }
+                                else
+                                {
+                                    <input type="number" value="" asp-for="Score" />
+                                }
+
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </form>
                         </td>
                     </tr>
                 }
+
+                //@foreach (var result in Model.CourseLineItem.Results)
+                //{
+                //    <tr>
+                //        <td>
+                //            @Html.DisplayFor(modelItem => result.User.FirstName)
+                //        </td>
+                //        <td>
+                //            @Html.DisplayFor(modelItem => result.User.LastName)
+                //        </td>
+                //        <td>
+                //            <form asp-page-handler="UpdateScore" asp-route-userId="@result.UserId">
+                //                <input type="number" value="" asp-for="Score" />
+                //            </form>
+                //        </td>
+                //    </tr>
+                //}
+                //<button type="submit">Save</button>
             }
             else
             {

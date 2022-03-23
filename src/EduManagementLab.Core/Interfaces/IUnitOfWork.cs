@@ -9,6 +9,7 @@ namespace EduManagementLab.Core.Interfaces
         IUserRepository Users { get; }
         ICourseRepository Courses { get; }
         ICourseLineItemRepository CourseLineItems { get; }
+        ILineItemResultsRepository LineItemResults { get; }
         int Complete();
     }
 }
