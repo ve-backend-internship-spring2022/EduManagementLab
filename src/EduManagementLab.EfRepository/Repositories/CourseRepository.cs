@@ -26,17 +26,16 @@ namespace EduManagementLab.EfRepository.Repositories
                         Code = c.Code,
                         Name = c.Name,
                         Description = c.Description,
-                        StartDate = c.StartDate,
+                        EnrolledDate = c.EnrolledDate,
                         EndDate = c.EndDate,
                     },
                 });
         }
-
         public Course? GetCourse(Guid courseId, bool includeMembershipUsers)
         {
             if (includeMembershipUsers == true)
             {
-                return _context.Courses.Include(m => m.Memperships).ThenInclude(u => u.User).FirstOrDefault(m => m.Id == courseId);
+                return _context.Courses.Include(c => c.CourseLineItems).ThenInclude(r => r.Results).Include(m => m.Memperships).ThenInclude(u => u.User).FirstOrDefault(m => m.Id == courseId);
             }
             else
             {

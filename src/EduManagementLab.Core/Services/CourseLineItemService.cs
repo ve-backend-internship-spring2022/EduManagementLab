@@ -23,12 +23,12 @@ namespace EduManagementLab.Core.Services
         {
             return _unitOfWork.CourseLineItems.GetAll();
         }
-        public CourseLineItem GetCourseLineItem(Guid id, bool includeResults = false)
+        public CourseLineItem GetCourseLineItem(Guid lineitemId, bool includeResults = false)
         {
-            var courseLineItem = _unitOfWork.CourseLineItems.GetCourseLineItem(id, includeResults);
+            var courseLineItem = _unitOfWork.CourseLineItems.GetCourseLineItem(lineitemId, includeResults);
             if (courseLineItem == null)
             {
-                throw new CourseLineItemNotFoundException(id);
+                throw new CourseLineItemNotFoundException(lineitemId);
             }
             return courseLineItem;
         }
@@ -40,9 +40,9 @@ namespace EduManagementLab.Core.Services
             {
                 Name = name,
                 Description = description,
-                Active = active
+                Active = active,
+                DateCreated = DateTime.Now,
             };
-
             course.CourseLineItems.Add(newlineItem);
 
             _unitOfWork.CourseLineItems.Add(newlineItem);
@@ -50,7 +50,6 @@ namespace EduManagementLab.Core.Services
             return newlineItem;
 
         }
-
         public CourseLineItem UpdateCourseLineItemInfo(Guid id, string name, string description)
         {
             CourseLineItem courseLineItem = GetCourseLineItem(id);
@@ -61,69 +60,62 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return courseLineItem;
         }
-
         public CourseLineItem UpdateCourseLineItemActive(Guid id, bool active)
         {
-            CourseLineItem courseLineItem = GetCourseLineItem(id);
+            var courseLineItem = GetCourseLineItem(id);
             courseLineItem.Active = active;
 
             _unitOfWork.CourseLineItems.Update(courseLineItem);
             _unitOfWork.Complete();
             return courseLineItem;
         }
+        public CourseLineItem.Result UpdateLineItemResult(Guid lineItemId, Guid memberId, decimal score)
+        {
+            var lineItem = GetCourseLineItem(lineItemId, true);
 
+            var result = lineItem.Results.FirstOrDefault(l => l.MembershipId == memberId && l.CourseLineItemId == lineItemId);
+
+            result.Score = score;
+            result.LastUpdated = DateTime.Now;
+
+            _unitOfWork.LineItemResults.Update(result);
+            _unitOfWork.Complete();
+            return result;
+        }
         public void DeleteCourseLineItem(Guid id)
         {
             var courseLineItem = GetCourseLineItem(id);
             _unitOfWork.CourseLineItems.Remove(courseLineItem);
             _unitOfWork.Complete();
         }
-
-        public CourseLineItem.Result CreateLineItemResult(Guid lineItemId, Guid userId, decimal score)
+        public CourseLineItem.Result CreateLineItemResult(Guid lineItemId, Guid memberId, decimal score)
         {
             var courseLineItem = GetCourseLineItem(lineItemId, true);
 
             CourseLineItem.Result newResult = null;
 
-            if (!courseLineItem.Results.Any(x => x.UserId == userId))
+            if (!courseLineItem.Results.Any(x => x.MembershipId == memberId))
             {
                 newResult = new CourseLineItem.Result()
                 {
                     CourseLineItemId = lineItemId,
-                    UserId = userId,
+                    MembershipId = memberId,
                     Score = score,
+                    LastUpdated = DateTime.Now
                 };
 
                 courseLineItem.Results.Add(newResult);
             }
-            //_unitOfWork.CourseLineItems.Update(courseLineItem);
             _unitOfWork.LineItemResults.Add(newResult);
             _unitOfWork.Complete();
             return newResult;
         }
-
-        public CourseLineItem.Result UpdateLineItemResult(Guid lineItemId, Guid userId, decimal score)
-        {           
-            var lineItem = GetCourseLineItem(lineItemId, true);
-
-            var result = lineItem.Results.FirstOrDefault(l => l.UserId == userId && l.CourseLineItemId == lineItemId);
-
-            result.Score = score;
-
-            _unitOfWork.LineItemResults.Update(result);
-            _unitOfWork.Complete();
-            return result;
-        }
-
         public CourseLineItem.Result DeleteLineItemResult(Guid lineItemId, Guid userId)
         {
-            var lineItem = GetCourseLineItem(lineItemId);
+            var lineItem = GetCourseLineItem(lineItemId, true);
 
-            var resultToDelete = lineItem.Results.Find(l => l.UserId == userId && l.CourseLineItemId == lineItemId);
-
-            lineItem.Results.Remove(resultToDelete);
-
-            _unitOfWork.CourseLineItems.Update(lineItem);
+            var resultToDelete = lineItem.Results.FirstOrDefault(l => l.MembershipId == userId && l.CourseLineItemId == lineItemId);
+            _unitOfWork.LineItemResults.Remove(resultToDelete);
             _unitOfWork.Complete();
             return resultToDelete;
         }

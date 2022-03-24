@@ -34,7 +34,7 @@ namespace EduManagementLab.Web.Pages.Courses
             {
                 var course = _courseService.GetCourse(id);
                 CourseId = course.Id;
-                StartDate = course.StartDate;
+                StartDate = course.EnrolledDate;
                 EndDate = course.EndDate;
                 return Page();
             }

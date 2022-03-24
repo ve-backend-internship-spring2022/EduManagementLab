@@ -150,9 +150,9 @@ namespace EduManagementLab.Api.Controllers
             {
                 var resultList = _courseLineItemService.GetCourseLineItem(lineItemId).Results.ToList();
 
-                if (resultList.Any(u => u.UserId == userId))
+                if (resultList.Any(u => u.MembershipId == userId))
                 {
-                    var selectedMembership = resultList.FirstOrDefault(u => u.UserId == userId);
+                    var selectedMembership = resultList.FirstOrDefault(u => u.MembershipId == userId);
 
                     return Ok(selectedMembership);
                 }
@@ -173,7 +173,7 @@ namespace EduManagementLab.Api.Controllers
         public ActionResult<CourseLineItem.Result> AddLineItemResult(Guid lineItemId, Guid userId, decimal score)
         {
             var newlineItemResult = _courseLineItemService.CreateLineItemResult(lineItemId, userId, score);
-            return CreatedAtAction(nameof(GetLineItemResult), new { lineItemId = newlineItemResult.CourseLineItemId, userId = newlineItemResult.UserId }, newlineItemResult);
+            return CreatedAtAction(nameof(GetLineItemResult), new { lineItemId = newlineItemResult.CourseLineItemId, userId = newlineItemResult.MembershipId }, newlineItemResult);
         }
 
         [HttpPut]

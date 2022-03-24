@@ -10,20 +10,20 @@ namespace EduManagementLab.Core.Entities
         public string Name { get; set; }
         public string? Description { get; set; }
         public bool Active { get; set; }
+        public DateTime DateCreated { get; set; }
         public List<Result> Results { get; set; } = new List<Result>();
-
-
         public class Result
         {
             public Guid Id { get; set; }
-            public User? User { get; set; }
+            public Course.Membership? Membership { get; set; }
             [Required]
-            public Guid UserId { get; set; }
+            public Guid MembershipId { get; set; }
             public CourseLineItem? CourseLineItem { get; set; }
             [Required]
             public Guid CourseLineItemId { get; set; }
             [Column(TypeName = "decimal")]
             public decimal Score { get; set; }
+            public DateTime LastUpdated { get; set; }
         }
     }
 }

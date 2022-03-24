@@ -48,10 +48,10 @@
             @Html.DisplayFor(model => model.Course.Description)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Course.StartDate)
+            @Html.DisplayNameFor(model => model.Course.EnrolledDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Course.StartDate)
+            @Html.DisplayFor(model => model.Course.EnrolledDate)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Course.EndDate)
@@ -64,12 +64,26 @@
 <hr />
 @*using id atm as course is null*@
 <div class="row">
-    <div class="col-md-10"><h4>Students enrolled in this course</h4></div>
+    <div class="col-md-6"><h4>Students enrolled in this course</h4></div>
     @*Modal pop up*@
-    <div class="col-md-2 text-md-end">
-        <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#create">
-            Add membership
-        </button>
+    <div class="col-md-6 text-md-end">
+        <div class="justify-content-end d-flex">
+            <div style="margin:9px; float:right">
+                <form method="post" asp-page-handler="SortingList" asp-route-courseId="@Model.Course.Id">
+                    <select name="sortingId"
+                            asp-for="SelectedIteminSortingList"
+                            asp-items="Model.SortingList"
+                            onchange="this.form.submit();"
+                            class="form-select">
+                    </select>
+                </form>
+            </div>
+            <div style="float:right">
+                <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#create">
+                    Add membership
+                </button>
+            </div>
+        </div>
         <div class="modal fade" id="create" tabindex="-1" aria-labelledby="create" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -169,34 +183,79 @@
             <th>
                 @Html.DisplayNameFor(model => model.Course.Memperships[0].EnrolledDate)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Course.Memperships[0].EndDate)
+            </th>
         </tr>
     </thead>
     <tbody>
         @if (Model.Course.Memperships != null)
         {
-            @foreach (var courseMembership in Model.Course.Memperships)
+            @foreach (var courseMembership in Model.ListOfFilteredMembers)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => courseMembership.User.Displayname)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => courseMembership.User.FirstName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => courseMembership.User.LastName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => courseMembership.User.Email)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => courseMembership.EnrolledDate)
-                    </td>
-                    <td>
-                        <a asp-page="../Users/Details" asp-route-userId="@courseMembership.UserId">Details</a> |
-                        <a asp-page="./RemoveMembership" asp-route-userId="@courseMembership.UserId" asp-route-courseId="@courseMembership.CourseId">Delete</a>
-                    </td>
-                </tr>
+                @if (courseMembership.EndDate == null)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.User.Displayname)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.User.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.User.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.User.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.EnrolledDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => courseMembership.EndDate)
+                        </td>
+                        <td class="d-flex justify-content-lg-start">
+                            <a type="button" class="btn btn-primary m-2" asp-page="../Users/Details" asp-route-userId="@courseMembership.UserId">Details</a>
+                            <div id="modal-placeholder"></div>
+                            <button type="button" class="btn btn-danger m-2" data-toggle="ajax-endMember" data-url="@Url.Page("/Courses/Details", "EndMemberModalPartial", new {courseId = @Model.Course.Id, userId =@courseMembership.UserId } )">
+                                End Member
+                            </button>
+                            <button type="button" class="btn btn-danger m-2" data-toggle="ajax-deleteMember" data-url="@Url.Page("/Courses/Details", "DeleteMemberModalPartial", new {courseId = @Model.Course.Id, userId =@courseMembership.UserId } )">
+                                Delete Member
+                            </button>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td style="opacity: 0.4;">
+                            @Html.DisplayFor(modelItem => courseMembership.User.Displayname)
+                        </td>
+                        <td style="opacity: 0.4;">
+                            @Html.DisplayFor(modelItem => courseMembership.User.FirstName)
+                        </td>
+                        <td style="opacity: 0.4;">
+                            @Html.DisplayFor(modelItem => courseMembership.User.LastName)
+                        </td>
+                        <td style="opacity: 0.4;">
+                            @Html.DisplayFor(modelItem => courseMembership.User.Email)
+                        </td>
+                        <td style="opacity: 0.4;">
+                            @Html.DisplayFor(modelItem => courseMembership.EnrolledDate)
+                        </td>
+                        <td style="opacity: 0.4;">
+                            @Html.DisplayFor(modelItem => courseMembership.EndDate)
+                        </td>
+                        <td class="d-flex justify-content-lg-start">
+                            <div id="modal-placeholder"></div>
+                            <button type="button" class="btn btn-danger m-2" data-toggle="ajax-activate-Member" data-url="@Url.Page("/Courses/Details", "ReactiveMemberModalPartial", new {courseId = @Model.Course.Id, userId =@courseMembership.UserId } )">
+                                Activate Member
+                            </button>
+                        </td>
+                    </tr>
+                }
+
             }
         }
         else
@@ -230,7 +289,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="lineItemInput.Description" class="control-label"></label>
-                                <input asp-for="lineItemInput.Description" class="form-control" />                               
+                                <input asp-for="lineItemInput.Description" class="form-control" />
                             </div>
                             <div class="form-group">
                                 <label asp-for="lineItemInput.Active" class="control-label"></label>
@@ -287,7 +346,7 @@
                         @Html.DisplayFor(modelItem => lineItem.Active)
                     </td>
                     <td>
-                        <a asp-page="../CourseLineItems/Details"  asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Details</a> |
+                        <a asp-page="../CourseLineItems/Details" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Details</a> |
                         <a asp-page="../CourseLineItems/RemoveCourseLineItem" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Delete</a>
                     </td>
                 </tr>

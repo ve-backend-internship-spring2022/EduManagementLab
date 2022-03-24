@@ -11,7 +11,7 @@
                 <h4>Course Line Item details</h4>
             </div>
             <div class="col-md-5 text-md-end">
-                <form method="post" asp-route-lineItemId="@Model.CourseLineItem.Id">
+                <form method="post" asp-page-handler="UpdateActive" asp-route-lineItemId="@Model.CourseLineItem.Id" asp-route-courseId="@Model.Course.Id">
                     <div class="form-check form-switch">
                         <input class="form-check-input" style="position:absolute;" onchange="this.form.submit()" type="checkbox" role="switch" aria-checked="true" asp-for="IsChecked" name="IsChecked" value="true" id="flexSwitchCheckDefault">
                         <label class="form-check-label" for="flexSwitchCheckDefault">Active</label> |
@@ -39,6 +39,7 @@
     <div class="row justify-content-between">
         <div class="col">
             <h4>Results for this course</h4>
+            <span class="text-warning">@ViewBag.error</span>
         </div>
     </div>
     <hr />
@@ -46,10 +47,13 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].User.FirstName)
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Membership.User.FirstName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].User.LastName)
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Membership.User.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].LastUpdated)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Score)
@@ -59,50 +63,92 @@
         <tbody>
             @if (Model.CourseLineItem.Results != null)
             {
-                @foreach (var result in Model.userScoreList)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => result.Firstname)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => result.Lastname)
-                        </td>
-                        <td>
-                            <form asp-page-handler="UpdateScore" asp-route-courseId="@Model.Course.Id"
-                      asp-route-userId="@result.UserId" asp-route-lineItemId="@result.LineItemId">
-                                @if (result.Score != 0)
-                                {
-                                    <input type="number" value="@result.Score" asp-for="Score" />
-                                }
-                                else
-                                {
-                                    <input type="number" value="" asp-for="Score" />
-                                }
-
-                                <button class="btn btn-primary" type="submit">Save</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-
-                //@foreach (var result in Model.CourseLineItem.Results)
-                //{
-                //    <tr>
-                //        <td>
-                //            @Html.DisplayFor(modelItem => result.User.FirstName)
-                //        </td>
-                //        <td>
-                //            @Html.DisplayFor(modelItem => result.User.LastName)
-                //        </td>
-                //        <td>
-                //            <form asp-page-handler="UpdateScore" asp-route-userId="@result.UserId">
-                //                <input type="number" value="" asp-for="Score" />
-                //            </form>
-                //        </td>
-                //    </tr>
-                //}
-                //<button type="submit">Save</button>
+                <form method="post" id="form__submit" asp-page-handler="UpdateScore" asp-route-lineItemId="@Model.CourseLineItem.Id" asp-route-courseId="@Model.Course.Id">
+                    @{
+                        @for (int i = 0; i < Model.userScoreList.Count; i++)
+                        {
+                            @if (@Model.userScoreList[i].EndDate == null)
+                            {
+                            <tr>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Firstname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Lastname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].lastUpdated)
+                                </td>
+                                <td>
+                                    <div class="container">
+                                        <div class="row justify-content-start">
+                                                @if (@Model.userScoreList[i].Score != 0)
+                                                {
+                                                <div class="col-4">
+                                                    <input type="text" value="@Model.userScoreList[i].Score" asp-for="@Model.userScoreList[i].Score" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                                else if (@Model.userScoreList[i].Score == 0)
+                                                {
+                                                <div class="col-4">
+                                                    <input type="text" value="" asp-for="@Model.userScoreList[i].Score" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                                else
+                                                {
+                                                <div class="col-4">
+                                                    <p>@Model.userScoreList[i].Score.ToString()</p>
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                            else
+                            {
+                            <tr style="opacity: 0.4; pointer-events: none;">
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Firstname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Lastname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].lastUpdated)
+                                </td>
+                                <td>
+                                    <div class="container">
+                                        <div class="row justify-content-start">
+                                                @if (@Model.userScoreList[i].Score != 0)
+                                                {
+                                                <div class="col-4">
+                                                    <p>@Model.userScoreList[i].Score.ToString()</p>
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        }
+                    }
+                <button class="btn btn-primary justify-content-end" type="submit">Save all</button>
+                </form>
+                <div class="col" style="width:20%; float:right;">
+                    <form method="post" asp-page-handler="Filter" asp-route-lineItemId="@Model.CourseLineItem.Id" asp-route-courseId="@Model.Course.Id">
+                        <select asp-for="selectedFilter" onchange="this.form.submit()" class="dropdown form-select border-color-lightbrown" aria-label="Default select example" asp-items="@Model.filterList">
+                        </select>
+                    </form>
+                </div>
             }
             else
             {

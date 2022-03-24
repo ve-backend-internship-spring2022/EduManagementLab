@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduManagementLab.EfRepository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220322093100_ChangePasswordProperty")]
-    partial class ChangePasswordProperty
+    [Migration("20220404142138_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,12 +40,12 @@ namespace EduManagementLab.EfRepository.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("EnrolledDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -60,6 +60,9 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("EnrolledDate")
                         .HasColumnType("datetime2");
@@ -88,8 +91,10 @@ namespace EduManagementLab.EfRepository.Migrations
                     b.Property<Guid?>("CourseId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -112,17 +117,20 @@ namespace EduManagementLab.EfRepository.Migrations
                     b.Property<Guid>("CourseLineItemId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Score")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("MembershipId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Score")
+                        .HasColumnType("decimal");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseLineItemId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("MembershipId");
 
                     b.ToTable("LineItemResults");
                 });
@@ -196,15 +204,15 @@ namespace EduManagementLab.EfRepository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EduManagementLab.Core.Entities.User", "User")
+                    b.HasOne("EduManagementLab.Core.Entities.Course+Membership", "Membership")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("MembershipId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CourseLineItem");
 
-                    b.Navigation("User");
+                    b.Navigation("Membership");
                 });
 
             modelBuilder.Entity("EduManagementLab.Core.Entities.Course", b =>
