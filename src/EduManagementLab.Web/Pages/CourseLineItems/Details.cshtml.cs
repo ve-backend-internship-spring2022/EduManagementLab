@@ -27,8 +27,6 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         [BindProperty]
         public bool IsChecked { get; set; }
         [BindProperty]
-        public decimal Score { get; set; }
-        [BindProperty]
         public List<UserScoreDto> userScoreList { get; set; } = new List<UserScoreDto>();
         [BindProperty]
         public UserScoreDto userScore { get; set; }
@@ -65,80 +63,77 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                 return NotFound();
             }
         }
-
-        public IActionResult OnPostUpdateScore(Guid lineItemId, Guid userId, Guid courseId)
+        public IActionResult OnPostUpdateScore(Guid lineItemId, Guid courseId, Guid userId)
         {
-            var user = _userService.GetUser(userId);
-            CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true);
-
-            try
+            foreach (var userScore in userScoreList)
             {
-                if (user != null && CourseLineItem.Results.Any(x => x.UserId == userId && x.CourseLineItemId == lineItemId))
+                var user = _userService.GetUser(userScore.UserId);
+                CourseLineItem = _courseLineItemService.GetCourseLineItem(userScore.LineItemId, true);
+                try
                 {
-                    _courseLineItemService.UpdateLineItemResult(lineItemId, userId, Score);
+                    if (user != null && CourseLineItem.Results.Any(x => x.UserId == userScore.UserId && x.CourseLineItemId == userScore.LineItemId) && userScore.Score != null)
+                    {
+                        _courseLineItemService.UpdateLineItemResult(userScore.LineItemId, userScore.UserId, userScore.Score.Value);
+                    }
+                    else if (userScore.Score != null)
+                    {
+                        _courseLineItemService.CreateLineItemResult(userScore.LineItemId, userScore.UserId, userScore.Score.Value);
+                    }
                 }
-                else
+                catch (CourseLineItemNotFoundException)
                 {
-                    _courseLineItemService.CreateLineItemResult(lineItemId, userId, Score);
+                    return NotFound();
                 }
             }
-            catch (CourseLineItemNotFoundException)
-            {
-                return NotFound();
-            }
-
             PopulateProperties(lineItemId, courseId);
             return Page();
         }
-
         private void PopulateProperties(Guid lineItemId, Guid courseId)
         {
+            userScoreList.Clear();
             CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true);
             Course = _courseService.GetCourse(courseId, true);
             IsChecked = CourseLineItem.Active;
-            decimal score = 0;
 
-            var memberships = _courseService.GetCourse(courseId, true);
+            var course = _courseService.GetCourse(courseId, true);
             var users = _userService.GetUsers();
 
             //loopa genom alla användare
             foreach (var userNotMembership in users)
             {
                 // kolla om användare har resulatat men inte är medlem och om medlemmar redan finns
-                if (!memberships.Memperships.Any(x => x.UserId == userNotMembership.Id)
+                if (!course.Memperships.Any(x => x.UserId == userNotMembership.Id)
                     && CourseLineItem.Results.Any(u => u.UserId == userNotMembership.Id))
                 {
-                    //Hämta resultat för användare som är borttagna från Medlemskap fast har betyg kvar
-                    score = CourseLineItem.Results.FirstOrDefault(x => x.UserId == userNotMembership.Id && x.CourseLineItemId == lineItemId).Score;
-                    userScoreList.Add(new UserScoreDto
-                    {
-                        UserId = userNotMembership.Id,
-                        LineItemId = lineItemId,
-                        Firstname = userNotMembership.FirstName,
-                        Lastname = userNotMembership.LastName,
-                        Score = score,
-                    });
+                    FetchUserScoreList(userNotMembership, CourseLineItem, false);
                 }
             }
 
-            foreach (var user in memberships.Memperships)
+            foreach (var user in course.Memperships)
             {
-                //Kolla om användare har resultat
-                if (CourseLineItem.Results.Any(u => u.UserId == user.UserId))
-                {
-                    //Hämta score för användare som är Medlem
-                    score = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.UserId && x.CourseLineItemId == lineItemId).Score;
-                }
-                userScoreList.Add(new UserScoreDto
-                {
-                    UserId = user.UserId,
-                    LineItemId = lineItemId,
-                    Firstname = user.User.FirstName,
-                    Lastname = user.User.LastName,
-                    Score = score,
-                });
-                //_courseLineItemService.CreateLineItemResult(lineItemId, user.UserId, 0);
+                FetchUserScoreList(user.User, CourseLineItem, true);
             }
+        }
+        private void FetchUserScoreList(User user, CourseLineItem courseLineItem, bool isMember)
+        {
+            decimal score = 0;
+            if (CourseLineItem.Results.Any(u => u.UserId == user.Id) && isMember == true)
+            {
+                score = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id).Score;
+            }
+            else if(CourseLineItem.Results.Any(u => u.UserId == user.Id) &&isMember == false )
+            {
+                score = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id).Score;
+            }
+
+            userScoreList.Add(new UserScoreDto
+            {
+                UserId = user.Id,
+                LineItemId = courseLineItem.Id,
+                Firstname = user.FirstName,
+                Lastname = user.LastName,
+                Score = score,
+            });
         }
     }
 }

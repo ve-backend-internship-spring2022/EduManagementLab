@@ -2,3 +2,7 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+function submitForm() {
+    let form = document.getElementById("form__submit");
+    form.submit();
+}
