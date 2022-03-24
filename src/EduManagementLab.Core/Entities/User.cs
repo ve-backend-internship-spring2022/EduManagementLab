@@ -11,6 +11,8 @@ namespace EduManagementLab.Core.Entities
     {
         public Guid Id { get; set; }
         [Required]
+        public string UserName { get; set; }
+        [Required]
         public string Displayname { get; set; }
         [Required]
         public string FirstName { get; set; }
@@ -18,6 +20,7 @@ namespace EduManagementLab.Core.Entities
         public string LastName { get; set; }
         [Required]
         public string Email { get; set; }
-
+        [Required]
+        public string PasswordHash { get; set; }
     }
 }

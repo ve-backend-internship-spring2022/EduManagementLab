@@ -1,10 +1,12 @@
 using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EduManagementLab.Web.Pages.Courses
 {
+    [Authorize]
     public class IndexModel : PageModel
     {
         private readonly CourseService _courseService;

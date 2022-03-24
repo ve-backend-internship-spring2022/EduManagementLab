@@ -24,6 +24,10 @@ namespace EduManagementLab.Web.Pages.Users
 
         [BindProperty]
         [Required]
+        public string Username { get; set; }
+        [Required]
+        public string Password { get; set; }
+        [Required]
         public string Displayname { get; set; }
         [BindProperty]
         [Required]
@@ -47,7 +51,7 @@ namespace EduManagementLab.Web.Pages.Users
             {
                 try
                 {
-                    _userService.CreateUser(Displayname, FirstName, LastName, Email);
+                    _userService.CreateUser(Password, Username, Displayname, FirstName, LastName, Email);
                     return RedirectToPage("./Index");
                 }
                 catch (Exception)

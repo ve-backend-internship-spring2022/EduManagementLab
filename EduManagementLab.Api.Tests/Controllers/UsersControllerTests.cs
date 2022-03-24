@@ -40,8 +40,12 @@ namespace EduManagementLab.Api.Tests.Controllers
             _dataContext.Database.EnsureDeleted();
             _dataContext.Database.EnsureCreated();
 
-            User user1 = new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), Displayname = "DisplayNameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" };
-            User user2 = new User { Id = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F"), Displayname = "DisplayNameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameOne", LastName = "LastNameTwo" };
+            _unitOfWork = CreateUnitOfWork();
+            _userService = CreateUserService();
+            _usersController = CreateUsersController();
+
+            User user1 = new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), UserName = "DisplayNameOne13531", PasswordHash = _userService.GenerateHashPassword("Test1221"), Displayname = "DisplayNameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" };
+            User user2 = new User { Id = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F"), UserName = "DisplayNameTwo2353", PasswordHash = _userService.GenerateHashPassword("Test7543"), Displayname = "DisplayNameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameOne", LastName = "LastNameTwo" };
 
             _dataContext.AddRange(
                 user1, user2
@@ -50,10 +54,6 @@ namespace EduManagementLab.Api.Tests.Controllers
             _dataContext.SaveChanges();
 
             var mapper = _config.CreateMapper();
-
-            _unitOfWork = CreateUnitOfWork();
-            _userService = CreateUserService();
-            _usersController = CreateUsersController();
         }
 
         [Fact]
@@ -106,6 +106,8 @@ namespace EduManagementLab.Api.Tests.Controllers
         {
             var testCreateUserRequest = new UsersController.CreateUserRequest()
             {
+                Username = "DisplayNameTest",
+                PasswordHash = _userService.GenerateHashPassword("Test5323"),
                 DisplayName = "DisplayNameTest",
                 FirstName = "FirstNameTest",
                 LastName = "LastNameTest",
@@ -122,6 +124,8 @@ namespace EduManagementLab.Api.Tests.Controllers
         {
             var testCreateUserRequest = new UsersController.CreateUserRequest()
             {
+                Username = "DisplayNameTest",
+                PasswordHash = _userService.GenerateHashPassword("Test5323"),
                 DisplayName = "DisplayNameTest",
                 FirstName = "FirstNameTest",
                 LastName = "LastNameTest",

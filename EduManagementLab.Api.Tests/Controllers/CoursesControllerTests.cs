@@ -42,16 +42,21 @@ namespace EduManagementLab.Api.Tests.Controllers
             _dataContext.Database.EnsureDeleted();
             _dataContext.Database.EnsureCreated();
 
+            _unitOfWork = CreateUnitOfWork();
+            _courseService = CreateCourseService();
+            _userService = CreateUserService();
+            _coursesController = CreateCoursesController();
+
             Course course1 = new Course { Id = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), Code = "AAA", Name = "CourseNameOne", Description = "CourseDescriptionOne", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
             Course course2 = new Course { Id = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), Code = "BBB", Name = "CourseNameTwo", Description = "CourseDescriptionTwo", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
 
-            User user1 = new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), Displayname = "DisplaynameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne"  };
-            User user2 = new User { Id = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F"), Displayname = "DisplaynameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameOne", LastName = "LastNameTwo" };
+            User user1 = new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), UserName = "DisplaynameOne5233", PasswordHash = _userService.GenerateHashPassword("Test3513"), Displayname = "DisplaynameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" };
+            User user2 = new User { Id = Guid.Parse("AAE99651-8FCA-4ABE-ACDB-C4EE0735DE5F"), UserName = "DisplaynameTwo4364", PasswordHash = _userService.GenerateHashPassword("Test3513"), Displayname = "DisplaynameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameOne", LastName = "LastNameTwo" };
 
             Course.Membership membership1 = new Course.Membership { Id = Guid.Parse("9C1BA350-62EC-4A90-BD85-647CD15159ED"), Course = course1, CourseId = course1.Id, User = user1, UserId = user1.Id, EnrolledDate = DateTime.MinValue };
             Course.Membership membership2 = new Course.Membership { Id = Guid.Parse("5901AAC8-445A-4A7B-984A-F9C0916CA2A6"), Course = course2, CourseId = course2.Id, User = user2, UserId = user2.Id, EnrolledDate = DateTime.MinValue };
 
-            _dataContext.AddRange(          
+            _dataContext.AddRange(
                 course1, course2,
                 user1, user2,
                 membership1, membership2);
@@ -59,11 +64,6 @@ namespace EduManagementLab.Api.Tests.Controllers
             _dataContext.SaveChanges();
 
             var mapper = _config.CreateMapper();
-
-            _unitOfWork = CreateUnitOfWork();
-            _courseService = CreateCourseService();
-            _userService = CreateUserService();
-            _coursesController = CreateCoursesController();
         }
 
         [Fact]
@@ -325,7 +325,7 @@ namespace EduManagementLab.Api.Tests.Controllers
             var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
             var testEnrollmentDate = DateTime.MinValue;
 
-            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate};
+            var membershipDto = new MembershipDto() { CourseId = testCourseId, UserId = testUserId, EnrolledDate = testEnrollmentDate };
 
             var response = _coursesController.AddCourseMembership(membershipDto);
 

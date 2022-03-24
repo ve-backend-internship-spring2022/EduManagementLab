@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EduManagementLab.Api.Tests"
 		{ED73EE37-4205-4E8E-8123-00BD2A7DB00C} = {ED73EE37-4205-4E8E-8123-00BD2A7DB00C}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EduManagementLab.IdentityServer4", "src\EduManagementLab.IdentityServer4\EduManagementLab.IdentityServer4.csproj", "{C6210FDD-C6A9-446C-9C16-0155A2F4B0C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{ABD583EB-5EAE-4737-B50F-C53DE5A6A713}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABD583EB-5EAE-4737-B50F-C53DE5A6A713}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABD583EB-5EAE-4737-B50F-C53DE5A6A713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6210FDD-C6A9-446C-9C16-0155A2F4B0C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6210FDD-C6A9-446C-9C16-0155A2F4B0C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6210FDD-C6A9-446C-9C16-0155A2F4B0C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6210FDD-C6A9-446C-9C16-0155A2F4B0C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +81,7 @@ Global
 		{D351ED4B-4F92-4BE9-8265-C9266601CCB8} = {C34F36FF-44C1-424D-ACAB-1057E51C8653}
 		{29A289C1-AF2F-4822-BDFA-74D26310D063} = {C34F36FF-44C1-424D-ACAB-1057E51C8653}
 		{ABD583EB-5EAE-4737-B50F-C53DE5A6A713} = {C34F36FF-44C1-424D-ACAB-1057E51C8653}
+		{C6210FDD-C6A9-446C-9C16-0155A2F4B0C3} = {924F318C-C959-4AA0-ABBD-8785FE23115B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A9C36C05-AA9A-444F-93F1-3D37AF4978AA}

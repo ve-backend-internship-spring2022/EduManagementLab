@@ -4,6 +4,7 @@ using EduManagementLab.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,9 +25,47 @@ namespace EduManagementLab.Core.Services
             return _unitOfWork.Users.GetAll();
         }
 
-        public User CreateUser(string displayname, string firstName, string lastName, string email)
+        //public static string CreateSalt(int size)
+        //{
+        //    //Generate a cryptographic random number
+        //    RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+        //    byte[] vs = new byte[size];
+        //    rng.GetBytes(vs);
+        //    return Convert.ToBase64String(vs);
+        //}
+
+        public string GenerateHashPassword(string password)
         {
-            var user = new User() { Displayname = displayname, FirstName = firstName, LastName = lastName, Email = email };
+            SHA256 sha = SHA256.Create();
+            byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(password);
+            byte[] hash = sha.ComputeHash(inputBytes);
+            return Convert.ToBase64String(hash);
+        }
+
+        //TODO: Validate if username and password are right
+        public bool ValidateCredentials(string userName, string password)
+        {
+            var user = GetUserUsername(userName);
+            if (user != null)
+            {
+                var hashPassword = GenerateHashPassword(password);
+                return user.PasswordHash.Equals(hashPassword);
+            }
+
+            return false;
+        }
+
+        //TODO: find username and return Username object 
+        public User GetUserUsername(string userName)
+        {
+            var users = GetUsers();
+            return users.FirstOrDefault(x => x.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public User CreateUser(string password, string username, string displayname, string firstName, string lastName, string email)
+        {
+            var passwordHash = GenerateHashPassword(password);
+            var user = new User() { UserName = username, Displayname = displayname, PasswordHash = passwordHash, FirstName = firstName, LastName = lastName, Email = email };
             var allUsers = GetUsers();
             if (allUsers.Any(x => x.Email == email))
             {
