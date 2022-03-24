@@ -20,9 +20,11 @@ namespace EduManagementLab.Core.Tests.Services
         private readonly DataContext _dataContext;
         private readonly UnitOfWork _unitOfWork;
         private readonly CourseService _courseService;
+        private readonly UserService _userService;
         DataContext CreateContext() => new DataContext(_contextOptions);
         UnitOfWork CreateUnitOfWork() => new UnitOfWork(_dataContext);
         CourseService CreateCourseService() => new CourseService(_unitOfWork);
+        UserService CreateUserService() => new UserService(_unitOfWork);
         public CourseServiceTests()
         {
 
@@ -31,11 +33,15 @@ namespace EduManagementLab.Core.Tests.Services
             _dataContext.Database.EnsureDeleted();
             _dataContext.Database.EnsureCreated();
 
+            _userService = CreateUserService();
+            _unitOfWork = CreateUnitOfWork();
+            _courseService = CreateCourseService();
+
             Course course1 = new Course { Id = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), Code = "AAA", Name = "CourseNameOne", Description = "CourseDescriptionOne", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
             Course course2 = new Course { Id = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), Code = "BBB", Name = "CourseNameTwo", Description = "CourseDescriptionTwo", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
 
-            User user1 = new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), Displayname = "DisplayNameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" };
-            User user2 = new User { Id = Guid.Parse("AC866BEC-3107-4160-9099-2B1328F386C2"), Displayname = "DisplayNameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameTwo", LastName = "LastNameTwo" };
+            User user1 = new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), UserName = "DisplayNameOne1242", PasswordHash = _userService.GenerateHashPassword("Test1245"), Displayname = "DisplayNameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" };
+            User user2 = new User { Id = Guid.Parse("AC866BEC-3107-4160-9099-2B1328F386C2"), UserName = "DisplayNameTwo6542", PasswordHash = _userService.GenerateHashPassword("Test5755"), Displayname = "DisplayNameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameTwo", LastName = "LastNameTwo" };
 
             Course.Membership membership1 = new Course.Membership { Id = Guid.Parse("9C1BA350-62EC-4A90-BD85-647CD15159ED"), Course = course2, CourseId = course2.Id, User = user1, UserId = user1.Id, EnrolledDate = DateTime.MinValue };
 
@@ -45,9 +51,6 @@ namespace EduManagementLab.Core.Tests.Services
                 membership1);
 
             _dataContext.SaveChanges();
-
-            _unitOfWork = CreateUnitOfWork();
-            _courseService = CreateCourseService();
         }
 
         [Fact]
