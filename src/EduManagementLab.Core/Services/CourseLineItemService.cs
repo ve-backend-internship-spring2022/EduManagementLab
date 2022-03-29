@@ -40,9 +40,9 @@ namespace EduManagementLab.Core.Services
             {
                 Name = name,
                 Description = description,
-                Active = active
+                Active = active,
+                DateCreated = DateTime.Now,
             };
-
             course.CourseLineItems.Add(newlineItem);
 
             _unitOfWork.CourseLineItems.Add(newlineItem);
@@ -106,7 +106,6 @@ namespace EduManagementLab.Core.Services
 
                 courseLineItem.Results.Add(newResult);
             }
-            //_unitOfWork.CourseLineItems.Update(courseLineItem);
             _unitOfWork.LineItemResults.Add(newResult);
             _unitOfWork.Complete();
             return newResult;
@@ -116,10 +115,6 @@ namespace EduManagementLab.Core.Services
             var lineItem = GetCourseLineItem(lineItemId, true);
 
             var resultToDelete = lineItem.Results.FirstOrDefault(l => l.UserId == userId && l.CourseLineItemId == lineItemId);
-            if (resultToDelete == null)
-            {
-
-            }
 
             _unitOfWork.LineItemResults.Remove(resultToDelete);
             _unitOfWork.Complete();

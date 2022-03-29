@@ -6,3 +6,15 @@ function submitForm() {
     let form = document.getElementById("form__submit");
     form.submit();
 }
+
+$(function () {
+    var placeholderElement = $('#RemoveModal-placeholder');
+
+    $('button[data-toggle="ajax-RemoveModal"]').click(function (event) {
+        var url = $(this).data('url');
+        $.get(url).done(function (data) {
+            placeholderElement.html(data);
+            placeholderElement.find('.removemodal').modal('show');
+        });
+    });
+});

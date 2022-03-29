@@ -4,6 +4,7 @@ using EduManagementLab.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -36,6 +37,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             public Guid LineItemId { get; set; }
             public string Firstname { get; set; }
             public string Lastname { get; set; }
+            public string? lastUpdated { get; set; }
             public decimal? Score { get; set; }
         }
         public async Task<IActionResult> OnGetAsync(Guid lineItemId, Guid courseId)
@@ -63,7 +65,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                 return NotFound();
             }
         }
-        public IActionResult OnPostUpdateScore(Guid lineItemId, Guid courseId, Guid userId)
+        public IActionResult OnPostUpdateScore(Guid lineItemId, Guid courseId)
         {
             foreach (var userScore in userScoreList)
             {
@@ -73,7 +75,11 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                 {
                     if (user != null && CourseLineItem.Results.Any(x => x.UserId == userScore.UserId && x.CourseLineItemId == userScore.LineItemId) && userScore.Score != null)
                     {
-                        _courseLineItemService.UpdateLineItemResult(userScore.LineItemId, userScore.UserId, userScore.Score.Value);
+                        var result = CourseLineItem.Results.FirstOrDefault(u => u.UserId == userScore.UserId && u.CourseLineItemId == userScore.LineItemId);
+                        if (userScore.Score != result.Score && userScore.Score != null)
+                        {
+                            _courseLineItemService.UpdateLineItemResult(userScore.LineItemId, userScore.UserId, userScore.Score.Value);
+                        }
                     }
                     else if (userScore.Score != null)
                     {
@@ -85,6 +91,23 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                     return NotFound();
                 }
             }
+            PopulateProperties(lineItemId, courseId);
+            return Page();
+        }
+        public IActionResult OnPostRemoveScore(Guid lineItemId, Guid courseId, Guid userId, decimal? score)
+        {
+            if (score != 0)
+            {
+                try
+                {
+                    _courseLineItemService.DeleteLineItemResult(lineItemId, userId);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+
             PopulateProperties(lineItemId, courseId);
             return Page();
         }
@@ -115,13 +138,19 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         private void FetchUserScoreList(User user, CourseLineItem courseLineItem, bool isMember)
         {
             decimal score = 0;
+            string? lastupdated = "";
             if (CourseLineItem.Results.Any(u => u.UserId == user.Id) && isMember == true)
             {
-                score = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id).Score;
+                var result = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id);
+                lastupdated = result.LastUpdated.ToString("f");
+                score = result.Score;
             }
             else if (CourseLineItem.Results.Any(u => u.UserId == user.Id) && isMember == false)
             {
-                score = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id).Score;
+                var result = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id);
+                lastupdated = result.LastUpdated.ToString("f");
+                score = result.Score;
+
             }
 
             userScoreList.Add(new UserScoreDto
@@ -131,7 +160,21 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                 Firstname = user.FirstName,
                 Lastname = user.LastName,
                 Score = score,
+                lastUpdated = lastupdated
             });
+        }
+        public PartialViewResult OnGetRemoveScoreModalPartial(Guid lineItemId, Guid courseId, Guid userId, decimal? score)
+        {
+            ViewData["lineItemId"] = lineItemId;
+            ViewData["courseId"] = courseId;
+            ViewData["userId"] = userId;
+            ViewData["score"] = score;
+
+            return new PartialViewResult
+            {
+                ViewName = "_RemoveScoreModalPartial",
+                ViewData = new ViewDataDictionary(ViewData)
+            };
         }
     }
 }

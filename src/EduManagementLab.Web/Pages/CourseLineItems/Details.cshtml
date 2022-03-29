@@ -52,6 +52,9 @@
                     @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].User.LastName)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].LastUpdated)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Score)
                 </th>
             </tr>
@@ -71,34 +74,50 @@
                                     @Html.DisplayFor(modelItem => @Model.userScoreList[i].Lastname)
                             </td>
                             <td>
-                                    @if (@Model.userScoreList[i].Score != 0)
-                                    {
-                                    <input type="text" value="@Model.userScoreList[i].Score" asp-for="@Model.userScoreList[i].Score" />
-                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
-                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
-
-                                    }
-                                    else
-                                    {
-                                    <input type="text" value="" asp-for="@Model.userScoreList[i].Score" />
-                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
-                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
-                                    }
-                                    @{
-                                        var parms = new Dictionary<string, string>
-                                        {
-                                            { "courseId", @Model.Course.Id.ToString() },
-                                            { "userId", @Model.userScoreList[i].UserId.ToString() },
-                                            { "lineItemId",@Model.userScoreList[i].LineItemId.ToString() }
-                                        };
-                                      }
-                                <a asp-page="./RemoveCourseLineItemResult" asp-all-route-data="parms">Clear score</a>
+                                    @Html.DisplayFor(modelItem => @Model.userScoreList[i].lastUpdated)
+                            </td>
+                            <td>
+                                <div class="container">
+                                    <div class="row justify-content-start">
+                                            @if (@Model.userScoreList[i].Score != 0)
+                                            {
+                                            <div class="col-4">
+                                                <input type="text" value="@Model.userScoreList[i].Score" asp-for="@Model.userScoreList[i].Score" />
+                                                <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                            </div>
+                                            }
+                                            else
+                                            {
+                                            <div class="col-4">
+                                                <input type="text" value="" asp-for="@Model.userScoreList[i].Score" />
+                                                <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                            </div>
+                                            }
+                                        <div class="col-4">
+                                            <div id="RemoveModal-placeholder"></div>
+                                            <div>
+                                                    @if (@Model.userScoreList[i].Score != 0)
+                                                    {
+                                                    <button type="button" class="btn btn-danger" data-toggle="ajax-RemoveModal" data-url="@Url.Page("/CourseLineItems/Details", "RemoveScoreModalPartial", new {lineItemId = @Model.userScoreList[i].LineItemId,courseId = @Model.Course.Id, userId = @Model.userScoreList[i].UserId, score = @Model.userScoreList[i].Score} )">
+                                                        Remove score
+                                                    </button>
+                                                    }
+                                                    else
+                                                    {
+                                                    <button type="button" class="btn btn-danger" data-toggle="ajax-RemoveModal" data-url="@Url.Page("/CourseLineItems/Details", "RemoveScoreModalPartial", new {lineItemId = @Model.userScoreList[i].LineItemId,courseId = @Model.Course.Id, userId = @Model.userScoreList[i].UserId, score = @Model.userScoreList[i].Score} )" disabled>
+                                                        Remove score
+                                                    </button>
+                                                    }
+                                            </div>
+                                        </div>
+                                    </div>
                             </td>
                         </tr>
                         }
                     }
-
-                <button class="btn btn-primary" onclick="submitForm()">Save</button>
+                <button class="btn btn-primary justify-content-end" type="submit">Save all</button>
                 </form>
             }
             else

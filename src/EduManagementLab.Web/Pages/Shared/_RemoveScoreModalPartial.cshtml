@@ -1,0 +1,21 @@
+﻿<div class="col-md-2 text-md-end">
+    <div class="modal fade removemodal" id="remove-score" tabindex="-1" aria-labelledby="remove-score" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="remove-score">Remove result</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-md-start">
+                    <p class="text-center">Are you sure you want to delete this student result?</p>
+                    <form method="post" asp-route-score="@ViewBag.score" asp-route-lineItemId="@ViewBag.lineItemId" asp-route-courseId="@ViewBag.courseId" asp-route-userId="@ViewBag.userId" asp-page-handler="RemoveScore" class="text-center">
+                        <div class="form-group text-center">
+                            <input id="submitValue" class="btn btn-primary" type="submit" value="Delete result" />
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -101,22 +101,16 @@ namespace EduManagementLab.Core.Services
 
             var membershipToDelete = course.Memperships.Find(c => c.UserId == userId && c.CourseId == courseId);
 
-            if (deleteResult == true && course.CourseLineItems.Select(r => r.Results).Any() ||
-                deleteResult == true && !course.CourseLineItems.Select(r => r.Results).Any())
+            if (deleteResult == true && course.CourseLineItems.Select(r => r.Results).Any())
             {
-                // leta resultat för den användare 
+                // Get courselineItem results for this course
                 var results = course.CourseLineItems.Select(r => r.Results);
-
-                if (results != null)
+                foreach (var item in results.Where(u => u.Any(u => u.UserId == userId)))
                 {
-                    foreach (var item in results.Where(u => u.Any(u => u.UserId == userId)))
-                    {
-                        _unitOfWork.LineItemResults.Remove(item.FirstOrDefault(u => u.UserId == userId));
-                    }
+                    _unitOfWork.LineItemResults.Remove(item.FirstOrDefault(u => u.UserId == userId));
                 }
             }
             course.Memperships.Remove(membershipToDelete);
-
             _unitOfWork.Complete();
             return membershipToDelete;
         }
