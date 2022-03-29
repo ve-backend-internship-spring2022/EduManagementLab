@@ -109,6 +109,9 @@ namespace EduManagementLab.EfRepository.Migrations
                     b.Property<Guid>("CourseLineItemId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("Score")
                         .HasColumnType("decimal");
 

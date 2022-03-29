@@ -96,16 +96,14 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             IsChecked = CourseLineItem.Active;
 
             var course = _courseService.GetCourse(courseId, true);
-            var users = _userService.GetUsers();
+            var results = _courseLineItemService.GetCourseLineItem(lineItemId, true).Results.Where(c => c.CourseLineItemId == lineItemId);
 
-            //loopa genom alla användare
-            foreach (var userNotMembership in users)
+            //loopa genom alla resultat
+            foreach (var result in results)
             {
-                // kolla om användare har resulatat men inte är medlem och om medlemmar redan finns
-                if (!course.Memperships.Any(x => x.UserId == userNotMembership.Id)
-                    && CourseLineItem.Results.Any(u => u.UserId == userNotMembership.Id))
+                if (!course.Memperships.Any(x => x.UserId == result.UserId))
                 {
-                    FetchUserScoreList(userNotMembership, CourseLineItem, false);
+                    FetchUserScoreList(result.User, CourseLineItem, false);
                 }
             }
 
@@ -121,7 +119,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             {
                 score = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id).Score;
             }
-            else if(CourseLineItem.Results.Any(u => u.UserId == user.Id) &&isMember == false )
+            else if (CourseLineItem.Results.Any(u => u.UserId == user.Id) && isMember == false)
             {
                 score = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id).Score;
             }

@@ -24,6 +24,7 @@ namespace EduManagementLab.Core.Entities
             public Guid CourseLineItemId { get; set; }
             [Column(TypeName = "decimal")]
             public decimal Score { get; set; }
+            public DateTime LastUpdated { get; set; }
         }
     }
 }

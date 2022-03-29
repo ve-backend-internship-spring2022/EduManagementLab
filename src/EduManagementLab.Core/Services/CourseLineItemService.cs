@@ -23,12 +23,12 @@ namespace EduManagementLab.Core.Services
         {
             return _unitOfWork.CourseLineItems.GetAll();
         }
-        public CourseLineItem GetCourseLineItem(Guid id, bool includeResults = false)
+        public CourseLineItem GetCourseLineItem(Guid lineitemId, bool includeResults = false)
         {
-            var courseLineItem = _unitOfWork.CourseLineItems.GetCourseLineItem(id, includeResults);
+            var courseLineItem = _unitOfWork.CourseLineItems.GetCourseLineItem(lineitemId, includeResults);
             if (courseLineItem == null)
             {
-                throw new CourseLineItemNotFoundException(id);
+                throw new CourseLineItemNotFoundException(lineitemId);
             }
             return courseLineItem;
         }
@@ -76,6 +76,7 @@ namespace EduManagementLab.Core.Services
             var result = lineItem.Results.FirstOrDefault(l => l.UserId == userId && l.CourseLineItemId == lineItemId);
 
             result.Score = score;
+            result.LastUpdated = DateTime.Now;
 
             _unitOfWork.LineItemResults.Update(result);
             _unitOfWork.Complete();
@@ -100,6 +101,7 @@ namespace EduManagementLab.Core.Services
                     CourseLineItemId = lineItemId,
                     UserId = userId,
                     Score = score,
+                    LastUpdated = DateTime.Now
                 };
 
                 courseLineItem.Results.Add(newResult);
@@ -116,7 +118,7 @@ namespace EduManagementLab.Core.Services
             var resultToDelete = lineItem.Results.FirstOrDefault(l => l.UserId == userId && l.CourseLineItemId == lineItemId);
             if (resultToDelete == null)
             {
-                
+
             }
 
             _unitOfWork.LineItemResults.Remove(resultToDelete);

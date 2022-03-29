@@ -23,7 +23,6 @@ namespace EduManagementLab.Core.Services
         {
             return _unitOfWork.Courses.GetAll();
         }
-
         public Course CreateCourse(string code, string name, string description, DateTime startDate, DateTime endDate)
         {
             var course = new Course() { Code = code, Name = name, Description = description, StartDate = startDate, EndDate = endDate };
@@ -36,7 +35,6 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return course;
         }
-
         public Course GetCourse(Guid id, bool includeMembershipUsers = false)
         {
             var course = _unitOfWork.Courses.GetCourse(id, includeMembershipUsers);
@@ -50,7 +48,6 @@ namespace EduManagementLab.Core.Services
         {
             return _unitOfWork.Courses.GetUserCourses(userId);
         }
-
         public Course UpdateCourseInfo(Guid id, string code, string name, string description)
         {
             var course = GetCourse(id);
@@ -61,7 +58,6 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return course;
         }
-
         public Course UpdateCoursePeriod(Guid id, DateTime startDate, DateTime endDate)
         {
             var course = GetCourse(id);
@@ -71,14 +67,12 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return course;
         }
-
         public void DeleteCourse(Guid id)
         {
             var course = GetCourse(id);
             _unitOfWork.Courses.Remove(course);
             _unitOfWork.Complete();
         }
-
         public Course.Membership CreateCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             var course = GetCourse(courseId, true);
@@ -99,8 +93,7 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return newMembership;
         }
-
-        public Course.Membership RemoveCourseMembership(Guid courseId, Guid userId)
+        public Course.Membership RemoveCourseMembership(Guid courseId, Guid userId, bool deleteResult = false)
         {
             var course = GetCourse(courseId, true);
 
@@ -108,13 +101,25 @@ namespace EduManagementLab.Core.Services
 
             var membershipToDelete = course.Memperships.Find(c => c.UserId == userId && c.CourseId == courseId);
 
+            if (deleteResult == true && course.CourseLineItems.Select(r => r.Results).Any() ||
+                deleteResult == true && !course.CourseLineItems.Select(r => r.Results).Any())
+            {
+                // leta resultat för den användare 
+                var results = course.CourseLineItems.Select(r => r.Results);
+
+                if (results != null)
+                {
+                    foreach (var item in results.Where(u => u.Any(u => u.UserId == userId)))
+                    {
+                        _unitOfWork.LineItemResults.Remove(item.FirstOrDefault(u => u.UserId == userId));
+                    }
+                }
+            }
             course.Memperships.Remove(membershipToDelete);
 
-            _unitOfWork.Courses.Update(course);
             _unitOfWork.Complete();
             return membershipToDelete;
         }
-
         public Course.Membership UpdateMembershipEnrolledDate(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             var course = GetCourse(courseId, true);

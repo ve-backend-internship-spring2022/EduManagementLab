@@ -95,7 +95,8 @@ namespace EduManagementLab.EfRepository.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CourseLineItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Score = table.Column<decimal>(type: "decimal", nullable: false)
+                    Score = table.Column<decimal>(type: "decimal", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
