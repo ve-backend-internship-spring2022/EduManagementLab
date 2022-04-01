@@ -26,7 +26,7 @@ namespace EduManagementLab.EfRepository.Repositories
                         Code = c.Code,
                         Name = c.Name,
                         Description = c.Description,
-                        StartDate = c.StartDate,
+                        EnrolledDate = c.EnrolledDate,
                         EndDate = c.EndDate,
                     },
                 });

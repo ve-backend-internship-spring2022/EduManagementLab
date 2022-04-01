@@ -22,6 +22,8 @@ namespace EduManagementLab.Web.Pages.Courses
         [BindProperty]
         public UserDto User { get; set; } = new UserDto();
         [BindProperty]
+        public int SelectedReason { get; set; }
+        [BindProperty]
         public bool DeleteResult { get; set; }
         public class UserDto
         {
@@ -51,13 +53,20 @@ namespace EduManagementLab.Web.Pages.Courses
         {
             try
             {
-                if (DeleteResult == true)
+                switch (SelectedReason)
                 {
-                    _courseService.RemoveCourseMembership(courseId, userId, true);
-                }
-                else
-                {
-                    _courseService.RemoveCourseMembership(courseId, userId);
+                    case 1:
+                        _courseService.RemoveCourseMembership(courseId, userId, true);
+                        break;
+                    case 2:
+                        _courseService.RemoveCourseMembership(courseId, userId);
+                        break;
+                    case 3:
+                        _courseService.RemoveCourseMembership(courseId, userId);
+                        break;
+                    case 4:
+                        _courseService.RemoveCourseMembership(courseId, userId, true);
+                        break;
                 }
 
                 return RedirectToPage("./Details", new { courseId = courseId });

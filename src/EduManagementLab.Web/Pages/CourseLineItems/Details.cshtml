@@ -11,7 +11,7 @@
                 <h4>Course Line Item details</h4>
             </div>
             <div class="col-md-5 text-md-end">
-                <form method="post" asp-route-lineItemId="@Model.CourseLineItem.Id">
+                <form method="post" asp-page-handler="UpdateActive" asp-route-lineItemId="@Model.CourseLineItem.Id" asp-route-courseId="@Model.Course.Id">
                     <div class="form-check form-switch">
                         <input class="form-check-input" style="position:absolute;" onchange="this.form.submit()" type="checkbox" role="switch" aria-checked="true" asp-for="IsChecked" name="IsChecked" value="true" id="flexSwitchCheckDefault">
                         <label class="form-check-label" for="flexSwitchCheckDefault">Active</label> |
@@ -39,6 +39,7 @@
     <div class="row justify-content-between">
         <div class="col">
             <h4>Results for this course</h4>
+            <span class="text-warning">@ViewBag.error</span>
         </div>
     </div>
     <hr />
@@ -110,9 +111,11 @@
                                                         Remove score
                                                     </button>
                                                     }
+
                                             </div>
                                         </div>
                                     </div>
+
                             </td>
                         </tr>
                         }

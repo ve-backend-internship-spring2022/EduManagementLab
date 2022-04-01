@@ -62,7 +62,7 @@ namespace EduManagementLab.Core.Services
         }
         public CourseLineItem UpdateCourseLineItemActive(Guid id, bool active)
         {
-            CourseLineItem courseLineItem = GetCourseLineItem(id);
+            var courseLineItem = GetCourseLineItem(id);
             courseLineItem.Active = active;
 
             _unitOfWork.CourseLineItems.Update(courseLineItem);
@@ -115,7 +115,6 @@ namespace EduManagementLab.Core.Services
             var lineItem = GetCourseLineItem(lineItemId, true);
 
             var resultToDelete = lineItem.Results.FirstOrDefault(l => l.UserId == userId && l.CourseLineItemId == lineItemId);
-
             _unitOfWork.LineItemResults.Remove(resultToDelete);
             _unitOfWork.Complete();
             return resultToDelete;

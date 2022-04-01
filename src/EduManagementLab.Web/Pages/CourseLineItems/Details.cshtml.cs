@@ -40,6 +40,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             public string? lastUpdated { get; set; }
             public decimal? Score { get; set; }
         }
+
         public async Task<IActionResult> OnGetAsync(Guid lineItemId, Guid courseId)
         {
             try
@@ -52,7 +53,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                 return NotFound();
             }
         }
-        public IActionResult OnPost(Guid lineItemId, Guid courseId)
+        public IActionResult OnPostUpdateActive(Guid lineItemId, Guid courseId)
         {
             try
             {
@@ -94,9 +95,10 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             PopulateProperties(lineItemId, courseId);
             return Page();
         }
-        public IActionResult OnPostRemoveScore(Guid lineItemId, Guid courseId, Guid userId, decimal? score)
+        public IActionResult OnPostRemoveScore(Guid lineItemId, Guid courseId, Guid userId, decimal? score, int SelectedReason)
         {
-            if (score != 0)
+            var course = _courseService.GetCourse(courseId, true);
+            if (score != 0 && SelectedReason == 2)
             {
                 try
                 {
@@ -105,6 +107,25 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                 catch (Exception ex)
                 {
                     throw new Exception(ex.Message);
+                }
+            }
+            else if (score != 0 && SelectedReason == 1)
+            {
+                if (!course.Memperships.Any(u => u.UserId == userId))
+                {
+                    try
+                    {
+                        _courseLineItemService.DeleteLineItemResult(lineItemId, userId);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                }
+                else
+                {
+                    var user = _userService.GetUser(userId);
+                    ViewData["error"] = $"OBS! could not remove result. {user.FirstName} {user.LastName} is enrolled in this course";
                 }
             }
 
@@ -119,38 +140,31 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             IsChecked = CourseLineItem.Active;
 
             var course = _courseService.GetCourse(courseId, true);
-            var results = _courseLineItemService.GetCourseLineItem(lineItemId, true).Results.Where(c => c.CourseLineItemId == lineItemId);
+            var CourseLineItemResults = _courseLineItemService.GetCourseLineItem(lineItemId, true).Results.Where(c => c.CourseLineItemId == lineItemId);
 
             //loopa genom alla resultat
-            foreach (var result in results)
+            foreach (var result in CourseLineItemResults)
             {
                 if (!course.Memperships.Any(x => x.UserId == result.UserId))
                 {
-                    FetchUserScoreList(result.User, CourseLineItem, false);
+                    FetchUserScoreList(result.User, CourseLineItem);
                 }
             }
 
             foreach (var user in course.Memperships)
             {
-                FetchUserScoreList(user.User, CourseLineItem, true);
+                FetchUserScoreList(user.User, CourseLineItem);
             }
         }
-        private void FetchUserScoreList(User user, CourseLineItem courseLineItem, bool isMember)
+        private void FetchUserScoreList(User user, CourseLineItem courseLineItem)
         {
             decimal score = 0;
             string? lastupdated = "";
-            if (CourseLineItem.Results.Any(u => u.UserId == user.Id) && isMember == true)
+            if (CourseLineItem.Results.Any(u => u.UserId == user.Id))
             {
                 var result = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id);
                 lastupdated = result.LastUpdated.ToString("f");
                 score = result.Score;
-            }
-            else if (CourseLineItem.Results.Any(u => u.UserId == user.Id) && isMember == false)
-            {
-                var result = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id);
-                lastupdated = result.LastUpdated.ToString("f");
-                score = result.Score;
-
             }
 
             userScoreList.Add(new UserScoreDto

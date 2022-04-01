@@ -7,9 +7,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-md-start">
-                    <p class="text-center">Are you sure you want to delete this student result?</p>
+                    <p class="text-center">Why do you want to delete this student score?</p>
                     <form method="post" asp-route-score="@ViewBag.score" asp-route-lineItemId="@ViewBag.lineItemId" asp-route-courseId="@ViewBag.courseId" asp-route-userId="@ViewBag.userId" asp-page-handler="RemoveScore" class="text-center">
-                        <div class="form-group text-center">
+                        <div class="form-group">
+                            <select name="SelectedReason" class="form-select" aria-label="Default select example">
+                                <option value="1">Student was removed from this course but the results remain</option>
+                                <option value="2">I Set the result to the wrong student</option>
+                            </select>
+                        </div>
+                        <div class="form-group text-center mt-3">
                             <input id="submitValue" class="btn btn-primary" type="submit" value="Delete result" />
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                         </div>
@@ -19,3 +25,6 @@
         </div>
     </div>
 </div>
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

@@ -69,7 +69,6 @@ namespace EduManagementLab.Web.Pages.Courses
                 return NotFound();
             }
         }
-
         private void PopulateProperties(Guid courseId)
         {
             Course = _courseService.GetCourse(courseId, true);
@@ -80,12 +79,12 @@ namespace EduManagementLab.Web.Pages.Courses
             LineItemListItems = new SelectList(_courseLineItemService.GetCourseLineItems()
                .Where(s => !Course.CourseLineItems.Any(x => x.Name == s.Name)), "Name", "Description");
         }
-
         public async Task<IActionResult> OnPostExistingUserAsync(Guid courseId, Guid Id)
         {
             try
             {
                 var existingUser = _userService.GetUser(Id);
+                var course = _courseService.GetCourse(courseId);
                 _courseService.CreateCourseMembership(courseId, existingUser.Id, DateTime.Now);
 
                 return RedirectToPage("./Details", new { courseId = courseId });
@@ -95,7 +94,6 @@ namespace EduManagementLab.Web.Pages.Courses
                 return NotFound();
             }
         }
-
         public async Task<IActionResult> OnPostNewUserAsync(Guid courseId)
         {
             if (ModelState.IsValid)
@@ -103,7 +101,7 @@ namespace EduManagementLab.Web.Pages.Courses
                 try
                 {
                     var newUser = _userService.CreateUser(Input.Password, Input.Username, Input.DisplayName, Input.FirstName, Input.LastName, Input.Email);
-                    _courseService.CreateCourseMembership(courseId, newUser.Id, DateTime.Now);
+                    _courseService.CreateCourseMembership(courseId, newUser.Id, EnrolledDate);
 
                     return RedirectToPage("./Details", new { courseId = courseId });
                 }
