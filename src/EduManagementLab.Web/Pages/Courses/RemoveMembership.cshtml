@@ -49,7 +49,8 @@
                                 <br />
                                 <div style="font-size: 14px;">
                                     <p class="fw-bolder">*Student completed the course:<p>The student and results will be deleted from this course.</p>
-                                    <p class="fw-bolder">*Student does not complete the course but have done some assignment:<p>The results of this student will be remain in this course.(you have to delete the results manuely)</p>
+                                    <p class="fw-bolder">*Student does not complete the course but have done some assignment:<p>The results of this student will be remain in this course.</p>
+                                    <p class="fw-bolder">*Student does not complete the course but have done some assignment(Delete all results):<p>The results of this student will be deleted in this course.</p>
                                     <p class="fw-bolder">*Student does not complete the course and have no results:<p>The student will be deleted from this course</p>
                                     <p class="fw-bolder">*Student does not belong to this course:<p>The student will be remove from this course include results.</p>
                                 </div>
@@ -57,7 +58,8 @@
                                 <select asp-for="SelectedReason" class="form-select mt-3" aria-label="Default select example">
                                     <option selected>---Select a reason---</option>
                                     <option value="1">Student completed the course</option>
-                                    <option value="2">Student does not complete the course (for reasons such as : Drop off/Doesn't finish assignments)</option>
+                                    <option value="2">Student does not complete the course but have done some assignment</option>
+                                    <option value="5">Student does not complete the course but have done some assignment(Delete all results)</option>
                                     <option value="3">Student does not complete the course and have no results</option>
                                     <option value="4">Student does not belong to this course</option>
                                 </select>

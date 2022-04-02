@@ -99,7 +99,7 @@
                                         <div class="col-4">
                                             <div id="RemoveModal-placeholder"></div>
                                             <div>
-                                                    @if (@Model.userScoreList[i].Score != 0)
+                                                    @if (@Model.userScoreList[i].Score != null)
                                                     {
                                                     <button type="button" class="btn btn-danger" data-toggle="ajax-RemoveModal" data-url="@Url.Page("/CourseLineItems/Details", "RemoveScoreModalPartial", new {lineItemId = @Model.userScoreList[i].LineItemId,courseId = @Model.Course.Id, userId = @Model.userScoreList[i].UserId, score = @Model.userScoreList[i].Score} )">
                                                         Remove score
@@ -122,6 +122,12 @@
                     }
                 <button class="btn btn-primary justify-content-end" type="submit">Save all</button>
                 </form>
+                <div class="col" style="width:20%; float:right;">
+                    <form method="post" asp-page-handler="Filter" asp-route-lineItemId="@Model.CourseLineItem.Id" asp-route-courseId="@Model.Course.Id">
+                        <select asp-for="selectedFilter" onchange="this.form.submit()" class="dropdown form-select border-color-lightbrown" aria-label="Default select example" asp-items="@Model.filterList">
+                        </select>
+                    </form>
+                </div>
             }
             else
             {

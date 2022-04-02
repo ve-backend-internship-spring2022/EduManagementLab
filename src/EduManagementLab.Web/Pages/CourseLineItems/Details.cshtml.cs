@@ -21,7 +21,10 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             _userService = userService;
             _courseLineItemService = courseLineItemService;
         }
-
+        [BindProperty]
+        public List<SelectListItem> filterList { get; } = new List<SelectListItem>();
+        [BindProperty]
+        public int selectedFilter { get; set; }
         public Course Course { get; set; }
         public CourseLineItem CourseLineItem { get; set; }
         public SelectList UserListItems { get; set; }
@@ -45,7 +48,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         {
             try
             {
-                PopulateProperties(lineItemId, courseId);
+                PopulateProperties(lineItemId, courseId, selectedFilter);
                 return Page();
             }
             catch (CourseLineItemNotFoundException)
@@ -53,12 +56,19 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                 return NotFound();
             }
         }
+        private void loadFilters()
+        {
+            filterList.Add(new SelectListItem() { Text = "None", Value = "0" });
+            filterList.Add(new SelectListItem() { Text = "Not member but have results", Value = "1" });
+            filterList.Add(new SelectListItem() { Text = "Member have results", Value = "2" });
+            filterList.Add(new SelectListItem() { Text = "Member have no results", Value = "3" });
+        }
         public IActionResult OnPostUpdateActive(Guid lineItemId, Guid courseId)
         {
             try
             {
                 _courseLineItemService.UpdateCourseLineItemActive(lineItemId, IsChecked);
-                PopulateProperties(lineItemId, courseId);
+                PopulateProperties(lineItemId, courseId, selectedFilter);
                 return Page();
             }
             catch (CourseLineItemNotFoundException)
@@ -92,7 +102,12 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                     return NotFound();
                 }
             }
-            PopulateProperties(lineItemId, courseId);
+            PopulateProperties(lineItemId, courseId, selectedFilter);
+            return Page();
+        }
+        public IActionResult OnPostFilter(Guid lineItemId, Guid courseId)
+        {
+            PopulateProperties(lineItemId, courseId, selectedFilter);
             return Page();
         }
         public IActionResult OnPostRemoveScore(Guid lineItemId, Guid courseId, Guid userId, decimal? score, int SelectedReason)
@@ -129,10 +144,10 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                 }
             }
 
-            PopulateProperties(lineItemId, courseId);
+            PopulateProperties(lineItemId, courseId, selectedFilter);
             return Page();
         }
-        private void PopulateProperties(Guid lineItemId, Guid courseId)
+        private void PopulateProperties(Guid lineItemId, Guid courseId, int selectedFilter)
         {
             userScoreList.Clear();
             CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true);
@@ -140,41 +155,106 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             IsChecked = CourseLineItem.Active;
 
             var course = _courseService.GetCourse(courseId, true);
-            var CourseLineItemResults = _courseLineItemService.GetCourseLineItem(lineItemId, true).Results.Where(c => c.CourseLineItemId == lineItemId);
+            var courseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true).Results.Where(c => c.CourseLineItemId == lineItemId);
 
-            //loopa genom alla resultat
-            foreach (var result in CourseLineItemResults)
+            switch (selectedFilter)
             {
-                if (!course.Memperships.Any(x => x.UserId == result.UserId))
+                case 1:
+                    LoadResult(false, true, course, courseLineItem);
+                    break;
+                case 2:
+                    LoadResult(true, true, course, courseLineItem);
+                    break;
+                case 3:
+                    LoadResult(true, false, course, courseLineItem);
+                    break;
+                default:
+                    LoadResult(null, null, course, courseLineItem);
+                    break;
+            }
+            loadFilters();
+        }
+        private void LoadResult(bool? isMember, bool? haveResult, Course course, IEnumerable<CourseLineItem.Result> courselineitemResult)
+        {
+            // if user is not member but have result and display it on web
+            if (isMember == false && haveResult == true)
+            {
+                foreach (var result in courselineitemResult)
                 {
-                    FetchUserScoreList(result.User, CourseLineItem);
+                    if (!course.Memperships.Any(x => x.UserId == result.UserId) && CourseLineItem.Results.Any(u => u.UserId == result.UserId && u.CourseLineItemId == result.CourseLineItemId))
+                    {
+                        FillUserScoreList(result);
+                    }
                 }
             }
-
-            foreach (var user in course.Memperships)
+            // if user is member and have result and display it on web
+            else if (isMember == true && haveResult == true)
             {
-                FetchUserScoreList(user.User, CourseLineItem);
+                foreach (var result in courselineitemResult)
+                {
+                    if (course.Memperships.Any(x => x.UserId == result.UserId))
+                    {
+                        FillUserScoreList(result);
+                    }
+                }
+            }
+            // if user is member but have no result and display it on web
+            else if (isMember == true && haveResult == false)
+            {
+                foreach (var user in course.Memperships)
+                {
+                    if (!CourseLineItem.Results.Any(u => u.UserId == user.UserId && u.CourseLineItemId == CourseLineItem.Id))
+                    {
+                        userScoreList.Add(new UserScoreDto
+                        {
+                            UserId = user.UserId,
+                            LineItemId = CourseLineItem.Id,
+                            Firstname = user.User.FirstName,
+                            Lastname = user.User.LastName,
+                        });
+                    }
+                }
+            }
+            // else get all result and member and display it on web
+            else
+            {
+                foreach (var user in course.Memperships)
+                {
+                    if (!CourseLineItem.Results.Any(u => u.UserId == user.UserId && u.CourseLineItemId == CourseLineItem.Id))
+                    {
+                        userScoreList.Add(new UserScoreDto
+                        {
+                            UserId = user.UserId,
+                            LineItemId = CourseLineItem.Id,
+                            Firstname = user.User.FirstName,
+                            Lastname = user.User.LastName,
+                        });
+                    }
+                    else
+                    {
+                        var userResult = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.UserId && x.CourseLineItemId == CourseLineItem.Id);
+                        FillUserScoreList(userResult);
+                    }
+                }
+                foreach (var result in courselineitemResult)
+                {
+                    if (!course.Memperships.Any(x => x.UserId == result.UserId))
+                    {
+                        FillUserScoreList(result);
+                    }
+                }
             }
         }
-        private void FetchUserScoreList(User user, CourseLineItem courseLineItem)
+        private void FillUserScoreList(CourseLineItem.Result courseLineItemResult)
         {
-            decimal score = 0;
-            string? lastupdated = "";
-            if (CourseLineItem.Results.Any(u => u.UserId == user.Id))
-            {
-                var result = CourseLineItem.Results.FirstOrDefault(x => x.UserId == user.Id && x.CourseLineItemId == courseLineItem.Id);
-                lastupdated = result.LastUpdated.ToString("f");
-                score = result.Score;
-            }
-
             userScoreList.Add(new UserScoreDto
             {
-                UserId = user.Id,
-                LineItemId = courseLineItem.Id,
-                Firstname = user.FirstName,
-                Lastname = user.LastName,
-                Score = score,
-                lastUpdated = lastupdated
+                UserId = courseLineItemResult.UserId,
+                LineItemId = courseLineItemResult.Id,
+                Firstname = courseLineItemResult.User.FirstName,
+                Lastname = courseLineItemResult.User.LastName,
+                Score = courseLineItemResult.Score,
+                lastUpdated = courseLineItemResult.LastUpdated.ToString("f")
             });
         }
         public PartialViewResult OnGetRemoveScoreModalPartial(Guid lineItemId, Guid courseId, Guid userId, decimal? score)

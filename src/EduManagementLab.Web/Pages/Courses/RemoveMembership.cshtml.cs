@@ -67,6 +67,9 @@ namespace EduManagementLab.Web.Pages.Courses
                     case 4:
                         _courseService.RemoveCourseMembership(courseId, userId, true);
                         break;
+                    case 5:
+                        _courseService.RemoveCourseMembership(courseId, userId, true);
+                        break;
                 }
 
                 return RedirectToPage("./Details", new { courseId = courseId });
