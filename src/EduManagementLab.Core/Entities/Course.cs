@@ -35,6 +35,7 @@ namespace EduManagementLab.Core.Entities
             public Guid UserId { get; set; }
             [Required]
             public DateTime EnrolledDate { get; set; }
+            public DateTime? EndDate { get; set; }
         }
     }
 }

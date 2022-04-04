@@ -102,22 +102,34 @@ namespace EduManagementLab.Core.Services
             var membershipToDelete = course.Memperships.Find(c => c.UserId == userId && c.CourseId == courseId);
             var membershipEndDateToUpdate = course.Memperships.FirstOrDefault(x => x.UserId == userId && x.CourseId == courseId);
 
-            //om användare checkar deleteAllResult och resultat hittades i DB
-            if (deleteResult == true && course.CourseLineItems.Select(r => r.Results).Any())
-            {
-                // Get courselineItem results for this course
-                var results = course.CourseLineItems.Select(r => r.Results);
-                foreach (var resultToDelete in results.Where(u => u.Any(u => u.UserId == userId)))
-                {
-                    _unitOfWork.LineItemResults.Remove(resultToDelete.FirstOrDefault(u => u.UserId == userId));
-                }
-            }
-
             course.Memperships.Remove(membershipToDelete);
             _unitOfWork.Courses.Update(course);
             _unitOfWork.Complete();
             return membershipToDelete;
         }
+        
+        public Course.Membership UpdateMemberEndDate(Guid courseId, Guid userId, DateTime endDate, bool endDateActive = false)
+        {
+            var course = GetCourse(courseId, true);
+
+            Guard.AgainstUnknownCourseMembership(course, userId);
+
+            var membershipToInactive = course.Memperships.FirstOrDefault(u => u.UserId == userId && u.CourseId == courseId);
+
+            if(endDateActive == true)
+            {
+                membershipToInactive.EndDate = null;
+            } 
+            else 
+            {
+                membershipToInactive.EndDate = endDate;
+            }
+
+            _unitOfWork.Courses.Update(course);
+            _unitOfWork.Complete();
+            return membershipToInactive;
+        }
+
         public Course.Membership UpdateMembershipEnrolledDate(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             var course = GetCourse(courseId, true);

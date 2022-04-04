@@ -1,0 +1,22 @@
+﻿@model EduManagementLab.Web.Pages.Courses.DetailsModel
+<div class="col-md-2 text-md-end">
+    <div class="modal fade activateMember" id="Activate-Member" tabindex="-1" aria-labelledby="Activate-Member" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="Activate-Member">Reactivate Member</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-md-start">
+                    <p class="text-center">This will reactivate user's membership!</p>
+                    <form method="post" asp-route-courseId="@ViewBag.courseId" asp-route-userId="@ViewBag.userId" asp-route-selectedOption="@ViewBag.SelectedOption" asp-page-handler="UpdateMembership" class="text-center">
+                        <div class="form-group text-center mt-3">
+                            <button type="submit" class="btn btn-danger">Confirm</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

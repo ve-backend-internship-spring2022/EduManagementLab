@@ -15,9 +15,9 @@ namespace EduManagementLab.Core.Entities
         public class Result
         {
             public Guid Id { get; set; }
-            public User? User { get; set; }
+            public Course.Membership? Membership { get; set; }
             [Required]
-            public Guid UserId { get; set; }
+            public Guid MembershipId { get; set; }
             public CourseLineItem? CourseLineItem { get; set; }
             [Required]
             public Guid CourseLineItemId { get; set; }

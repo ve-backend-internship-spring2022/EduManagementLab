@@ -4,6 +4,7 @@ using EduManagementLab.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.ComponentModel.DataAnnotations;
 
 namespace EduManagementLab.Web.Pages.Courses
@@ -19,11 +20,17 @@ namespace EduManagementLab.Web.Pages.Courses
             _userService = userService;
             _courseLineItemService = courseLineItemService;
         }
+        [BindProperty]
+        public int SelectedIteminSortingList { get; set; }
+        public List<SelectListItem> SortingList { get; set; }
+        public List<Course.Membership> ListOfFilteredMembers { get; set; }
 
         public Course Course { get; set; }
         public SelectList UserListItems { get; set; }
         public SelectList LineItemListItems { get; set; }
-
+        [BindProperty]
+        public DateTime SelectedEndDate { get; set; }
+        public int SelectedOption { get; set; }
         [BindProperty]
         public DateTime EnrolledDate { get; set; }
         [BindProperty]
@@ -73,11 +80,57 @@ namespace EduManagementLab.Web.Pages.Courses
         {
             Course = _courseService.GetCourse(courseId, true);
 
+            OnPostSortingListAsync(SelectedIteminSortingList, Course.Id);
+
             UserListItems = new SelectList(_userService.GetUsers()
                 .Where(s => !Course.Memperships.Any(x => x.User.Email == s.Email)), "Id", "Email");
 
             LineItemListItems = new SelectList(_courseLineItemService.GetCourseLineItems()
                .Where(s => !Course.CourseLineItems.Any(x => x.Name == s.Name)), "Name", "Description");
+
+            ListOfFilteredMembers = Course.Memperships
+            .OrderBy(p => p.EnrolledDate)
+            .ToList();
+        }
+        public IActionResult OnPostSortingListAsync(int sortingId, Guid courseId)
+        {
+            Course = _courseService.GetCourse(courseId, true);
+            SelectedIteminSortingList = sortingId;
+
+            UserListItems = new SelectList(_userService.GetUsers()
+                .Where(s => !Course.Memperships.Any(x => x.User.Email == s.Email)), "Id", "Email");
+
+            SortingList = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "All members", Value = "0"},
+                new SelectListItem { Text = "Members who completed the course", Value = "1"},
+                new SelectListItem { Text = "Members who are active", Value = "2"}
+            };
+
+            switch (sortingId)
+            {
+                case 0:
+                    ListOfFilteredMembers = Course.Memperships
+                        .OrderBy(p => p.EnrolledDate)
+                        .ToList();
+                    break;
+                case 1:
+                    ListOfFilteredMembers = Course.Memperships
+                        .OrderBy(p => p.EnrolledDate)
+                        .Where(r => r.EndDate != null)
+                        .ToList();
+                    break;
+                case 2:
+                    ListOfFilteredMembers = Course.Memperships
+                        .OrderBy(p => p.EnrolledDate)
+                        .Where(r => r.EndDate == null)
+                        .ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            return Page();
         }
         public async Task<IActionResult> OnPostExistingUserAsync(Guid courseId, Guid Id)
         {
@@ -134,6 +187,69 @@ namespace EduManagementLab.Web.Pages.Courses
             results = new List<ValidationResult>();
 
             return Validator.TryValidateObject(obj, new ValidationContext(obj), results, true);
+        }
+        public PartialViewResult OnGetEndMemberModalPartial(Guid courseId, Guid userId)
+        {
+            SelectedEndDate = DateTime.Now;
+            ViewData["courseId"] = courseId;
+            ViewData["userId"] = userId;
+            ViewData["SelectedOption"] = 1;
+
+            return new PartialViewResult
+            {
+                ViewName = "_EndMembershipModalPartial",
+                ViewData = new ViewDataDictionary(ViewData)
+            };
+        }
+        public PartialViewResult OnGetDeleteMemberModalPartial(Guid courseId, Guid userId)
+        {
+            ViewData["courseId"] = courseId;
+            ViewData["userId"] = userId;
+            ViewData["SelectedOption"] = 2;
+
+            return new PartialViewResult
+            {
+                ViewName = "_DeleteMembershipModalPartial",
+                ViewData = new ViewDataDictionary(ViewData)
+            };
+        }
+        public PartialViewResult OnGetReactiveMemberModalPartial(Guid courseId, Guid userId)
+        {
+            SelectedEndDate = DateTime.Now;
+            ViewData["courseId"] = courseId;
+            ViewData["userId"] = userId;
+            ViewData["SelectedOption"] = 3;
+
+            return new PartialViewResult
+            {
+                ViewName = "_ActiveMemberModalPartial",
+                ViewData = new ViewDataDictionary(ViewData)
+            };
+        }
+        public async Task<IActionResult> OnPostUpdateMembershipAsync(Guid courseId, Guid userId, int selectedOption)
+        {
+            try
+            {
+                switch (selectedOption)
+                {
+                    case 1:
+                        _courseService.UpdateMemberEndDate(courseId, userId, SelectedEndDate);
+                        break;
+                    case 2:
+                        _courseService.RemoveCourseMembership(courseId, userId, true);
+                        break;
+                    case 3:
+                        _courseService.UpdateMemberEndDate(courseId, userId, SelectedEndDate, true);
+                        break;
+                    default:
+                        break;
+                }
+                return RedirectToPage("./Details", new { courseId = courseId });
+            }
+            catch (CourseNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

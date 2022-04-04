@@ -47,10 +47,10 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].User.FirstName)
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Membership.User.FirstName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].User.LastName)
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Membership.User.LastName)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].LastUpdated)
@@ -67,57 +67,78 @@
                     @{
                         @for (int i = 0; i < Model.userScoreList.Count; i++)
                         {
-                        <tr>
-                            <td>
-                                    @Html.DisplayFor(modelItem => @Model.userScoreList[i].Firstname)
-                            </td>
-                            <td>
-                                    @Html.DisplayFor(modelItem => @Model.userScoreList[i].Lastname)
-                            </td>
-                            <td>
-                                    @Html.DisplayFor(modelItem => @Model.userScoreList[i].lastUpdated)
-                            </td>
-                            <td>
-                                <div class="container">
-                                    <div class="row justify-content-start">
-                                            @if (@Model.userScoreList[i].Score != 0)
-                                            {
-                                            <div class="col-4">
-                                                <input type="text" value="@Model.userScoreList[i].Score" asp-for="@Model.userScoreList[i].Score" />
-                                                <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
-                                                <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
-                                            </div>
-                                            }
-                                            else
-                                            {
-                                            <div class="col-4">
-                                                <input type="text" value="" asp-for="@Model.userScoreList[i].Score" />
-                                                <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
-                                                <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
-                                            </div>
-                                            }
-                                        <div class="col-4">
-                                            <div id="RemoveModal-placeholder"></div>
-                                            <div>
-                                                    @if (@Model.userScoreList[i].Score != null)
-                                                    {
-                                                    <button type="button" class="btn btn-danger" data-toggle="ajax-RemoveModal" data-url="@Url.Page("/CourseLineItems/Details", "RemoveScoreModalPartial", new {lineItemId = @Model.userScoreList[i].LineItemId,courseId = @Model.Course.Id, userId = @Model.userScoreList[i].UserId, score = @Model.userScoreList[i].Score} )">
-                                                        Remove score
-                                                    </button>
-                                                    }
-                                                    else
-                                                    {
-                                                    <button type="button" class="btn btn-danger" data-toggle="ajax-RemoveModal" data-url="@Url.Page("/CourseLineItems/Details", "RemoveScoreModalPartial", new {lineItemId = @Model.userScoreList[i].LineItemId,courseId = @Model.Course.Id, userId = @Model.userScoreList[i].UserId, score = @Model.userScoreList[i].Score} )" disabled>
-                                                        Remove score
-                                                    </button>
-                                                    }
-
-                                            </div>
+                            @if (@Model.userScoreList[i].EndDate == null)
+                            {
+                            <tr>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Firstname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Lastname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].lastUpdated)
+                                </td>
+                                <td>
+                                    <div class="container">
+                                        <div class="row justify-content-start">
+                                                @if (@Model.userScoreList[i].Score != 0)
+                                                {
+                                                <div class="col-4">
+                                                    <input type="text" value="@Model.userScoreList[i].Score" asp-for="@Model.userScoreList[i].Score" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                                else if (@Model.userScoreList[i].Score == 0)
+                                                {
+                                                <div class="col-4">
+                                                    <input type="text" value="" asp-for="@Model.userScoreList[i].Score" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                                else
+                                                {
+                                                <div class="col-4">
+                                                    <p>@Model.userScoreList[i].Score.ToString()</p>
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
                                         </div>
                                     </div>
-
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                            }
+                            else
+                            {
+                            <tr style="opacity: 0.4; pointer-events: none;">
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Firstname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Lastname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].lastUpdated)
+                                </td>
+                                <td>
+                                    <div class="container">
+                                        <div class="row justify-content-start">
+                                                @if (@Model.userScoreList[i].Score != 0)
+                                                {
+                                                <div class="col-4">
+                                                    <p>@Model.userScoreList[i].Score.ToString()</p>
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
                         }
                     }
                 <button class="btn btn-primary justify-content-end" type="submit">Save all</button>
