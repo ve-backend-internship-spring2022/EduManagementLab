@@ -1,6 +1,7 @@
 using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Services;
+using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,7 +25,8 @@ namespace EduManagementLab.Web.Pages.Courses
         public int SelectedIteminSortingList { get; set; }
         public List<SelectListItem> SortingList { get; set; }
         public List<Course.Membership> ListOfFilteredMembers { get; set; }
-
+        [BindProperty]
+        public Guid LoginUserId { get; set; }
         public Course Course { get; set; }
         public SelectList UserListItems { get; set; }
         public SelectList LineItemListItems { get; set; }
@@ -65,7 +67,7 @@ namespace EduManagementLab.Web.Pages.Courses
         }
 
         public async Task<IActionResult> OnGetAsync(Guid courseId)
-        {
+        {            
             try
             {
                 PopulateProperties(courseId);
@@ -78,6 +80,7 @@ namespace EduManagementLab.Web.Pages.Courses
         }
         private void PopulateProperties(Guid courseId)
         {
+            LoginUserId = Guid.Parse(User?.GetSubjectId());
             Course = _courseService.GetCourse(courseId, true);
 
             OnPostSortingListAsync(SelectedIteminSortingList, Course.Id);
@@ -87,13 +90,10 @@ namespace EduManagementLab.Web.Pages.Courses
 
             LineItemListItems = new SelectList(_courseLineItemService.GetCourseLineItems()
                .Where(s => !Course.CourseLineItems.Any(x => x.Name == s.Name)), "Name", "Description");
-
-            ListOfFilteredMembers = Course.Memperships
-            .OrderBy(p => p.EnrolledDate)
-            .ToList();
         }
         public IActionResult OnPostSortingListAsync(int sortingId, Guid courseId)
         {
+            LoginUserId = Guid.Parse(User?.GetSubjectId());
             Course = _courseService.GetCourse(courseId, true);
             SelectedIteminSortingList = sortingId;
 
@@ -102,9 +102,8 @@ namespace EduManagementLab.Web.Pages.Courses
 
             SortingList = new List<SelectListItem>
             {
-                new SelectListItem { Text = "All members", Value = "0"},
-                new SelectListItem { Text = "Members who completed the course", Value = "1"},
-                new SelectListItem { Text = "Members who are active", Value = "2"}
+                new SelectListItem { Text = "Active Members", Value = "0"},
+                new SelectListItem { Text = "Completed Members", Value = "1"},
             };
 
             switch (sortingId)
@@ -112,18 +111,13 @@ namespace EduManagementLab.Web.Pages.Courses
                 case 0:
                     ListOfFilteredMembers = Course.Memperships
                         .OrderBy(p => p.EnrolledDate)
+                        .Where(r => r.EndDate == null)
                         .ToList();
                     break;
                 case 1:
                     ListOfFilteredMembers = Course.Memperships
                         .OrderBy(p => p.EnrolledDate)
                         .Where(r => r.EndDate != null)
-                        .ToList();
-                    break;
-                case 2:
-                    ListOfFilteredMembers = Course.Memperships
-                        .OrderBy(p => p.EnrolledDate)
-                        .Where(r => r.EndDate == null)
                         .ToList();
                     break;
                 default:

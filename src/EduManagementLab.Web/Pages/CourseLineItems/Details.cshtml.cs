@@ -59,9 +59,8 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         }
         private void loadFilters()
         {
-            filterList.Add(new SelectListItem() { Text = "All", Value = "0" });
-            filterList.Add(new SelectListItem() { Text = "Active Members", Value = "1" });
-            filterList.Add(new SelectListItem() { Text = "Completed Members", Value = "2" });
+            filterList.Add(new SelectListItem() { Text = "Active Members", Value = "0" });
+            filterList.Add(new SelectListItem() { Text = "Completed Members", Value = "1" });
         }
         public IActionResult OnPostUpdateActive(Guid lineItemId, Guid courseId)
         {
@@ -124,11 +123,11 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
 
             switch (selectedFilter)
             {
-                case 1:
+                case 0:
                     var activeUsers = course.Memperships.Where(s => s.EndDate == null);
                     FillUserScoreList(lineItemId, activeUsers, courseLineItemResult);
                     break;
-                case 2:
+                case 1:
                     var inactiveUsers = course.Memperships.Where(s => s.EndDate != null);
                     FillUserScoreList(lineItemId, inactiveUsers, courseLineItemResult);
                     break;

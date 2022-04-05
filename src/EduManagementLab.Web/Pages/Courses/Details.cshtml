@@ -337,16 +337,18 @@
                     <td>
                         @Html.DisplayFor(modelItem => lineItem.Name)
                     </td>
-
                     <td>
                         @Html.DisplayFor(modelItem => lineItem.Description)
                     </td>
-
                     <td>
                         @Html.DisplayFor(modelItem => lineItem.Active)
                     </td>
                     <td>
-                        <a asp-page="../CourseLineItems/Details" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Details</a> |
+                        @if (@Model.Course.Memperships.Any(u => u.UserId == @Model.LoginUserId))
+                        {
+                            <a asp-page="../CourseLineItems/ViewResults" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">View result</a> 
+                        }
+                        | <a asp-page="../CourseLineItems/Details" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Details</a> |
                         <a asp-page="../CourseLineItems/RemoveCourseLineItem" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Delete</a>
                     </td>
                 </tr>
