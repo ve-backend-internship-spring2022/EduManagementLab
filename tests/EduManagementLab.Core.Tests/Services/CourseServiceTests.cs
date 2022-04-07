@@ -37,8 +37,8 @@ namespace EduManagementLab.Core.Tests.Services
             _unitOfWork = CreateUnitOfWork();
             _courseService = CreateCourseService();
 
-            Course course1 = new Course { Id = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), Code = "AAA", Name = "CourseNameOne", Description = "CourseDescriptionOne", EnrolledDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
-            Course course2 = new Course { Id = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), Code = "BBB", Name = "CourseNameTwo", Description = "CourseDescriptionTwo", EnrolledDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
+            Course course1 = new Course { Id = Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"), Code = "AAA", Name = "CourseNameOne", Description = "CourseDescriptionOne", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
+            Course course2 = new Course { Id = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), Code = "BBB", Name = "CourseNameTwo", Description = "CourseDescriptionTwo", StartDate = DateTime.MinValue, EndDate = DateTime.MaxValue };
 
             User user1 = new User { Id = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0"), UserName = "DisplayNameOne1242", PasswordHash = _userService.GenerateHashPassword("Test1245"), Displayname = "DisplayNameOne", Email = "EmailOne@Test.com", FirstName = "FirstNameOne", LastName = "LastNameOne" };
             User user2 = new User { Id = Guid.Parse("AC866BEC-3107-4160-9099-2B1328F386C2"), UserName = "DisplayNameTwo6542", PasswordHash = _userService.GenerateHashPassword("Test5755"), Displayname = "DisplayNameTwo", Email = "EmailTwo@Test.com", FirstName = "FirstNameTwo", LastName = "LastNameTwo" };
@@ -62,7 +62,7 @@ namespace EduManagementLab.Core.Tests.Services
             Assert.Equal("AAA", fetchedCourse.Code);
             Assert.Equal("CourseNameOne", fetchedCourse.Name);
             Assert.Equal("CourseDescriptionOne", fetchedCourse.Description);
-            Assert.Equal(DateTime.MinValue, fetchedCourse.EnrolledDate);
+            Assert.Equal(DateTime.MinValue, fetchedCourse.StartDate);
             Assert.Equal(DateTime.MaxValue, fetchedCourse.EndDate);
         }
 
@@ -125,7 +125,7 @@ namespace EduManagementLab.Core.Tests.Services
             var course = _dataContext.Courses.Single(b => b.Id == Guid.Parse("4E228873-0468-4BE6-A14B-48DE5E7CFFFB"));
 
             Assert.NotNull(course);
-            Assert.Equal(DateTime.Today, course.EnrolledDate);
+            Assert.Equal(DateTime.Today, course.StartDate);
             Assert.Equal(DateTime.Today, course.EndDate);
         }
 

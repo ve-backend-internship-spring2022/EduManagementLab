@@ -105,14 +105,11 @@
                     @Html.DisplayNameFor(model => model.CourseList[0].Course.Description)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CourseList[0].Course.EnrolledDate)
+                    @Html.DisplayNameFor(model => model.CourseList[0].Course.StartDate)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.CourseList[0].Course.EndDate)
                 </th> 
-                @*<th>
-                    @Html.DisplayNameFor(model => model.Course[0].EnrolledDate)
-                </th>*@
             </tr>
         </thead>
         <tbody>
@@ -131,14 +128,11 @@
                             @Html.DisplayFor(modelItem => course.Course.Description)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => course.Course.EnrolledDate)
+                            @Html.DisplayFor(modelItem => course.Course.StartDate)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => course.Course.EndDate)
                         </td>
-                        @*<td>
-                            @Html.DisplayFor(modelItem => course.EnrolledDate)
-                        </td>*@
                         <td>
                             <a asp-page="../Courses/Details" asp-route-courseId="@course.Course.Id">Details</a> |
                             <a asp-page="./RemoveCourse" asp-route-courseId="@course.Course.Id" asp-route-userId="@Model.User.Id">Delete</a>

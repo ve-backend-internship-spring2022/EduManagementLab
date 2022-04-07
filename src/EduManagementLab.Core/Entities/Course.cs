@@ -18,7 +18,7 @@ namespace EduManagementLab.Core.Entities
         public string Name { get; set; }
         public string? Description { get; set; }
         [Required]
-        public DateTime EnrolledDate { get; set; }
+        public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
         public List<Membership> Memperships { get; set; } = new List<Membership>();

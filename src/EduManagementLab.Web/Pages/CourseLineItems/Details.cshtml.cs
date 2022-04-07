@@ -118,21 +118,20 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             Course = _courseService.GetCourse(courseId, true);
             IsChecked = CourseLineItem.Active;
 
-            var course = _courseService.GetCourse(courseId, true);
-            var courseLineItemResult = _courseLineItemService.GetCourseLineItem(lineItemId, true).Results.Where(c => c.CourseLineItemId == lineItemId);
+            var courseLineItemResult = CourseLineItem.Results.Where(c => c.CourseLineItemId == lineItemId);
 
             switch (selectedFilter)
             {
                 case 0:
-                    var activeUsers = course.Memperships.Where(s => s.EndDate == null);
+                    var activeUsers = Course.Memperships.Where(s => s.EndDate == null);
                     FillUserScoreList(lineItemId, activeUsers, courseLineItemResult);
                     break;
                 case 1:
-                    var inactiveUsers = course.Memperships.Where(s => s.EndDate != null);
+                    var inactiveUsers = Course.Memperships.Where(s => s.EndDate != null);
                     FillUserScoreList(lineItemId, inactiveUsers, courseLineItemResult);
                     break;
                 default:
-                    FillUserScoreList(lineItemId, course.Memperships, courseLineItemResult);
+                    FillUserScoreList(lineItemId, Course.Memperships, courseLineItemResult);
                     break;
             }
             loadFilters();

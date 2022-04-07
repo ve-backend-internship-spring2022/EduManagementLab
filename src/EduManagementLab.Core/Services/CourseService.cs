@@ -25,7 +25,7 @@ namespace EduManagementLab.Core.Services
         }
         public Course CreateCourse(string code, string name, string description, DateTime startDate, DateTime endDate)
         {
-            var course = new Course() { Code = code, Name = name, Description = description, EnrolledDate = startDate, EndDate = endDate };
+            var course = new Course() { Code = code, Name = name, Description = description, StartDate = startDate, EndDate = endDate };
             var allCourses = GetCourses();
             if (allCourses.Any(x => x.Code == code || x.Name == name))
             {
@@ -61,7 +61,7 @@ namespace EduManagementLab.Core.Services
         public Course UpdateCoursePeriod(Guid id, DateTime startDate, DateTime endDate)
         {
             var course = GetCourse(id);
-            course.EnrolledDate = startDate;
+            course.StartDate = startDate;
             course.EndDate = endDate;
             _unitOfWork.Courses.Update(course);
             _unitOfWork.Complete();

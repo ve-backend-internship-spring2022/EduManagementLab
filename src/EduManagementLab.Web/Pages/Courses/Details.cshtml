@@ -48,10 +48,10 @@
             @Html.DisplayFor(model => model.Course.Description)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Course.EnrolledDate)
+            @Html.DisplayNameFor(model => model.Course.StartDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Course.EnrolledDate)
+            @Html.DisplayFor(model => model.Course.StartDate)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Course.EndDate)
@@ -344,11 +344,7 @@
                         @Html.DisplayFor(modelItem => lineItem.Active)
                     </td>
                     <td>
-                        @if (@Model.Course.Memperships.Any(u => u.UserId == @Model.LoginUserId))
-                        {
-                            <a asp-page="../CourseLineItems/ViewResults" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">View result</a> 
-                        }
-                        | <a asp-page="../CourseLineItems/Details" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Details</a> |
+                        <a asp-page="../CourseLineItems/Details" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Details</a> |
                         <a asp-page="../CourseLineItems/RemoveCourseLineItem" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Delete</a>
                     </td>
                 </tr>

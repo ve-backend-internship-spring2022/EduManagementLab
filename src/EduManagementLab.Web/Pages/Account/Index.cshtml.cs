@@ -13,7 +13,6 @@ namespace EduManagementLab.Web.Pages.Account
         {
             _userService = userService;
         }
-
         [BindProperty]
         public UserDto user { get; set; } = new UserDto();
         public class UserDto
@@ -27,13 +26,24 @@ namespace EduManagementLab.Web.Pages.Account
         public IActionResult OnGet()
         {
             var userId = Guid.Parse(User?.GetSubjectId());
+            GetAccountSettings(userId);
+            return Page();
+        }
+
+        public IActionResult OnGetAccount(Guid userId)
+        {
+            GetAccountSettings(userId);
+            return Page();
+        }
+
+        public void GetAccountSettings(Guid userId)
+        {
             var targetUser = _userService.GetUser(userId);
             user.UserName = targetUser.UserName;
             user.FirstName = targetUser.FirstName;
             user.LastName = targetUser.LastName;
             user.Email = targetUser.Email;
             user.Displayname = targetUser.Displayname;
-            return Page();
         }
     }
 }
