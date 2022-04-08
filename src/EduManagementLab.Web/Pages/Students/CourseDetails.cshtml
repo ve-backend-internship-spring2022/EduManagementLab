@@ -56,9 +56,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Course.CourseLineItems[0].Description)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Course.CourseLineItems[0].Active)
-            </th>
         </tr>
     </thead>
     <tbody>
@@ -66,37 +63,17 @@
         {
             @foreach (var lineItem in Model.Course.CourseLineItems)
             {
-                @if (lineItem.Active == true)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => lineItem.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => lineItem.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => lineItem.Active)
-                        </td>
-                        <td>
-                            <a asp-page="../Students/AssignmentDetails" asp-route-lineItemId="@lineItem.Id">Details</a>
-                        </td>
-                    </tr>
-                }
-                else
-                {
-                    <tr style="opacity: 0.4;">
-                        <td>
-                            @Html.DisplayFor(modelItem => lineItem.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => lineItem.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => lineItem.Active)
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => lineItem.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => lineItem.Description)
+                    </td>
+                    <td>
+                        <a asp-page="../Students/AssignmentDetails" asp-route-lineItemId="@lineItem.Id">Details</a>
+                    </td>
+                </tr>
             }
         }
         else

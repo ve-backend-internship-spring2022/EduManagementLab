@@ -216,7 +216,6 @@ namespace EduManagementLab.Api.Controllers
                 public Course.Membership? Membership { get; set; }
                 [Required]
                 public Guid MembershipId { get; set; }
-                public CourseLineItem? CourseLineItem { get; set; }
                 [Required]
                 public Guid CourseLineItemId { get; set; }
                 public decimal Score { get; set; }
