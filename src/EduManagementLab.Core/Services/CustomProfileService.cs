@@ -40,7 +40,6 @@ namespace EduManagementLab.Core.Services
 
             context.IssuedClaims = claims;
         }
-
         public async Task IsActiveAsync(IsActiveContext context)
         {
             var sub = context.Subject.GetSubjectId();

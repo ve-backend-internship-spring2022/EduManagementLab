@@ -9,8 +9,7 @@ namespace EduManagementLab.Core.Entities
         [Required]
         public string Name { get; set; }
         public string? Description { get; set; }
-        public bool Active { get; set; }
-        public DateTime DateCreated { get; set; }
+        public DateTime LastUpdate { get; set; }
         public List<Result> Results { get; set; } = new List<Result>();
         public class Result
         {

@@ -291,18 +291,6 @@
                                 <label asp-for="lineItemInput.Description" class="control-label"></label>
                                 <input asp-for="lineItemInput.Description" class="form-control" />
                             </div>
-                            <div class="form-group">
-                                <label asp-for="lineItemInput.Active" class="control-label"></label>
-                                <span asp-validation-for="lineItemInput.Active" class="text-danger"></span>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" asp-for="lineItemInput.Active" id="inlineRadio1" value="true">
-                                <label class="form-check-label" for="inlineRadio1">Yes</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" asp-for="lineItemInput.Active" id="inlineRadio2" value="false">
-                                <label class="form-check-label" for="inlineRadio2">No</label>
-                            </div>
                             <div class="form-group text-center">
                                 <input type="submit" value="Add to course" class="btn btn-primary" />
                             </div>
@@ -323,9 +311,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Course.CourseLineItems[0].Description)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Course.CourseLineItems[0].Active)
-            </th>
         </tr>
     </thead>
     <tbody>
@@ -339,9 +324,6 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => lineItem.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => lineItem.Active)
                     </td>
                     <td>
                         <a asp-page="../CourseLineItems/Details" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Details</a> |

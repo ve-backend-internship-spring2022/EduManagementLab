@@ -62,8 +62,6 @@ namespace EduManagementLab.Web.Pages.Courses
             [Required]
             public string Name { get; set; }
             public string? Description { get; set; }
-            [Required]
-            public bool Active { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync(Guid courseId)
@@ -171,7 +169,7 @@ namespace EduManagementLab.Web.Pages.Courses
             ICollection<ValidationResult> results = null;
             if (Validate(lineItemInput, out results))
             {
-                _courseLineItemService.CreateCourseLineItem(courseId, lineItemInput.Name, lineItemInput.Description, lineItemInput.Active);
+                _courseLineItemService.CreateCourseLineItem(courseId, lineItemInput.Name, lineItemInput.Description);
             }
             PopulateProperties(courseId);
             return RedirectToPage("./Details", new { courseId = courseId });

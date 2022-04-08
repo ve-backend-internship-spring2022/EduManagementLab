@@ -11,13 +11,7 @@
                 <h4>Course Line Item details</h4>
             </div>
             <div class="col-md-5 text-md-end">
-                <form method="post" asp-page-handler="UpdateActive" asp-route-lineItemId="@Model.CourseLineItem.Id" asp-route-courseId="@Model.Course.Id">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" style="position:absolute;" onchange="this.form.submit()" type="checkbox" role="switch" aria-checked="true" asp-for="IsChecked" name="IsChecked" value="true" id="flexSwitchCheckDefault">
-                        <label class="form-check-label" for="flexSwitchCheckDefault">Active</label> |
-                        <a asp-page="./EditCourseLineItemInfo" asp-route-id="@Model.CourseLineItem.Id">Edit courselineitem info</a>
-                    </div>
-                </form>
+                <a asp-page="./EditCourseLineItemInfo" asp-route-id="@Model.CourseLineItem.Id" asp-route-courseId=@Model.Course.Id>Edit courselineitem info</a>
             </div>
         </div>
         <hr />
@@ -27,12 +21,6 @@
             </dt>
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.CourseLineItem.Description)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.CourseLineItem.Active)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.CourseLineItem.Active)
             </dd>
         </dl>
     </div>

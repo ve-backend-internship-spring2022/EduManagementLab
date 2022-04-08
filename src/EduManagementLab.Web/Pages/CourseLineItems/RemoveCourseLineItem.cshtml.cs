@@ -29,7 +29,6 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             courseLineItemDto.Id = courseLineItem.Id;
             courseLineItemDto.Name = courseLineItem.Name;
             courseLineItemDto.Description = courseLineItem.Description;
-            courseLineItemDto.Active = courseLineItem.Active;
         }
         public IActionResult OnPost(Guid courseId, Guid lineItemId)
         {

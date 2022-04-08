@@ -32,16 +32,15 @@ namespace EduManagementLab.Core.Services
             }
             return courseLineItem;
         }
-        public CourseLineItem CreateCourseLineItem(Guid courseId, string name, string description, bool active)
+        public CourseLineItem CreateCourseLineItem(Guid courseId, string name, string description)
         {
             var course = _unitOfWork.Courses.GetCourse(courseId, false);
 
             CourseLineItem newlineItem = new CourseLineItem()
             {
                 Name = name,
-                Description = description,
-                Active = active,
-                DateCreated = DateTime.Now,
+                Description = description,                
+                LastUpdate = DateTime.Now,
             };
             course.CourseLineItems.Add(newlineItem);
 
@@ -60,12 +59,11 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return courseLineItem;
         }
-        public CourseLineItem UpdateCourseLineItemActive(Guid id, bool active)
+        public CourseLineItem DeleteCourseLineItem(Guid id)
         {
             var courseLineItem = GetCourseLineItem(id);
-            courseLineItem.Active = active;
 
-            _unitOfWork.CourseLineItems.Update(courseLineItem);
+            _unitOfWork.CourseLineItems.Remove(courseLineItem);
             _unitOfWork.Complete();
             return courseLineItem;
         }
@@ -81,12 +79,6 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.LineItemResults.Update(result);
             _unitOfWork.Complete();
             return result;
-        }
-        public void DeleteCourseLineItem(Guid id)
-        {
-            var courseLineItem = GetCourseLineItem(id);
-            _unitOfWork.CourseLineItems.Remove(courseLineItem);
-            _unitOfWork.Complete();
         }
         public CourseLineItem.Result CreateLineItemResult(Guid lineItemId, Guid memberId, decimal score)
         {
@@ -105,8 +97,9 @@ namespace EduManagementLab.Core.Services
                 };
 
                 courseLineItem.Results.Add(newResult);
+
+                _unitOfWork.LineItemResults.Add(newResult);
             }
-            _unitOfWork.LineItemResults.Add(newResult);
             _unitOfWork.Complete();
             return newResult;
         }

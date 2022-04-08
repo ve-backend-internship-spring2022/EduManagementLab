@@ -18,86 +18,76 @@ namespace EduManagementLab.Api.Controllers
     {
         private readonly CourseService _courseService;
         private readonly CourseLineItemService _courseLineItemService;
+        private readonly IMapper _mapper;
 
-        public CourseLineItemsController(CourseLineItemService courseLineItemService, CourseService courseService)
+        public CourseLineItemsController(CourseLineItemService courseLineItemService, CourseService courseService,IMapper mapper)
         {
             _courseLineItemService = courseLineItemService;
             _courseService = courseService;
+            _mapper = mapper;
         }
 
-
         [HttpGet]
-        [ProducesResponseType(typeof(List<CourseLineItem>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<CourseLineItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{courseId}/LineItems")]
-        public ActionResult<IEnumerable<CourseLineItem>> GetCourseLineItems(Guid courseId)
+        public ActionResult<IEnumerable<CourseLineItemDto>> GetCourseLineItems(Guid courseId)
         {
             try
             {
-                var lineItemList = _courseService.GetCourse(courseId, false).CourseLineItems.ToList();
+                var lineItemList = _courseService.GetCourse(courseId).CourseLineItems.ToList();
+                var courseLineItemDtoList = new List<CourseLineItemDto>();
 
-                return Ok(lineItemList);
+                foreach (var lineitem in lineItemList)
+                {
+                    courseLineItemDtoList.Add(_mapper.Map<CourseLineItemDto>(lineitem));
+                }
+
+                return Ok(courseLineItemDtoList);
             }
-            catch (CourseNotFoundException)
+            catch (CourseLineItemNotFoundException)
             {
                 return NotFound();
             }
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(CourseLineItem), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseLineItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{lineItemId}")]
-        public ActionResult<CourseLineItem> GetCourseLineItem(Guid courseLineItemId)
+        public ActionResult<CourseLineItemDto> GetCourseLineItem(Guid courseLineItemId)
         {
             try
             {
                 var courseLineItem = _courseLineItemService.GetCourseLineItem(courseLineItemId);
-                return Ok(courseLineItem);
+                return Ok(_mapper.Map<CourseLineItemDto>(courseLineItem));
             }
-            catch (UserNotFoundException)
+            catch (CourseLineItemNotFoundException)
             {
                 return NotFound();
             }
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CourseLineItem), StatusCodes.Status201Created)]
-        public ActionResult<CourseLineItem> AddCourseLineItem(Guid courseId, string lineItemName, string lineItemDescription, bool lineItemActive)
+        [ProducesResponseType(typeof(CourseLineItemDto), StatusCodes.Status201Created)]
+        public ActionResult<CourseLineItemDto> AddCourseLineItem(Guid courseId, string lineItemName, string lineItemDescription)
         {
-            var newCourseLineItem = _courseLineItemService.CreateCourseLineItem(courseId, lineItemName, lineItemDescription, lineItemActive);
-            return CreatedAtAction(nameof(GetCourseLineItem), new { lineItemId = newCourseLineItem.Id }, newCourseLineItem);
+            var newCourseLineItem = _courseLineItemService.CreateCourseLineItem(courseId, lineItemName, lineItemDescription);
+            return CreatedAtAction(nameof(GetCourseLineItem), new { lineItemId = newCourseLineItem.Id }, _mapper.Map<CourseLineItemDto>(newCourseLineItem));
         }
 
         [HttpPatch()]
-        [ProducesResponseType(typeof(CourseLineItem), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseLineItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{lineItemId}/UpdateLineItemInfo")]
-        public ActionResult<CourseLineItem> UpdateCourseLineItemInfo(Guid lineItemId, string lineItemName, string lineItemDescription)
+        public ActionResult<CourseLineItemDto> UpdateCourseLineItemInfo(Guid lineItemId, string lineItemName, string lineItemDescription)
         {
             try
             {
                 var newCourseLineItem = _courseLineItemService.UpdateCourseLineItemInfo(lineItemId, lineItemName, lineItemDescription);
-                return Ok(newCourseLineItem);
+                return Ok(_mapper.Map<CourseLineItemDto>(newCourseLineItem));
             }
-            catch (UserNotFoundException)
-            {
-                return NotFound();
-            }
-        }
-
-        [HttpPatch()]
-        [ProducesResponseType(typeof(CourseLineItem), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{lineItemId}/UpdateLineItemActive")]
-        public ActionResult<CourseLineItem> UpdateCourseLineItemActive(Guid lineItemId, bool lineItemActive)
-        {
-            try
-            {
-                var newCourseLineItem = _courseLineItemService.UpdateCourseLineItemActive(lineItemId, lineItemActive);
-                return Ok(newCourseLineItem);
-            }
-            catch (UserNotFoundException)
+            catch (CourseLineItemNotFoundException)
             {
                 return NotFound();
             }
@@ -107,61 +97,65 @@ namespace EduManagementLab.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{lineItemId}")]
-        public ActionResult DeleteCourseLineItem(Guid courseLineItemId)
+        public ActionResult<CourseLineItemDto> DeleteCourseLineItem(Guid courseLineItemId)
         {
             try
             {
-                _courseLineItemService.DeleteCourseLineItem(courseLineItemId);
-                return Ok();
+                var courseLineItem = _courseLineItemService.DeleteCourseLineItem(courseLineItemId);
+                return Ok(_mapper.Map<CourseLineItemDto>(courseLineItem));
             }
-            catch (UserNotFoundException)
+            catch (CourseLineItemNotFoundException)
             {
                 return NotFound();
             }
         }
 
-
         [HttpGet]
-        [ProducesResponseType(typeof(List<CourseLineItem.Result>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<CourseLineItemDto.ResultDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{lineItemId}/Results")]
-        public ActionResult<IEnumerable<CourseLineItem.Result>> GetLineItemResults(Guid lineItemId)
+        public ActionResult<IEnumerable<CourseLineItemDto.ResultDto>> GetLineItemResults(Guid lineItemId)
         {
             try
             {
-                var resultsList = _courseLineItemService.GetCourseLineItem(lineItemId).Results.ToList();
+                var resultsList = _courseLineItemService.GetCourseLineItem(lineItemId,true).Results.ToList();
+                var courseLineItemResultsDtoList = new List<CourseLineItemDto.ResultDto>();
 
-                return Ok(resultsList);
+                foreach (var result in resultsList)
+                {
+                    courseLineItemResultsDtoList.Add(_mapper.Map<CourseLineItemDto.ResultDto>(result));
+                }
+
+                return Ok(courseLineItemResultsDtoList);
             }
-            catch (CourseNotFoundException)
+            catch (CourseLineItemNotFoundException)
             {
                 return NotFound();
             }
         }
 
-
         [HttpGet]
-        [ProducesResponseType(typeof(List<CourseLineItem.Result>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<CourseLineItemDto.ResultDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{lineItemId}/Results/{userId}")]
-        public ActionResult<CourseLineItem.Result> GetLineItemResult(Guid lineItemId, Guid userId)
+        public ActionResult<CourseLineItemDto.ResultDto> GetLineItemResult(Guid lineItemId, Guid memberId)
         {
             try
             {
                 var resultList = _courseLineItemService.GetCourseLineItem(lineItemId).Results.ToList();
 
-                if (resultList.Any(u => u.MembershipId == userId))
+                if (resultList.Any(u => u.MembershipId == memberId))
                 {
-                    var selectedMembership = resultList.FirstOrDefault(u => u.MembershipId == userId);
+                    var selectedMembership = resultList.FirstOrDefault(u => u.MembershipId == memberId);
 
-                    return Ok(selectedMembership);
+                    return Ok(_mapper.Map<CourseLineItemDto.ResultDto>(selectedMembership));
                 }
                 else
                 {
                     return NotFound();
                 }
             }
-            catch (CourseNotFoundException)
+            catch (CourseLineItemNotFoundException)
             {
                 return NotFound();
             }
@@ -169,44 +163,87 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpPost]
         [Route("{lineItemId}/Results")]
-        [ProducesResponseType(typeof(CourseLineItem.Result), StatusCodes.Status201Created)]
-        public ActionResult<CourseLineItem.Result> AddLineItemResult(Guid lineItemId, Guid userId, decimal score)
+        [ProducesResponseType(typeof(CourseLineItemDto.ResultDto), StatusCodes.Status201Created)]
+        public ActionResult<CourseLineItemDto.ResultDto> AddLineItemResult(Guid lineItemId, Guid memberId, decimal score)
         {
-            var newlineItemResult = _courseLineItemService.CreateLineItemResult(lineItemId, userId, score);
-            return CreatedAtAction(nameof(GetLineItemResult), new { lineItemId = newlineItemResult.CourseLineItemId, userId = newlineItemResult.MembershipId }, newlineItemResult);
+            var newlineItemResult = _courseLineItemService.CreateLineItemResult(lineItemId, memberId, score);
+            return CreatedAtAction(nameof(GetLineItemResult), new { lineItemId = newlineItemResult.CourseLineItemId, memberId = newlineItemResult.MembershipId }, _mapper.Map<CourseLineItemDto.ResultDto>(newlineItemResult));
         }
 
         [HttpPut]
-        [ProducesResponseType(typeof(CourseLineItem.Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseLineItemDto.ResultDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{lineItemId}/Results")]
-        public ActionResult<CourseLineItem.Result> UpdateLineItemResult(Guid lineItemId, Guid userId, decimal score)
+        public ActionResult<CourseLineItemDto.ResultDto> UpdateLineItemResult(Guid lineItemId, Guid memberId, decimal score)
         {
             try
             {
-                var newLineItemResult = _courseLineItemService.UpdateLineItemResult(lineItemId, userId, score);
-                return Ok(newLineItemResult);
+                var newLineItemResult = _courseLineItemService.UpdateLineItemResult(lineItemId, memberId, score);
+                return Ok(_mapper.Map<CourseLineItemDto.ResultDto>(newLineItemResult));
             }
-            catch (UserNotFoundException)
+            catch (CourseLineItemNotFoundException)
             {
                 return NotFound();
             }
         }
 
         [HttpDelete]
-        [ProducesResponseType(typeof(CourseLineItem.Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CourseLineItemDto.ResultDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("{lineItemId}/Results/{membershipId}")]
-        public ActionResult<CourseLineItem.Result> DeleteLineItemResult(Guid lineItemId, Guid membershipId)
+        public ActionResult<CourseLineItemDto.ResultDto> DeleteLineItemResult(Guid lineItemId, Guid membershipId)
         {
             try
             {
-                _courseLineItemService.DeleteLineItemResult(lineItemId, membershipId);
-                return Ok();
+                var result = _courseLineItemService.DeleteLineItemResult(lineItemId, membershipId);
+                return Ok(_mapper.Map<CourseLineItemDto.ResultDto>(result));
             }
-            catch (UserNotFoundException)
+            catch (Exception e)
             {
-                return NotFound();
+                return NotFound(e.Message);
+            }
+        }
+        public class CourseLineItemDto
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
+            public string? Description { get; set; }
+            public DateTime LastUpdate { get; set; }
+            public List<ResultDto> Results { get; set; } = new List<ResultDto>();
+            public class ResultDto
+            {
+                public Guid Id { get; set; }
+                public Course.Membership? Membership { get; set; }
+                [Required]
+                public Guid MembershipId { get; set; }
+                public CourseLineItem? CourseLineItem { get; set; }
+                [Required]
+                public Guid CourseLineItemId { get; set; }
+                public decimal Score { get; set; }
+                public DateTime LastUpdated { get; set; }
+            }
+        }
+        
+        public class CreateCourseLineItemRequest
+        {
+            public Guid CourseId { get; set; }
+            public string Name { get; set; }
+            public string? Description { get; set; }
+            public DateTime LastUpdate { get; set; }
+        }
+        public class UpdateCourseLineItemInfoRequest
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
+            public string? Description { get; set; }
+            public DateTime LastUpdated { get; set; }
+        }
+        public class CourseLineItemAutoMapperProfile : Profile
+        {
+            public CourseLineItemAutoMapperProfile()
+            {
+                CreateMap<CourseLineItem, CourseLineItemDto>();
+                CreateMap<CourseLineItem.Result, CourseLineItemDto.ResultDto>();
             }
         }
     }

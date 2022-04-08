@@ -15,25 +15,7 @@ namespace EduManagementLab.EfRepository.Repositories
         public IEnumerable<Course.Membership> GetUserCourses(Guid userId)
         {
             return _context.CourseMemberships.Include(c => c.Course).Where(p => p.UserId == userId).ToList();
-
-            //return _context.Courses
-            //    .Include(m => m.Memperships)
-            //    .ThenInclude(u => u.User)
-            //    .Where(m => m.Memperships.Any(p => p.UserId == userId))
-            //    .Select(c => new Course.Membership()
-            //    {
-            //        Course = new Course()
-            //        {
-            //            Id = c.Id,
-            //            Code = c.Code,
-            //            Name = c.Name,
-            //            Description = c.Description,
-            //            StartDate = c.StartDate,
-            //            EndDate = c.EndDate,
-            //        },
-            //    });
         }
-
         public Course? GetCourse(Guid courseId, bool includeMembershipUsers)
         {
             if (includeMembershipUsers == true)
@@ -42,7 +24,6 @@ namespace EduManagementLab.EfRepository.Repositories
             }
             else
             {
-                //return _context.Courses.FirstOrDefault(c => c.Id == courseId);
                 return _context.Courses.Include(m => m.CourseLineItems).FirstOrDefault(m => m.Id == courseId);
             }
         }

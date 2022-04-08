@@ -25,10 +25,10 @@
             @Html.DisplayFor(model => model.CourseLineItem.Active)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLineItem.DateCreated)
+            @Html.DisplayNameFor(model => model.CourseLineItem.LastUpdate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CourseLineItem.DateCreated)
+            @Html.DisplayFor(model => model.CourseLineItem.LastUpdate)
         </dd>
          <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseLineItemId == @Model.CourseLineItem.Id).Score)

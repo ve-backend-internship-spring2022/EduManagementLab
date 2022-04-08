@@ -119,6 +119,7 @@ namespace EduManagementLab.Api.Controllers
                 return NotFound();
             }
         }
+
         public class UserDto
         {
             public Guid Id { get; set; }
@@ -131,7 +132,6 @@ namespace EduManagementLab.Api.Controllers
             [Required]
             public string Email { get; set; }
         }
-
         public class CreateUserRequest
         {
             [Required]
@@ -147,7 +147,6 @@ namespace EduManagementLab.Api.Controllers
             [Required]
             public string Email { get; set; }
         }
-
         public class UpdateUserNameRequest
         {
             [Required]
@@ -159,7 +158,6 @@ namespace EduManagementLab.Api.Controllers
             [Required]
             public string LastName { get; set; }
         }
-
         public class UpdateUserEmailRequest
         {
             [Required]
@@ -175,7 +173,5 @@ namespace EduManagementLab.Api.Controllers
                 CreateMap<User, UserDto>();
             }
         }
-
-
     }
 }

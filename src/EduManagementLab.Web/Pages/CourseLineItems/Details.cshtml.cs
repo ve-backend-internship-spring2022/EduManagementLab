@@ -62,19 +62,6 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             filterList.Add(new SelectListItem() { Text = "Active Members", Value = "0" });
             filterList.Add(new SelectListItem() { Text = "Completed Members", Value = "1" });
         }
-        public IActionResult OnPostUpdateActive(Guid lineItemId, Guid courseId)
-        {
-            try
-            {
-                _courseLineItemService.UpdateCourseLineItemActive(lineItemId, IsChecked);
-                PopulateProperties(lineItemId, courseId, selectedFilter);
-                return Page();
-            }
-            catch (CourseLineItemNotFoundException)
-            {
-                return NotFound();
-            }
-        }
         public IActionResult OnPostUpdateScore(Guid lineItemId, Guid courseId)
         {
             foreach (var userScore in userScoreList)
@@ -116,7 +103,6 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             userScoreList.Clear();
             CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true);
             Course = _courseService.GetCourse(courseId, true);
-            IsChecked = CourseLineItem.Active;
 
             var courseLineItemResult = CourseLineItem.Results.Where(c => c.CourseLineItemId == lineItemId);
 

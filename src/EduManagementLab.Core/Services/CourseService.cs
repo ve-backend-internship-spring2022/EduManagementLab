@@ -73,6 +73,7 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Courses.Remove(course);
             _unitOfWork.Complete();
         }
+
         public Course.Membership CreateCourseMembership(Guid courseId, Guid userId, DateTime EnrolledDate)
         {
             var course = GetCourse(courseId, true);
@@ -106,8 +107,7 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Courses.Update(course);
             _unitOfWork.Complete();
             return membershipToDelete;
-        }
-        
+        }        
         public Course.Membership UpdateMemberEndDate(Guid courseId, Guid userId, DateTime endDate, bool endDateActive = false)
         {
             var course = GetCourse(courseId, true);
@@ -129,7 +129,6 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return membershipToInactive;
         }
-
         public Course.Membership UpdateMembershipEnrolledDate(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             var course = GetCourse(courseId, true);
