@@ -55,7 +55,7 @@ namespace EduManagementLab.Web.Pages.Courses
             try
             {
                 _courseService.UpdateCourseInfo(CourseId, Code, Name, Description);
-                return RedirectToPage("./Index");
+                return RedirectToPage("./Details", new { CourseId = CourseId });
             }
             catch (CourseNotFoundException)
             {

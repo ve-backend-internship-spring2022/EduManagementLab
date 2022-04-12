@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EduManagementLab.Web.Pages.Users
 {
+    [BindProperties]
     public class CreateModel : PageModel
     {
         private readonly UserService _userService;
@@ -22,20 +23,17 @@ namespace EduManagementLab.Web.Pages.Users
             _userService = userService;
         }
 
-        [BindProperty]
         [Required]
+        [RegularExpression("^[A-Za-z][A-Za-z0-9_]{7,29}$", ErrorMessage = "Invalid")]
         public string Username { get; set; }
         [Required]
         public string Password { get; set; }
         [Required]
         public string Displayname { get; set; }
-        [BindProperty]
         [Required]
         public string FirstName { get; set; }
-        [BindProperty]
         [Required]
         public string LastName { get; set; }
-        [BindProperty]
         [Required]
         public string Email { get; set; }
 

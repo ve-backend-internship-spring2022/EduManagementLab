@@ -1,75 +1,147 @@
-﻿@page 
-@model  EduManagementLab.Web.Pages.CourseLineItems.DetailsModel
-@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@page
+@model EduManagementLab.Web.Pages.CourseLineItems.DetailsModel
 @{
     ViewData["Title"] = "Details";
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <h1>@Model.CourseLineItem.Name</h1>
 
     <div>
         <div class="row">
-            <div class="col-md-7 text-md-left"><h4>Course Line Item details</h4></div>
+            <div class="col-md-7 text-md-left">
+                <h4>Course Line Item details</h4>
+            </div>
+            <div class="col-md-5 text-md-end">
+                <a asp-page="./EditCourseLineItemInfo" asp-route-id="@Model.CourseLineItem.Id" asp-route-courseId=@Model.Course.Id>Edit courselineitem info</a>
+            </div>
         </div>
         <hr />
         <dl class="row">
             <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLineItem.Description)
+                @Html.DisplayNameFor(model => model.CourseLineItem.Description)
             </dt>
             <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CourseLineItem.Description)
-            </dd>
-            <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLineItem.Active)
-            </dt>
-            <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CourseLineItem.Active)
+                @Html.DisplayFor(model => model.CourseLineItem.Description)
             </dd>
         </dl>
     </div>
-     <div class="row">
-        <div class="col-md-10"><h4>Results for this course</h4></div>
+    <div class="row justify-content-between">
+        <div class="col">
+            <h4>Results for this course</h4>
+            <span class="text-warning">@ViewBag.error</span>
         </div>
+    </div>
     <hr />
-        <table class="table">
+    <table class="table">
         <thead>
             <tr>
                 <th>
-                @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].User.FirstName)
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Membership.User.FirstName)
                 </th>
                 <th>
-                @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].User.LastName)
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Membership.User.LastName)
                 </th>
                 <th>
-                @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Score)
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].LastUpdated)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseLineItem.Results[0].Score)
                 </th>
             </tr>
         </thead>
         <tbody>
-        @if (Model.CourseLineItem.Results != null)
-        {
-            @foreach (var result in Model.CourseLineItem.Results)
+            @if (Model.CourseLineItem.Results != null)
             {
+                <form method="post" id="form__submit" asp-page-handler="UpdateScore" asp-route-lineItemId="@Model.CourseLineItem.Id" asp-route-courseId="@Model.Course.Id">
+                    @{
+                        @for (int i = 0; i < Model.userScoreList.Count; i++)
+                        {
+                            @if (@Model.userScoreList[i].EndDate == null)
+                            {
                             <tr>
                                 <td>
-                        @Html.DisplayFor(modelItem => result.User.FirstName)
-                                </td>
-                                 <td>
-                        @Html.DisplayFor(modelItem => result.User.LastName)
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Firstname)
                                 </td>
                                 <td>
-                        @Html.DisplayFor(modelItem => result.Score)
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Lastname)
                                 </td>
-                           </tr>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].lastUpdated)
+                                </td>
+                                <td>
+                                    <div class="container">
+                                        <div class="row justify-content-start">
+                                                @if (@Model.userScoreList[i].Score != 0)
+                                                {
+                                                <div class="col-4">
+                                                    <input type="text" value="@Model.userScoreList[i].Score" asp-for="@Model.userScoreList[i].Score" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                                else if (@Model.userScoreList[i].Score == 0)
+                                                {
+                                                <div class="col-4">
+                                                    <input type="text" value="" asp-for="@Model.userScoreList[i].Score" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                                else
+                                                {
+                                                <div class="col-4">
+                                                    <p>@Model.userScoreList[i].Score.ToString()</p>
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                            else
+                            {
+                            <tr style="opacity: 0.4; pointer-events: none;">
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Firstname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].Lastname)
+                                </td>
+                                <td>
+                                        @Html.DisplayFor(modelItem => @Model.userScoreList[i].lastUpdated)
+                                </td>
+                                <td>
+                                    <div class="container">
+                                        <div class="row justify-content-start">
+                                                @if (@Model.userScoreList[i].Score != 0)
+                                                {
+                                                <div class="col-4">
+                                                    <p>@Model.userScoreList[i].Score.ToString()</p>
+                                                    <input hidden type="text" value="@Model.userScoreList[i].UserId" asp-for="@Model.userScoreList[i].UserId" />
+                                                    <input hidden type="text" value="@Model.userScoreList[i].LineItemId" asp-for="@Model.userScoreList[i].LineItemId" />
+                                                </div>
+                                                }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        }
+                    }
+                <button class="btn btn-primary justify-content-end" type="submit">Save all</button>
+                </form>
+                <div class="col" style="width:20%; float:right;">
+                    <form method="post" asp-page-handler="Filter" asp-route-lineItemId="@Model.CourseLineItem.Id" asp-route-courseId="@Model.Course.Id">
+                        <select asp-for="selectedFilter" onchange="this.form.submit()" class="dropdown form-select border-color-lightbrown" aria-label="Default select example" asp-items="@Model.filterList">
+                        </select>
+                    </form>
+                </div>
             }
-        }
-        else
-        {
-                   <h4>No results for this course!</h4> 
-        }
+            else
+            {
+                <h4>No results for this course!</h4>
+            }
         </tbody>
     </table>
 }

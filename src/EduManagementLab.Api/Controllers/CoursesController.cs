@@ -47,12 +47,11 @@ namespace EduManagementLab.Api.Controllers
 
                 return Ok(courseDtoList);
             }
-            catch (UserNotFoundException)
+            catch (CourseNotFoundException)
             {
                 return NotFound();
             }
         }
-
 
         [HttpGet]
         [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
@@ -72,7 +71,6 @@ namespace EduManagementLab.Api.Controllers
 
         }
 
-
         [HttpPost]
         [ProducesResponseType(typeof(CourseDto), StatusCodes.Status201Created)]
         public ActionResult<CourseDto> AddCourse(CreateCourseRequest createCourseRequest)
@@ -80,7 +78,6 @@ namespace EduManagementLab.Api.Controllers
             var course = _courseService.CreateCourse(createCourseRequest.Code, createCourseRequest.Name, createCourseRequest.Description, createCourseRequest.StartDate, createCourseRequest.EndDate);
             return CreatedAtAction(nameof(GetCourse), new { courseId = course.Id }, _mapper.Map<CourseDto>(course));
         }
-
 
         [HttpPatch()]
         [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
@@ -100,7 +97,6 @@ namespace EduManagementLab.Api.Controllers
 
         }
 
-
         [HttpPatch()]
         [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -118,7 +114,6 @@ namespace EduManagementLab.Api.Controllers
             }
         }
 
-
         [HttpDelete("{courseId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -134,7 +129,6 @@ namespace EduManagementLab.Api.Controllers
                 return NotFound();
             }
         }
-
 
         [HttpPost()]
         [Route("{courseId}/Memberships")]
@@ -170,7 +164,6 @@ namespace EduManagementLab.Api.Controllers
                 return BadRequest(e.Message);
             }
         }
-
 
         [HttpGet]
         [ProducesResponseType(typeof(List<MembershipDto>), StatusCodes.Status200OK)]
@@ -223,7 +216,6 @@ namespace EduManagementLab.Api.Controllers
             }
         }
 
-
         [HttpDelete]
         [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)] 
@@ -254,7 +246,6 @@ namespace EduManagementLab.Api.Controllers
             [Required]
             public DateTime EndDate { get; set; }
         }
-
         public class MembershipDto
         {
             [Required]

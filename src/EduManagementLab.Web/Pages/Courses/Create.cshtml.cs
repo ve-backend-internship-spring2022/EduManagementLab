@@ -32,6 +32,8 @@ namespace EduManagementLab.Web.Pages.Courses
         public DateTime EndDate { get; set; }
         public IActionResult OnGet()
         {
+            StartDate = DateTime.Now.Date;
+            EndDate = DateTime.Now.Date;
             return Page();
         }
 

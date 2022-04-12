@@ -15,7 +15,7 @@ namespace EduManagementLab.Web.Pages.Users
 {
     public class DetailsModel : PageModel
     {
-        private readonly UserService _userService; 
+        private readonly UserService _userService;
         private readonly CourseService _courseService;
 
         public DetailsModel(UserService userService, CourseService courseService)
@@ -46,7 +46,6 @@ namespace EduManagementLab.Web.Pages.Users
                 return NotFound();
             }
         }
-
         public async Task<IActionResult> OnPostAsync(Guid Id, Guid userId)
         {
             if (!ModelState.IsValid)

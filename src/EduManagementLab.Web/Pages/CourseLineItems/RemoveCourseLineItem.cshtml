@@ -1,0 +1,39 @@
+﻿@page
+@model EduManagementLab.Web.Pages.CourseLineItems.RemoveCourseLineItemModel
+@{
+    ViewData["Title"] = "Delete CourseLineItem";
+}
+
+<h1>Delete Course Line Item</h1>
+
+<h3>Are you sure you want to delete @Model.courseLineItemDto.Name?</h3>
+<div>
+    <h4>Course Line Item</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.courseLineItemDto.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.courseLineItemDto.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.courseLineItemDto.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.courseLineItemDto.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.courseLineItemDto.Active)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.courseLineItemDto.Active)
+        </dd>
+    </dl>
+
+    <form method="post" asp-route-courseId="@Model.courseId" asp-route-lineItemId="@Model.courseLineItemDto.Id">
+        <a href='javascript:history.go(-1)' class="btn btn-primary">Back</a>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+
+    </form>
+</div>

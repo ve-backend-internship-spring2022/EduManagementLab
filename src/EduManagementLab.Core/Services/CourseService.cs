@@ -23,7 +23,6 @@ namespace EduManagementLab.Core.Services
         {
             return _unitOfWork.Courses.GetAll();
         }
-
         public Course CreateCourse(string code, string name, string description, DateTime startDate, DateTime endDate)
         {
             var course = new Course() { Code = code, Name = name, Description = description, StartDate = startDate, EndDate = endDate };
@@ -36,7 +35,6 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return course;
         }
-
         public Course GetCourse(Guid id, bool includeMembershipUsers = false)
         {
             var course = _unitOfWork.Courses.GetCourse(id, includeMembershipUsers);
@@ -50,7 +48,6 @@ namespace EduManagementLab.Core.Services
         {
             return _unitOfWork.Courses.GetUserCourses(userId);
         }
-
         public Course UpdateCourseInfo(Guid id, string code, string name, string description)
         {
             var course = GetCourse(id);
@@ -61,7 +58,6 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return course;
         }
-
         public Course UpdateCoursePeriod(Guid id, DateTime startDate, DateTime endDate)
         {
             var course = GetCourse(id);
@@ -71,7 +67,6 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return course;
         }
-
         public void DeleteCourse(Guid id)
         {
             var course = GetCourse(id);
@@ -79,7 +74,7 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
         }
 
-        public Course.Membership CreateCourseMembership(Guid courseId, Guid userId, DateTime enrolledDate)
+        public Course.Membership CreateCourseMembership(Guid courseId, Guid userId, DateTime EnrolledDate)
         {
             var course = GetCourse(courseId, true);
 
@@ -90,7 +85,7 @@ namespace EduManagementLab.Core.Services
             {
                 CourseId = courseId,
                 UserId = userId,
-                EnrolledDate = enrolledDate,
+                EnrolledDate = EnrolledDate,
             };
 
             course.Memperships.Add(newMembership);
@@ -99,22 +94,41 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return newMembership;
         }
-
-        public Course.Membership RemoveCourseMembership(Guid courseId, Guid userId)
+        public Course.Membership RemoveCourseMembership(Guid courseId, Guid userId, bool deleteResult = false)
         {
             var course = GetCourse(courseId, true);
 
             Guard.AgainstUnknownCourseMembership(course, userId);
 
             var membershipToDelete = course.Memperships.Find(c => c.UserId == userId && c.CourseId == courseId);
+            var membershipEndDateToUpdate = course.Memperships.FirstOrDefault(x => x.UserId == userId && x.CourseId == courseId);
 
             course.Memperships.Remove(membershipToDelete);
-
             _unitOfWork.Courses.Update(course);
             _unitOfWork.Complete();
             return membershipToDelete;
-        }
+        }        
+        public Course.Membership UpdateMemberEndDate(Guid courseId, Guid userId, DateTime endDate, bool endDateActive = false)
+        {
+            var course = GetCourse(courseId, true);
 
+            Guard.AgainstUnknownCourseMembership(course, userId);
+
+            var membershipToInactive = course.Memperships.FirstOrDefault(u => u.UserId == userId && u.CourseId == courseId);
+
+            if(endDateActive == true)
+            {
+                membershipToInactive.EndDate = null;
+            } 
+            else 
+            {
+                membershipToInactive.EndDate = endDate;
+            }
+
+            _unitOfWork.Courses.Update(course);
+            _unitOfWork.Complete();
+            return membershipToInactive;
+        }
         public Course.Membership UpdateMembershipEnrolledDate(Guid courseId, Guid userId, DateTime enrolledDate)
         {
             var course = GetCourse(courseId, true);

@@ -1,10 +1,102 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-start">
+    <h1 class="display-4">Welcome @Model.UserLoggedIn.UserName!</h1>
+    <div class="row">
+        <div class="col-md-7 text-md-left"><h4>This is your dashboard</h4></div>
+        <div class="col-md-5 text-md-end">
+            <a asp-page="./Account/Index" asp-route-userId="@Model.LoginUserId" asp-page-handler="Account">Account Settings</a>
+        </div>
+    </div>
+    <div class="row pt-5">
+        <div class="col-md-12 text-md-left"><h4>Enrolled courses</h4></div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseList[0].Course.Code)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseList[0].Course.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseList[0].Course.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseList[0].Course.StartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseList[0].Course.EndDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ListOfCourseMemberships != null)
+            {
+                @foreach (var course in Model.ListOfCourseMemberships)
+                {
+                    @if (course.EndDate == null)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => course.Code)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => course.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => course.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => course.StartDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => course.EndDate)
+                            </td>
+                            @*<td>
+                                <a asp-page="../CourseLineItems/ViewResults" asp-route-courseId="@course.Id" asp-route-lineItemId="@lineItem.Id">View result</a>
+                            </td>*@
+                            <td>
+                                <a asp-page="./Students/CourseDetails" asp-route-courseId="@course.Id">Details</a>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td style="opacity: 0.4;">
+                                @Html.DisplayFor(modelItem => course.Code)
+                            </td>
+                            <td style="opacity: 0.4;">
+                                @Html.DisplayFor(modelItem => course.Name)
+                            </td>
+                            <td style="opacity: 0.4;">
+                                @Html.DisplayFor(modelItem => course.Description)
+                            </td>
+                            <td style="opacity: 0.4;">
+                                @Html.DisplayFor(modelItem => course.StartDate)
+                            </td>
+                            <td style="opacity: 0.4;">
+                                @Html.DisplayFor(modelItem => course.EndDate)
+                            </td>
+
+                            <td>
+                                <a asp-page="./Students/CourseDetails" asp-route-courseId="@course.Id">Details</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+            else
+            {
+                <h3>Student hasn't enroll in any course</h3>
+            }
+        </tbody>
+    </table>
 </div>

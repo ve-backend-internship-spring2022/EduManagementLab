@@ -58,7 +58,7 @@ namespace EduManagementLab.Web.Pages.Users
             try
             {
                 _userService.UpdateEmail(UserId, Email);
-                return RedirectToPage("./Index");
+                return RedirectToPage("./Details", new { userId = UserId });
             }
             catch (UserNotFoundException)
             {

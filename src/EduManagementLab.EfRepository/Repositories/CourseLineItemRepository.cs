@@ -16,7 +16,7 @@ namespace EduManagementLab.EfRepository.Repositories
         {
             if (includeResults == true)
             {
-                return _context.CourseLineItems.Include(c => c.Results).ThenInclude(c => c.User).FirstOrDefault(c => c.Id == lineItemId);
+                return _context.CourseLineItems.Include(c => c.Results).ThenInclude(c => c.Membership).FirstOrDefault(c => c.Id == lineItemId);
             }
             else
             {
