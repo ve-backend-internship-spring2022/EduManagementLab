@@ -8,7 +8,7 @@ namespace EduManagementLab.Core.Exceptions
 {
     public class CourseLineItemResultNotFoundException : Exception
     {
-        public CourseLineItemResultNotFoundException(Guid lineitemId) : base($"CourseLineItemResult:{lineitemId} not found")
+        public CourseLineItemResultNotFoundException(Guid lineItemResultId) : base($"CourseLineItemResult:{lineItemResultId} not found")
         {
         }
     }

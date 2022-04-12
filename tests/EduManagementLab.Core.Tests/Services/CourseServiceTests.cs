@@ -243,5 +243,49 @@ namespace EduManagementLab.Core.Tests.Services
 
             Assert.Throws<CourseMembershipNotFoundException>(() => _courseService.UpdateMembershipEnrolledDate(testCourseId, testUserId, testEnrollmentDate));
         }
+
+        [Fact]
+        public void UpdateMemberEndDate_ReturnsCorrectMembership()
+        {
+            var testCourseId = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D");
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+            var testEndDate = DateTime.MinValue;
+
+            var membership = _courseService.UpdateMemberEndDate(testCourseId, testUserId, testEndDate, true);
+
+            Assert.Equal(Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D"), membership.CourseId);
+        }
+
+        [Fact]
+        public void UpdateMemberEndDate_UnknownCourseId_ThrowsCourseNotFoundException()
+        {
+            var testCourseId = Guid.NewGuid();
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+            var testEndDate = DateTime.MinValue;
+
+            Assert.Throws<CourseNotFoundException>(() => _courseService.UpdateMemberEndDate(testCourseId, testUserId, testEndDate, true));
+        }
+
+        [Fact]
+        public void UpdateMemberEndDate_UnknownMemberId_ThrowsCourseMembershipNotFoundException()
+        {
+            var testCourseId = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D");
+            var testUserId = Guid.NewGuid();
+            var testEndDate = DateTime.MinValue;
+
+            Assert.Throws<CourseMembershipNotFoundException>(() => _courseService.UpdateMemberEndDate(testCourseId, testUserId, testEndDate, true));
+        }
+
+        [Fact]
+        public void UpdateMemberEndDate_ReturnEndDateIfInactive()
+        {
+            var testCourseId = Guid.Parse("4A0E4335-08E0-45C0-8A97-9791CE81E73D");
+            var testUserId = Guid.Parse("8E7A4A48-9FFE-4E66-8AF5-65B7860CFEC0");
+            var testEndDate = DateTime.MaxValue;
+
+            var member = _courseService.UpdateMemberEndDate(testCourseId, testUserId, testEndDate, false);
+
+            Assert.Equal(testCourseId, member.CourseId);
+        }
     }
 }

@@ -34,7 +34,10 @@ namespace EduManagementLab.Core.Services
         }
         public CourseLineItem CreateCourseLineItem(Guid courseId, string name, string description)
         {
-            var course = _unitOfWork.Courses.GetCourse(courseId, false);
+            var course = _unitOfWork.Courses.GetCourse(courseId, true);
+
+            Guard.AgainstNullCourse(courseId, _unitOfWork);
+            Guard.AgaintDuplicateNameInCourseLineItem(courseId, name, _unitOfWork);
 
             CourseLineItem newlineItem = new CourseLineItem()
             {
@@ -44,14 +47,14 @@ namespace EduManagementLab.Core.Services
             };
             course.CourseLineItems.Add(newlineItem);
 
-            _unitOfWork.CourseLineItems.Add(newlineItem);
+            _unitOfWork.CourseLineItems.Add(newlineItem); 
             _unitOfWork.Complete();
             return newlineItem;
 
         }
-        public CourseLineItem UpdateCourseLineItemInfo(Guid id, string name, string description)
+        public CourseLineItem UpdateCourseLineItemInfo(Guid lineItemId, string name, string description)
         {
-            CourseLineItem courseLineItem = GetCourseLineItem(id);
+            CourseLineItem courseLineItem = GetCourseLineItem(lineItemId);
             courseLineItem.Name = name;
             courseLineItem.Description = description;
 
@@ -59,9 +62,11 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return courseLineItem;
         }
-        public CourseLineItem DeleteCourseLineItem(Guid id)
+        public CourseLineItem DeleteCourseLineItem(Guid lineItemId)
         {
-            var courseLineItem = GetCourseLineItem(id);
+            var courseLineItem = GetCourseLineItem(lineItemId);
+
+            Guard.AgainstUnknownCourseLineItem(lineItemId, _unitOfWork);
 
             _unitOfWork.CourseLineItems.Remove(courseLineItem);
             _unitOfWork.Complete();
@@ -70,6 +75,9 @@ namespace EduManagementLab.Core.Services
         public CourseLineItem.Result UpdateLineItemResult(Guid lineItemId, Guid memberId, decimal score)
         {
             var lineItem = GetCourseLineItem(lineItemId, true);
+
+            //Guard.AgainstUnknownCourseLineItem(lineItemId, _unitOfWork);
+            Guard.AgainstUnknownMemberInCourseLineItemResult(lineItemId, memberId, _unitOfWork);
 
             var result = lineItem.Results.FirstOrDefault(l => l.MembershipId == memberId && l.CourseLineItemId == lineItemId);
 
@@ -84,9 +92,11 @@ namespace EduManagementLab.Core.Services
         {
             var courseLineItem = GetCourseLineItem(lineItemId, true);
 
+            Guard.AgainstDuplicateCourseLineItemResult(lineItemId, memberId, _unitOfWork);
+
             CourseLineItem.Result newResult = null;
 
-            if (!courseLineItem.Results.Any(x => x.MembershipId == memberId))
+            if (!courseLineItem.Results.Any(x => x.MembershipId == memberId && x.CourseLineItemId == lineItemId))
             {
                 newResult = new CourseLineItem.Result()
                 {
@@ -100,14 +110,17 @@ namespace EduManagementLab.Core.Services
 
                 _unitOfWork.LineItemResults.Add(newResult);
             }
+
             _unitOfWork.Complete();
             return newResult;
         }
-        public CourseLineItem.Result DeleteLineItemResult(Guid lineItemId, Guid userId)
+        public CourseLineItem.Result DeleteLineItemResult(Guid lineItemId, Guid memberId)
         {
             var lineItem = GetCourseLineItem(lineItemId, true);
 
-            var resultToDelete = lineItem.Results.FirstOrDefault(l => l.MembershipId == userId && l.CourseLineItemId == lineItemId);
+            Guard.AgainstUnknownMemberInCourseLineItemResult(lineItemId, memberId, _unitOfWork);
+
+            var resultToDelete = lineItem.Results.FirstOrDefault(l => l.MembershipId == memberId && l.CourseLineItemId == lineItemId);
             _unitOfWork.LineItemResults.Remove(resultToDelete);
             _unitOfWork.Complete();
             return resultToDelete;
