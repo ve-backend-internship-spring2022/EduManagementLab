@@ -66,7 +66,7 @@ namespace EduManagementLab.Web.Pages.Users
             try
             {
                 _userService.UpdateName(UserId, Displayname, FirstName, LastName);
-                return RedirectToPage("./Index");
+                return RedirectToPage("./Details", new { userId = UserId });
             }
             catch (UserNotFoundException)
             {
