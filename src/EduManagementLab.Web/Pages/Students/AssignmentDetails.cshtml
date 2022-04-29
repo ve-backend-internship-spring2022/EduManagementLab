@@ -25,16 +25,16 @@
             @Html.DisplayFor(model => model.CourseLineItem.LastUpdate)
         </dd>
          <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseLineItemId == @Model.CourseLineItem.Id).Score)
+            @Html.DisplayNameFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseLineItem.Id).Score)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseLineItemId == @Model.CourseLineItem.Id).Score)
+            @Html.DisplayFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseLineItem.Id).Score)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseLineItemId == @Model.CourseLineItem.Id).LastUpdated)
+            @Html.DisplayNameFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseLineItem.Id).LastUpdated)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseLineItemId == @Model.CourseLineItem.Id).LastUpdated)
+            @Html.DisplayFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseLineItem.Id).LastUpdated)
         </dd>
     </dl>
 </div>

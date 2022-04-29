@@ -7,8 +7,8 @@ using EduManagementLab.Core.Entities;
 
 namespace EduManagementLab.Core.Interfaces.Repositories
 {
-    public interface ICourseLineItemRepository : IGenericRepository<CourseLineItem>
+    public interface ICourseTaskRepository : IGenericRepository<CourseTask>
     {
-        CourseLineItem? GetCourseLineItem(Guid lineItemId, bool includeResults);
+        CourseTask? GetCourseTask(Guid courseTaskId, bool includeResults);
     }
 }

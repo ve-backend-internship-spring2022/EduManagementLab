@@ -13,8 +13,8 @@ namespace EduManagementLab.Web.Pages.Students
     {
         private readonly CourseService _courseService;
         private readonly UserService _userService;
-        private readonly CourseLineItemService _courseLineItemService;
-        public CourseDetailsModel(CourseService courseService, UserService userService, CourseLineItemService courseLineItemService)
+        private readonly CourseTaskService _courseLineItemService;
+        public CourseDetailsModel(CourseService courseService, UserService userService, CourseTaskService courseLineItemService)
         {
             _courseService = courseService;
             _userService = userService;
@@ -49,8 +49,8 @@ namespace EduManagementLab.Web.Pages.Students
         {
             Course = _courseService.GetCourse(courseId, true);
 
-            LineItemListItems = new SelectList(_courseLineItemService.GetCourseLineItems()
-               .Where(s => !Course.CourseLineItems.Any(x => x.Name == s.Name)), "Name", "Description");
+            LineItemListItems = new SelectList(_courseLineItemService.GetCourseTasks()
+               .Where(s => !Course.CourseTasks.Any(x => x.Name == s.Name)), "Name", "Description");
         }
     }
 }

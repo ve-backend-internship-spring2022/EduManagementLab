@@ -20,11 +20,11 @@ namespace EduManagementLab.EfRepository.Repositories
         {
             if (includeMembershipUsers == true)
             {
-                return _context.Courses.Include(c => c.CourseLineItems).ThenInclude(r => r.Results).Include(m => m.Memperships).ThenInclude(u => u.User).FirstOrDefault(m => m.Id == courseId);
+                return _context.Courses.Include(c => c.CourseTasks).ThenInclude(r => r.Results).Include(m => m.Memperships).ThenInclude(u => u.User).FirstOrDefault(m => m.Id == courseId);
             }
             else
             {
-                return _context.Courses.Include(m => m.CourseLineItems).FirstOrDefault(m => m.Id == courseId);
+                return _context.Courses.Include(m => m.CourseTasks).FirstOrDefault(m => m.Id == courseId);
             }
         }
     }

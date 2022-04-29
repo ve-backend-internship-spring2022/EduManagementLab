@@ -8,21 +8,21 @@ namespace EduManagementLab.Web.Pages.Students
 {
     public class AssignmentDetailsModel : PageModel
     {
-        private readonly CourseLineItemService _courseLineItemService;
-        public AssignmentDetailsModel(CourseLineItemService courseLineItemService)
+        private readonly CourseTaskService _courseLineItemService;
+        public AssignmentDetailsModel(CourseTaskService courseLineItemService)
         {
             _courseLineItemService = courseLineItemService;
         }
-        public CourseLineItem CourseLineItem { get; set; }
+        public CourseTask CourseLineItem { get; set; }
 
         public async Task<IActionResult> OnGetAsync(Guid lineItemId)
         {
             try
             {
-                CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true);
+                CourseLineItem = _courseLineItemService.GetCourseTask(lineItemId, true);
                 return Page();
             }
-            catch (CourseLineItemNotFoundException)
+            catch (CourseTaskNotFoundException)
             {
                 return NotFound();
             }

@@ -4,10 +4,10 @@ using EduManagementLab.EfRepository.Repositories;
 
 namespace EduManagementLab.EfRepository
 {
-    internal class LineItemResultsRepository : GenericRepository<CourseLineItem.Result>, ILineItemResultsRepository
+    internal class CourseTaskResultsRepository : GenericRepository<CourseTask.Result>, ICourseTaskResultsRepository
     {
         public readonly DataContext _context;
-        public LineItemResultsRepository(DataContext context) : base(context)
+        public CourseTaskResultsRepository(DataContext context) : base(context)
         {
             _context = context;
         }

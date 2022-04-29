@@ -51,17 +51,17 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Course.CourseLineItems[0].Name)
+                @Html.DisplayNameFor(model => model.Course.CourseTasks[0].Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Course.CourseLineItems[0].Description)
+                @Html.DisplayNameFor(model => model.Course.CourseTasks[0].Description)
             </th>
         </tr>
     </thead>
     <tbody>
-        @if (Model.Course.CourseLineItems != null)
+        @if (Model.Course.CourseTasks != null)
         {
-            @foreach (var lineItem in Model.Course.CourseLineItems)
+            @foreach (var lineItem in Model.Course.CourseTasks)
             {
                 <tr>
                     <td>
