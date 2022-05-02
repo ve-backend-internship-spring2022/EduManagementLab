@@ -9,7 +9,7 @@ namespace EduManagementLab.Core.Interfaces.Repositories
 {
     public interface ICourseTaskRepository : IGenericRepository<CourseTask>
     {
-        CourseTask? GetCourseTask(Guid courseTaskId, bool includeResults);
-        CourseLineItem? GetCourseLineItem(Guid lineItemId, bool includeResults, bool includeResource);
+        List<CourseTask>? GetCourseTasks(bool includeResults, bool includeResource);
+        CourseTask? GetCourseTask(Guid courseTaskId, bool includeResults, bool includeResource);
     }
 }

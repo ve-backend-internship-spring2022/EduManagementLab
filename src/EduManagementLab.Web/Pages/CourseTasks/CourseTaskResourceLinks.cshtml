@@ -4,14 +4,14 @@
 }
 <div class="row">
     <div class="col-md-7 text-md-left">
-        <h4>Resources for @Model.CourseLineItem.Name</h4>
+        <h4>Resources for @Model.courseTask.Name</h4>
     </div>
     <div class="col-md-5 text-md-end">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resourcesModal">
-            Add resource link
+            Add Resource Link
         </button>
         <!-- Modal -->
-        <form method="post" asp-page-handler="AddResource" asp-route-courseTaskId="@Model.CourseLineItem.Id">
+        <form method="post" asp-page-handler="AddResourceLinkToCourseTask" asp-route-courseTaskId="@Model.courseTask.Id">
             <div class="modal fade" id="resourcesModal" tabindex="-1" aria-labelledby="resourcesModal" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -35,31 +35,31 @@
     </div>
 </div>
 <hr />
-@if (Model.CourseLineItem.IMSLTIResourceLinks.Any())
+@if (Model.courseTask.IMSLTIResourceLinks.Any())
 {
     <table class="table">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.CourseLineItem.IMSLTIResourceLinks[0].Title)
+                    @Html.DisplayNameFor(model => model.courseTask.IMSLTIResourceLinks[0].Title)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CourseLineItem.IMSLTIResourceLinks[0].Description)
+                    @Html.DisplayNameFor(model => model.courseTask.IMSLTIResourceLinks[0].Description)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CourseLineItem.IMSLTIResourceLinks[0].Tool)
+                    @Html.DisplayNameFor(model => model.courseTask.IMSLTIResourceLinks[0].Tool)
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in @Model.CourseLineItem.IMSLTIResourceLinks)
+            @foreach (var item in @Model.courseTask.IMSLTIResourceLinks)
             {
                 <tr>
                     <td>@item.Title</td>
                     <td>@item.Description</td>
                     <td>
                         <a class="btn btn-primary m-2" asp-page="/ResourceLinks/Detail" asp-route-resourceId="@item.Id">Detail</a>
-                        <form method="post" asp-page-handler="RemoveResourceLinkFromCourseTask" asp-route-resourceId="@item.Id" asp-route-courseTaskId="@Model.CourseLineItem.Id">
+                        <form method="post" asp-page-handler="RemoveResourceLinkFromCourseTask" asp-route-resourceId="@item.Id" asp-route-courseTaskId="@Model.courseTask.Id">
                             <button type="submit" class="btn btn-danger">Delete resource from this task</button>
                         </form>
                     </td>
@@ -73,4 +73,9 @@ else
     <div class="position-relative">
         <h1 class="text-center">No ResourceLinks available</h1>
     </div>
+}
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }

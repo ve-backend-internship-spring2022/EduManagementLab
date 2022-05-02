@@ -23,9 +23,13 @@ namespace EduManagementLab.Core.Services
         {
             return _unitOfWork.CourseTasks.GetAll();
         }
-        public CourseTask GetCourseTask(Guid courseTaskId, bool includeResults = false)
+        public IEnumerable<CourseTask> GetCourseTasksIncludeResourceLinks()
         {
-            var courseTask = _unitOfWork.CourseTasks.GetCourseTask(courseTaskId, includeResults);
+            return _unitOfWork.CourseTasks.GetCourseTasks(true, true);
+        }
+        public CourseTask GetCourseTask(Guid courseTaskId, bool includeResults = false, bool includeResourceLinks = true)
+        {
+            var courseTask = _unitOfWork.CourseTasks.GetCourseTask(courseTaskId, includeResults, includeResourceLinks);
             if (courseTask == null)
             {
                 throw new CourseTaskNotFoundException(courseTaskId);
@@ -42,12 +46,12 @@ namespace EduManagementLab.Core.Services
             CourseTask newCourseTask = new CourseTask()
             {
                 Name = name,
-                Description = description,                
+                Description = description,
                 LastUpdate = DateTime.Now,
             };
             course.CourseTasks.Add(newCourseTask);
 
-            _unitOfWork.CourseTasks.Add(newCourseTask); 
+            _unitOfWork.CourseTasks.Add(newCourseTask);
             _unitOfWork.Complete();
             return newCourseTask;
 
@@ -62,6 +66,36 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return courseTask;
         }
+
+        public CourseTask AddResouceLinkToCourseTask(Guid courseTaskId, Guid resouceLinkId)
+        {
+            var targetCourseTask = GetCourseTask(courseTaskId, true, true);
+
+            if (!targetCourseTask.IMSLTIResourceLinks.Any(r => r.Id == resouceLinkId))
+            {
+                var targetResourceLink = _unitOfWork.ResourceLinks.GetById(resouceLinkId);
+                targetCourseTask.IMSLTIResourceLinks.Add(targetResourceLink);
+
+                _unitOfWork.CourseTasks.Update(targetCourseTask);
+                _unitOfWork.Complete();
+            }
+            return targetCourseTask;
+        }
+        public CourseTask DeleteCourseTaskResoruceLink(Guid courseTaskId, Guid resourceId)
+        {
+            var targetCourseTask = GetCourseTask(courseTaskId, true, true);
+
+            if (targetCourseTask.IMSLTIResourceLinks.Any(r => r.Id == resourceId))
+            {
+                var targetResourceLink = _unitOfWork.ResourceLinks.GetById(resourceId);
+                targetCourseTask.IMSLTIResourceLinks.Remove(targetResourceLink);
+
+                _unitOfWork.CourseTasks.Update(targetCourseTask);
+                _unitOfWork.Complete();
+            }
+            return targetCourseTask;
+        }
+
         public CourseTask DeleteCourseTask(Guid courseTaskId)
         {
             var courseTask = GetCourseTask(courseTaskId);

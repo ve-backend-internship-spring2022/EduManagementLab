@@ -9,25 +9,23 @@ namespace EduManagementLab.Web.Pages.Students
 {
     public class AssignmentDetailsModel : PageModel
     {
-        private readonly CourseTaskService _courseLineItemService;
-        public AssignmentDetailsModel(CourseTaskService courseLineItemService)
+        private readonly CourseTaskService _courseTaskService;
+        public AssignmentDetailsModel(CourseTaskService courseTaskService)
         {
-            _courseLineItemService = courseLineItemService;
+            _courseTaskService = courseTaskService;
         }
-        public CourseTask CourseLineItem { get; set; }
-        [BindProperty]
-        public CourseLineItem CourseLineItem { get; set; } = new CourseLineItem();
+        public CourseTask CourseTask { get; set; } = new CourseTask();
         [BindProperty]
         public Guid CourseId { get; set; }
         public Guid UserId { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(Guid lineItemId, Guid courseId)
+        public async Task<IActionResult> OnGetAsync(Guid courseTaskId, Guid courseId)
         {
             UserId = Guid.Parse(User?.GetSubjectId());
             CourseId = courseId;
             try
             {
-                CourseLineItem = _courseLineItemService.GetCourseTask(lineItemId, true);
+                CourseTask = _courseTaskService.GetCourseTask(courseTaskId, true);
                 return Page();
             }
             catch (CourseTaskNotFoundException)

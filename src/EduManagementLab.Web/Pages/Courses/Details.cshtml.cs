@@ -15,15 +15,12 @@ namespace EduManagementLab.Web.Pages.Courses
         private readonly CourseService _courseService;
         private readonly UserService _userService;
         private readonly CourseTaskService _courseTaskService;
-        public DetailsModel(CourseService courseService, UserService userService, CourseTaskService courseTaskService)
-        private readonly CourseLineItemService _courseLineItemService;
         private readonly ResourceLinkService _resourceLinkService;
-        public DetailsModel(CourseService courseService, UserService userService, CourseLineItemService courseLineItemService, ResourceLinkService resourceLinkService)
+        public DetailsModel(CourseService courseService, UserService userService, CourseTaskService courseTaskService, ResourceLinkService resourceLinkService)
         {
             _courseService = courseService;
             _userService = userService;
             _courseTaskService = courseTaskService;
-            _courseLineItemService = courseLineItemService;
             _resourceLinkService = resourceLinkService;
         }
         [BindProperty]
@@ -73,7 +70,7 @@ namespace EduManagementLab.Web.Pages.Courses
         }
 
         public async Task<IActionResult> OnGetAsync(Guid courseId)
-        {            
+        {
             try
             {
                 PopulateProperties(courseId);

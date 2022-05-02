@@ -61,7 +61,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseLineItems",
+                name: "CourseTasks",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -73,9 +73,9 @@ namespace EduManagementLab.EfRepository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseLineItems", x => x.Id);
+                    table.PrimaryKey("PK_CourseTasks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CourseLineItems_Courses_CourseId",
+                        name: "FK_CourseTasks_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id");
@@ -117,15 +117,15 @@ namespace EduManagementLab.EfRepository.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ToolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CourseLineItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    CourseTaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_IMSLTIResourceLinks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_IMSLTIResourceLinks_CourseLineItems_CourseLineItemId",
-                        column: x => x.CourseLineItemId,
-                        principalTable: "CourseLineItems",
+                        name: "FK_IMSLTIResourceLinks_CourseTasks_CourseTaskId",
+                        column: x => x.CourseTaskId,
+                        principalTable: "CourseTasks",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_IMSLTIResourceLinks_Tools_ToolId",
@@ -136,36 +136,31 @@ namespace EduManagementLab.EfRepository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LineItemResults",
+                name: "CourseTaskResults",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MembershipId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CourseLineItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CourseTaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Score = table.Column<decimal>(type: "decimal", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LineItemResults", x => x.Id);
+                    table.PrimaryKey("PK_CourseTaskResults", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LineItemResults_CourseLineItems_CourseLineItemId",
-                        column: x => x.CourseLineItemId,
-                        principalTable: "CourseLineItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LineItemResults_CourseMemberships_MembershipId",
+                        name: "FK_CourseTaskResults_CourseMemberships_MembershipId",
                         column: x => x.MembershipId,
                         principalTable: "CourseMemberships",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourseTaskResults_CourseTasks_CourseTaskId",
+                        column: x => x.CourseTaskId,
+                        principalTable: "CourseTasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CourseLineItems_CourseId",
-                table: "CourseLineItems",
-                column: "CourseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CourseMemberships_CourseId",
@@ -178,48 +173,53 @@ namespace EduManagementLab.EfRepository.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_IMSLTIResourceLinks_CourseLineItemId",
+                name: "IX_CourseTaskResults_CourseTaskId",
+                table: "CourseTaskResults",
+                column: "CourseTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseTaskResults_MembershipId",
+                table: "CourseTaskResults",
+                column: "MembershipId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseTasks_CourseId",
+                table: "CourseTasks",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IMSLTIResourceLinks_CourseTaskId",
                 table: "IMSLTIResourceLinks",
-                column: "CourseLineItemId");
+                column: "CourseTaskId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IMSLTIResourceLinks_ToolId",
                 table: "IMSLTIResourceLinks",
                 column: "ToolId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LineItemResults_CourseLineItemId",
-                table: "LineItemResults",
-                column: "CourseLineItemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LineItemResults_MembershipId",
-                table: "LineItemResults",
-                column: "MembershipId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "CourseTaskResults");
+
+            migrationBuilder.DropTable(
                 name: "IMSLTIResourceLinks");
-
-            migrationBuilder.DropTable(
-                name: "LineItemResults");
-
-            migrationBuilder.DropTable(
-                name: "Tools");
-
-            migrationBuilder.DropTable(
-                name: "CourseLineItems");
 
             migrationBuilder.DropTable(
                 name: "CourseMemberships");
 
             migrationBuilder.DropTable(
-                name: "Courses");
+                name: "CourseTasks");
+
+            migrationBuilder.DropTable(
+                name: "Tools");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Courses");
         }
     }
 }

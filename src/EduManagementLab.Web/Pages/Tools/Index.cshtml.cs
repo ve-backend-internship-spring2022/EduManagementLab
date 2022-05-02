@@ -32,7 +32,7 @@ namespace EduManagementLab.Web.Pages.Tools
             }
             _ToolService.DeleteTool(toolId);
             Tools = _ToolService.GetTools().ToList();
-            return Page();
+            return RedirectToPage("./Index");
         }
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduManagementLab.EfRepository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220502093459_Initial")]
+    [Migration("20220502133601_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,7 +79,7 @@ namespace EduManagementLab.EfRepository.Migrations
                     b.ToTable("CourseMemberships");
                 });
 
-            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseLineItem", b =>
+            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseTask", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,16 +105,16 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("CourseLineItems");
+                    b.ToTable("CourseTasks");
                 });
 
-            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseLineItem+Result", b =>
+            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseTask+Result", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CourseLineItemId")
+                    b.Property<Guid>("CourseTaskId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("LastUpdated")
@@ -128,11 +128,11 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseLineItemId");
+                    b.HasIndex("CourseTaskId");
 
                     b.HasIndex("MembershipId");
 
-                    b.ToTable("LineItemResults");
+                    b.ToTable("CourseTaskResults");
                 });
 
             modelBuilder.Entity("EduManagementLab.Core.Entities.IMSLTIResourceLink", b =>
@@ -141,7 +141,7 @@ namespace EduManagementLab.EfRepository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CourseLineItemId")
+                    b.Property<Guid?>("CourseTaskId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CustomProperties")
@@ -159,7 +159,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseLineItemId");
+                    b.HasIndex("CourseTaskId");
 
                     b.HasIndex("ToolId");
 
@@ -258,18 +258,18 @@ namespace EduManagementLab.EfRepository.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseLineItem", b =>
+            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseTask", b =>
                 {
                     b.HasOne("EduManagementLab.Core.Entities.Course", null)
-                        .WithMany("CourseLineItems")
+                        .WithMany("CourseTasks")
                         .HasForeignKey("CourseId");
                 });
 
-            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseLineItem+Result", b =>
+            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseTask+Result", b =>
                 {
-                    b.HasOne("EduManagementLab.Core.Entities.CourseLineItem", "CourseLineItem")
+                    b.HasOne("EduManagementLab.Core.Entities.CourseTask", "CourseTask")
                         .WithMany("Results")
-                        .HasForeignKey("CourseLineItemId")
+                        .HasForeignKey("CourseTaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -279,16 +279,16 @@ namespace EduManagementLab.EfRepository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CourseLineItem");
+                    b.Navigation("CourseTask");
 
                     b.Navigation("Membership");
                 });
 
             modelBuilder.Entity("EduManagementLab.Core.Entities.IMSLTIResourceLink", b =>
                 {
-                    b.HasOne("EduManagementLab.Core.Entities.CourseLineItem", null)
-                        .WithMany("ResourceLinks")
-                        .HasForeignKey("CourseLineItemId");
+                    b.HasOne("EduManagementLab.Core.Entities.CourseTask", null)
+                        .WithMany("IMSLTIResourceLinks")
+                        .HasForeignKey("CourseTaskId");
 
                     b.HasOne("EduManagementLab.Core.Entities.Tool", "Tool")
                         .WithMany()
@@ -301,14 +301,14 @@ namespace EduManagementLab.EfRepository.Migrations
 
             modelBuilder.Entity("EduManagementLab.Core.Entities.Course", b =>
                 {
-                    b.Navigation("CourseLineItems");
+                    b.Navigation("CourseTasks");
 
                     b.Navigation("Memperships");
                 });
 
-            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseLineItem", b =>
+            modelBuilder.Entity("EduManagementLab.Core.Entities.CourseTask", b =>
                 {
-                    b.Navigation("ResourceLinks");
+                    b.Navigation("IMSLTIResourceLinks");
 
                     b.Navigation("Results");
                 });

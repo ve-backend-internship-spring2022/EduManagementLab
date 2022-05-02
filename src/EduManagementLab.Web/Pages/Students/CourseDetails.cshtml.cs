@@ -13,18 +13,18 @@ namespace EduManagementLab.Web.Pages.Students
     {
         private readonly CourseService _courseService;
         private readonly UserService _userService;
-        private readonly CourseTaskService _courseLineItemService;
-        public CourseDetailsModel(CourseService courseService, UserService userService, CourseTaskService courseLineItemService)
+        private readonly CourseTaskService _courseTaskService;
+        public CourseDetailsModel(CourseService courseService, UserService userService, CourseTaskService courseTaskService)
         {
             _courseService = courseService;
             _userService = userService;
-            _courseLineItemService = courseLineItemService;
+            _courseTaskService = courseTaskService;
         }
         public Course Course { get; set; }
-        public SelectList LineItemListItems { get; set; }
+        public SelectList courseTaskListItems { get; set; }
         [BindProperty]
-        public LineItemInputModel lineItemInput { get; set; }
-        public class LineItemInputModel
+        public courseTaskInputModel courseTaskInput { get; set; }
+        public class courseTaskInputModel
         {
             [Required]
             public string Name { get; set; }
@@ -49,7 +49,7 @@ namespace EduManagementLab.Web.Pages.Students
         {
             Course = _courseService.GetCourse(courseId, true);
 
-            LineItemListItems = new SelectList(_courseLineItemService.GetCourseTasks()
+            courseTaskListItems = new SelectList(_courseTaskService.GetCourseTasks()
                .Where(s => !Course.CourseTasks.Any(x => x.Name == s.Name)), "Name", "Description");
         }
     }

@@ -24,7 +24,6 @@ namespace EduManagementLab.Web.Pages.CourseTasks
             _courseTaskService = courseTaskService;
         }
         public List<SelectListItem> filterList { get; } = new List<SelectListItem>();
-
         public List<IMSLTIResourceLink> ResourceLinks { get; } = new List<IMSLTIResourceLink>();
 
         public int selectedFilter { get; set; }

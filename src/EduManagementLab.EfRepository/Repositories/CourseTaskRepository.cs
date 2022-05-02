@@ -11,12 +11,22 @@ namespace EduManagementLab.EfRepository.Repositories
         {
             _context = context;
         }
-
-        public CourseTask? GetCourseTask(Guid courseTaskId, bool includeResults)
+        public List<CourseTask>? GetCourseTasks( bool includeResults, bool includeResource)
         {
-            if (includeResults == true)
+            if (includeResults == true || includeResource == true)
             {
-                return _context.CourseTasks.Include(c => c.Results).ThenInclude(c => c.Membership).FirstOrDefault(c => c.Id == courseTaskId);
+                return _context.CourseTasks.Include(r => r.IMSLTIResourceLinks).ThenInclude(t => t.Tool).Include(c => c.Results).ThenInclude(c => c.Membership).ToList();
+            }
+            else
+            {
+                return _context.CourseTasks.ToList();
+            }
+        }
+        public CourseTask? GetCourseTask(Guid courseTaskId, bool includeResults, bool includeResource)
+        {
+            if (includeResults == true || includeResource == true)
+            {
+                return _context.CourseTasks.Include(r => r.IMSLTIResourceLinks).ThenInclude(t => t.Tool).Include(c => c.Results).ThenInclude(c => c.Membership).FirstOrDefault(c => c.Id == courseTaskId);
             }
             else
             {

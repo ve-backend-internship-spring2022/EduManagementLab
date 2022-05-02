@@ -9,8 +9,6 @@ namespace EduManagementLab.Core.Interfaces
         ICourseRepository Courses { get; }
         ICourseTaskRepository CourseTasks { get; }
         ICourseTaskResultsRepository CourseTaskResults { get; }
-        ICourseLineItemRepository CourseLineItems { get; }
-        ILineItemResultsRepository LineItemResults { get; }
         IToolRepository Tools { get; }
         IResourceLinkRepository ResourceLinks { get; }
         int Complete();

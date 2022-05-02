@@ -124,7 +124,7 @@ namespace EduManagementLab.Web.Pages.Tools
                 }
                 _ToolService.UpdateTool(toolId, updateTool);
             }
-            return Page();
+            return RedirectToPage("./Index");
         }
 
     }

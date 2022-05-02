@@ -26,18 +26,26 @@ namespace EduManagementLab.Core.Services
         private readonly CourseService _courseService;
         private readonly ToolService _toolService;
         private readonly ResourceLinkService _resourceSeService;
-        private readonly CourseLineItemService _courseLineItemSeService;
+        private readonly CourseTaskService _courseTaskService;
         private readonly LinkGenerator _linkGenerator;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CustomProfileService(UserService userService, ToolService toolService, LinkGenerator linkGenerator, CourseLineItemService courseLineItemService, ResourceLinkService resourceLinkService, CourseService courseService, ILogger<CustomProfileService> logger, IHttpContextAccessor httpContextAccessor)
+        public CustomProfileService(
+            UserService userService,
+            ToolService toolService,
+            LinkGenerator linkGenerator,
+            CourseTaskService courseTaskService,
+            ResourceLinkService resourceLinkService,
+            CourseService courseService,
+            ILogger<CustomProfileService> logger,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _courseService = courseService;
             _resourceSeService = resourceLinkService;
-            _courseLineItemSeService = courseLineItemService;
+            _courseTaskService = courseTaskService;
             _linkGenerator = linkGenerator;
             _toolService = toolService;
         }
@@ -92,11 +100,11 @@ namespace EduManagementLab.Core.Services
 
                             // Null unless there is exactly one gradebook column for the resource link.
                             var member = membership.FirstOrDefault(c => c.UserId == targetUser.Id);
-                            var courseLineItems = _courseService.GetCourse(member.CourseId, true).CourseLineItems;
-                            var courseLineItem = courseLineItems.FirstOrDefault(c => c.IMSLTIResourceLinks.Any(c => c.Id == Guid.Parse(id)));
+                            var courseTaskList = _courseService.GetCourse(member.CourseId, true).CourseTasks;
+                            var courseTask = courseTaskList.FirstOrDefault(c => c.IMSLTIResourceLinks.Any(c => c.Id == Guid.Parse(id)));
 
 
-                            context.IssuedClaims = GetResourceLinkRequestClaims(resourceLink, courseLineItem, person, course);
+                            context.IssuedClaims = GetResourceLinkRequestClaims(resourceLink, courseTask, person, course);
 
                             break;
                         }
@@ -121,7 +129,7 @@ namespace EduManagementLab.Core.Services
             var user = _userService.GetUser(Guid.Parse(context.Subject.GetSubjectId()));
             context.IsActive = user != null;
         }
-        private List<Claim> GetResourceLinkRequestClaims(IMSLTIResourceLink resourceLink, CourseLineItem gradebookColumn, User person, Course course)
+        private List<Claim> GetResourceLinkRequestClaims(IMSLTIResourceLink resourceLink, CourseTask gradebookColumn, User person, Course course)
         {
             var httpRequest = _httpContextAccessor.HttpContext.Request;
 

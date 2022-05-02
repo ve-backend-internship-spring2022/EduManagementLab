@@ -4,7 +4,7 @@
 
 @{
 }
-<h1>@Model.CourseLineItem.Name</h1>
+<h1>@Model.CourseTask.Name</h1>
 
 <div>
     <div class="row">
@@ -14,35 +14,35 @@
 
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLineItem.Description)
+            @Html.DisplayNameFor(model => model.CourseTask.Description)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CourseLineItem.Description)
+            @Html.DisplayFor(model => model.CourseTask.Description)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLineItem.LastUpdate)
+            @Html.DisplayNameFor(model => model.CourseTask.LastUpdate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CourseLineItem.LastUpdate)
+            @Html.DisplayFor(model => model.CourseTask.LastUpdate)
         </dd>
          <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseLineItem.Id).Score)
+            @Html.DisplayNameFor(model => model.CourseTask.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseTask.Id).Score)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseLineItem.Id).Score)
+            @Html.DisplayFor(model => model.CourseTask.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseTask.Id).Score)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseLineItem.Id).LastUpdated)
+            @Html.DisplayNameFor(model => model.CourseTask.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseTask.Id).LastUpdated)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CourseLineItem.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseLineItem.Id).LastUpdated)
+            @Html.DisplayFor(model => model.CourseTask.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseTask.Id).LastUpdated)
         </dd>
     </dl>
 
     <hr />
-    @if (Model.CourseLineItem.IMSLTIResourceLinks.Any())
+    @if (Model.CourseTask.IMSLTIResourceLinks.Any())
     {
-        @foreach (var resource in @Model.CourseLineItem.IMSLTIResourceLinks)
+        @foreach (var resource in @Model.CourseTask.IMSLTIResourceLinks)
         {
             var url = Url.Page("OidcLaunch", new
             {

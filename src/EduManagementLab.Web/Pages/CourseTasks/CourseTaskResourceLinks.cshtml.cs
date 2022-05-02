@@ -10,23 +10,23 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
     [BindProperties]
     public class CourseTaskResourceLinksModel : PageModel
     {
-        private readonly CourseLineItemService _courseTaskService;
+        private readonly CourseTaskService _courseTaskService;
         private readonly ResourceLinkService _resourceLinkService;
-        public CourseTaskResourceLinksModel(CourseLineItemService courseLineItemService, ResourceLinkService resourceLinkService)
+        public CourseTaskResourceLinksModel(CourseTaskService courseLineItemService, ResourceLinkService resourceLinkService)
         {
             _courseTaskService = courseLineItemService;
             _resourceLinkService = resourceLinkService;
         }
         public List<SelectListItem> ResourceLinkSelectList { get; } = new List<SelectListItem>();
         public string SelctedResource { get; set; }
-        public CourseLineItem CourseLineItem { get; set; }
+        public CourseTask courseTask { get; set; }
         public IActionResult OnGet(Guid courseTaskId)
         {
             try
             {
                 LoadData(courseTaskId);
             }
-            catch (CourseLineItemNotFoundException ex)
+            catch (CourseTaskNotFoundException ex)
             {
                 NotFound(ex.Message);
             }
@@ -34,22 +34,29 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         }
         public void LoadData(Guid courseTaskId)
         {
-            CourseLineItem = _courseTaskService.GetCourseLineItem(courseTaskId, false, true);
-            foreach (var resource in _resourceLinkService.GetResourceLinks())
+            courseTask = _courseTaskService.GetCourseTask(courseTaskId, false, true);
+
+            foreach (var resourceLink in _resourceLinkService.GetResourceLinks())
             {
-                if (!CourseLineItem.IMSLTIResourceLinks.Any(r => r.Id == resource.Id))
-                {
-                    ResourceLinkSelectList.Add(new SelectListItem { Text = resource.Title, Value = resource.Id.ToString() });
-                }
+
+                ResourceLinkSelectList.Add(new SelectListItem { Text = resourceLink.Title, Value = resourceLink.Id.ToString() });
             }
+
+            //foreach (var resourceLink in _resourceLinkService.GetResourceLinks()
+            //    .Where(s => !courseTask.IMSLTIResourceLinks.Any(x => x.Id == s.Id) &&
+            //    courseTaskList.Any(c => !c.IMSLTIResourceLinks.Any(r => r.Id == s.Id))))
+            //{
+
+            //    ResourceLinkSelectList.Add(new SelectListItem { Text = resourceLink.Title, Value = resourceLink.Id.ToString() });
+            //}
         }
-        public IActionResult OnPostAddResource(Guid courseTaskId)
+        public IActionResult OnPostAddResourceLinkToCourseTask(Guid courseTaskId)
         {
             try
             {
                 _courseTaskService.AddResouceLinkToCourseTask(courseTaskId, Guid.Parse(SelctedResource));
             }
-            catch (CourseLineItemNotFoundException ex)
+            catch (CourseTaskNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
@@ -63,7 +70,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             {
                 _courseTaskService.DeleteCourseTaskResoruceLink(courseTaskId, resourceId);
             }
-            catch (CourseLineItemNotFoundException ex)
+            catch (CourseTaskNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }

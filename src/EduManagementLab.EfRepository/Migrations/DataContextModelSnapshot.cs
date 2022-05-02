@@ -130,7 +130,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasIndex("MembershipId");
 
-                    b.ToTable("LineItemResults");
+                    b.ToTable("CourseTaskResults");
                 });
 
             modelBuilder.Entity("EduManagementLab.Core.Entities.IMSLTIResourceLink", b =>
@@ -139,7 +139,7 @@ namespace EduManagementLab.EfRepository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CourseLineItemId")
+                    b.Property<Guid?>("CourseTaskId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CustomProperties")
@@ -157,7 +157,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseLineItemId");
+                    b.HasIndex("CourseTaskId");
 
                     b.HasIndex("ToolId");
 
@@ -284,9 +284,9 @@ namespace EduManagementLab.EfRepository.Migrations
 
             modelBuilder.Entity("EduManagementLab.Core.Entities.IMSLTIResourceLink", b =>
                 {
-                    b.HasOne("EduManagementLab.Core.Entities.CourseLineItem", null)
-                        .WithMany("ResourceLinks")
-                        .HasForeignKey("CourseLineItemId");
+                    b.HasOne("EduManagementLab.Core.Entities.CourseTask", null)
+                        .WithMany("IMSLTIResourceLinks")
+                        .HasForeignKey("CourseTaskId");
 
                     b.HasOne("EduManagementLab.Core.Entities.Tool", "Tool")
                         .WithMany()
@@ -306,7 +306,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
             modelBuilder.Entity("EduManagementLab.Core.Entities.CourseTask", b =>
                 {
-                    b.Navigation("ResourceLinks");
+                    b.Navigation("IMSLTIResourceLinks");
 
                     b.Navigation("Results");
                 });
