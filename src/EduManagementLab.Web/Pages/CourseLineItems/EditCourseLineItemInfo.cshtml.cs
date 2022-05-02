@@ -1,6 +1,8 @@
+using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace EduManagementLab.Web.Pages.CourseLineItems
@@ -8,10 +10,13 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
     public class EditCourseLineItemModel : PageModel
     {
         private readonly CourseLineItemService _courseLineItemService;
-        public EditCourseLineItemModel(CourseLineItemService courseLineItemService)
+        private readonly ResourceLinkService _resourceLinkService;
+        public EditCourseLineItemModel(CourseLineItemService courseLineItemService, ResourceLinkService resourceLinkService)
         {
             _courseLineItemService = courseLineItemService;
+            _resourceLinkService = resourceLinkService;
         }
+        public List<SelectListItem> Resources { get; set; } = new List<SelectListItem>();
         public Guid Id { get; set; }
         public Guid CourseId { get; set; }
         [Required]
@@ -27,6 +32,12 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             Id = courseLineItem.Id;
             Name = courseLineItem.Name;
             Description = courseLineItem.Description;
+
+            var resourceLinks = _resourceLinkService.GetResourceLinks();
+            foreach (var item in resourceLinks)
+            {
+                Resources.Add(new SelectListItem { Text = item.Title, Value = item.Id.ToString() });
+            }
         }
         public IActionResult OnPost(Guid id, Guid courseId)
         {

@@ -1,0 +1,37 @@
+﻿@page
+@model EduManagementLab.Web.Pages.Tools.IndexModel
+@{
+}
+<a class="btn btn-primary m-2" asp-page="/Tools/RegisterIMSTool">Register Tool</a>
+
+@if (@Model.Tools.Any())
+{
+    <div class="row">
+        @foreach (var tool in @Model.Tools)
+        {
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@tool.Name</h5>
+                        <p class="card-text"><strong>Deployment Id:</strong> @tool.DeploymentId</p>
+                        <p class="card-text"><strong>Tool Deep Link URL:</strong> @tool.DeepLinkingLaunchUrl</p>
+                        <p class="card-text"><strong>Tool OIDC Login URL:</strong> @tool.LoginUrl</p>
+                        <hr>
+                        <a asp-page="Detail" asp-route-toolId="@tool.Id" class="btn btn-primary m-2">Detail</a>
+                        <a asp-page="Edit" asp-route-toolId="@tool.Id" class="btn btn-primary m-2">Edit</a>
+                        <form method="post" asp-page-handler="DeleteTool" asp-route-toolId="@tool.Id">
+                            <button type="submit" class="btn btn-danger m-2">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="position-relative">
+        <h1 class="text-center">No Tool available</h1>
+    </div>
+}
+

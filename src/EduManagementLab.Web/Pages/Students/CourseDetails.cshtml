@@ -71,7 +71,7 @@
                         @Html.DisplayFor(modelItem => lineItem.Description)
                     </td>
                     <td>
-                        <a asp-page="../Students/AssignmentDetails" asp-route-lineItemId="@lineItem.Id">Details</a>
+                        <a asp-page="../Students/AssignmentDetails" asp-route-lineItemId="@lineItem.Id" asp-route-courseId="@Model.Course.Id">Details</a>
                     </td>
                 </tr>
             }

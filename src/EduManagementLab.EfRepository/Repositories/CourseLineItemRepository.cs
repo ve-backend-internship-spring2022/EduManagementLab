@@ -12,11 +12,15 @@ namespace EduManagementLab.EfRepository.Repositories
             _context = context;
         }
 
-        public CourseLineItem? GetCourseLineItem(Guid lineItemId, bool includeResults)
+        public CourseLineItem? GetCourseLineItem(Guid lineItemId, bool includeResults, bool includeResource)
         {
-            if (includeResults == true)
+            if (includeResults == true && includeResource == false)
             {
                 return _context.CourseLineItems.Include(c => c.Results).ThenInclude(c => c.Membership).FirstOrDefault(c => c.Id == lineItemId);
+            }
+            else if (includeResource == true && includeResults == true)
+            {
+                return _context.CourseLineItems.Include(r => r.IMSLTIResourceLinks).ThenInclude(t => t.Tool).Include(c => c.Results).ThenInclude(c => c.Membership).FirstOrDefault(c => c.Id == lineItemId);
             }
             else
             {

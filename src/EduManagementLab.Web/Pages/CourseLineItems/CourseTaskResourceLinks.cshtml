@@ -1,0 +1,76 @@
+﻿@page
+@model EduManagementLab.Web.Pages.CourseLineItems.CourseTaskResourceLinksModel
+@{
+}
+<div class="row">
+    <div class="col-md-7 text-md-left">
+        <h4>Resources for @Model.CourseLineItem.Name</h4>
+    </div>
+    <div class="col-md-5 text-md-end">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resourcesModal">
+            Add resource link
+        </button>
+        <!-- Modal -->
+        <form method="post" asp-page-handler="AddResource" asp-route-courseTaskId="@Model.CourseLineItem.Id">
+            <div class="modal fade" id="resourcesModal" tabindex="-1" aria-labelledby="resourcesModal" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="resourcesModal">Add Resource</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <select asp-for="@Model.SelctedResource" asp-items="@Model.ResourceLinkSelectList" class="form-select" aria-label="Default select example">
+                                <option value="">Select a resource</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<hr />
+@if (Model.CourseLineItem.IMSLTIResourceLinks.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseLineItem.IMSLTIResourceLinks[0].Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseLineItem.IMSLTIResourceLinks[0].Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseLineItem.IMSLTIResourceLinks[0].Tool)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in @Model.CourseLineItem.IMSLTIResourceLinks)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <a class="btn btn-primary m-2" asp-page="/ResourceLinks/Detail" asp-route-resourceId="@item.Id">Detail</a>
+                        <form method="post" asp-page-handler="RemoveResourceLinkFromCourseTask" asp-route-resourceId="@item.Id" asp-route-courseTaskId="@Model.CourseLineItem.Id">
+                            <button type="submit" class="btn btn-danger">Delete resource from this task</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="position-relative">
+        <h1 class="text-center">No ResourceLinks available</h1>
+    </div>
+}

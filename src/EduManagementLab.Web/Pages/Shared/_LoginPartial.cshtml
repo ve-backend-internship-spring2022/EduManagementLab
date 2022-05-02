@@ -1,7 +1,6 @@
-﻿@using IdentityServer4.Extensions
-@inject EduManagementLab.Core.Services.UserService userService;
+﻿@inject EduManagementLab.Core.Services.UserService userService;
 @{
-    var userId = Guid.Parse(Context.User?.GetSubjectId());
+    var userId = userService.GetSubjectId(User);
 }
 <ul class="navbar-nav">
     <li class="nav-item">

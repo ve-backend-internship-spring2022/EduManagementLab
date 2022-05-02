@@ -23,15 +23,16 @@ namespace EduManagementLab.Core.Services
         {
             return _unitOfWork.CourseLineItems.GetAll();
         }
-        public CourseLineItem GetCourseLineItem(Guid lineitemId, bool includeResults = false)
+        public CourseLineItem GetCourseLineItem(Guid lineitemId, bool includeResults = false, bool includeResource = false)
         {
-            var courseLineItem = _unitOfWork.CourseLineItems.GetCourseLineItem(lineitemId, includeResults);
+            var courseLineItem = _unitOfWork.CourseLineItems.GetCourseLineItem(lineitemId, includeResults, includeResource);
             if (courseLineItem == null)
             {
                 throw new CourseLineItemNotFoundException(lineitemId);
             }
             return courseLineItem;
         }
+
         public CourseLineItem CreateCourseLineItem(Guid courseId, string name, string description)
         {
             var course = _unitOfWork.Courses.GetCourse(courseId, true);
@@ -42,51 +43,15 @@ namespace EduManagementLab.Core.Services
             CourseLineItem newlineItem = new CourseLineItem()
             {
                 Name = name,
-                Description = description,                
+                Description = description,
                 LastUpdate = DateTime.Now,
             };
             course.CourseLineItems.Add(newlineItem);
 
-            _unitOfWork.CourseLineItems.Add(newlineItem); 
+            _unitOfWork.CourseLineItems.Add(newlineItem);
             _unitOfWork.Complete();
             return newlineItem;
 
-        }
-        public CourseLineItem UpdateCourseLineItemInfo(Guid lineItemId, string name, string description)
-        {
-            CourseLineItem courseLineItem = GetCourseLineItem(lineItemId);
-            courseLineItem.Name = name;
-            courseLineItem.Description = description;
-
-            _unitOfWork.CourseLineItems.Update(courseLineItem);
-            _unitOfWork.Complete();
-            return courseLineItem;
-        }
-        public CourseLineItem DeleteCourseLineItem(Guid lineItemId)
-        {
-            var courseLineItem = GetCourseLineItem(lineItemId);
-
-            Guard.AgainstUnknownCourseLineItem(lineItemId, _unitOfWork);
-
-            _unitOfWork.CourseLineItems.Remove(courseLineItem);
-            _unitOfWork.Complete();
-            return courseLineItem;
-        }
-        public CourseLineItem.Result UpdateLineItemResult(Guid lineItemId, Guid memberId, decimal score)
-        {
-            var lineItem = GetCourseLineItem(lineItemId, true);
-
-            //Guard.AgainstUnknownCourseLineItem(lineItemId, _unitOfWork);
-            Guard.AgainstUnknownMemberInCourseLineItemResult(lineItemId, memberId, _unitOfWork);
-
-            var result = lineItem.Results.FirstOrDefault(l => l.MembershipId == memberId && l.CourseLineItemId == lineItemId);
-
-            result.Score = score;
-            result.LastUpdated = DateTime.Now;
-
-            _unitOfWork.LineItemResults.Update(result);
-            _unitOfWork.Complete();
-            return result;
         }
         public CourseLineItem.Result CreateLineItemResult(Guid lineItemId, Guid memberId, decimal score)
         {
@@ -113,6 +78,65 @@ namespace EduManagementLab.Core.Services
 
             _unitOfWork.Complete();
             return newResult;
+        }
+        public CourseLineItem AddResouceLinkToCourseTask(Guid courseTaskId, Guid resourceId)
+        {
+            var targetCourseTask = GetCourseLineItem(courseTaskId, false, true);
+            var targetResource = _unitOfWork.ResourceLinks.GetById(resourceId);
+            targetCourseTask.IMSLTIResourceLinks.Add(targetResource);
+
+            _unitOfWork.CourseLineItems.Update(targetCourseTask);
+            _unitOfWork.Complete();
+            return targetCourseTask;
+
+        }
+
+        public CourseLineItem.Result UpdateLineItemResult(Guid lineItemId, Guid memberId, decimal score)
+        {
+            var lineItem = GetCourseLineItem(lineItemId, true);
+
+            //Guard.AgainstUnknownCourseLineItem(lineItemId, _unitOfWork);
+            Guard.AgainstUnknownMemberInCourseLineItemResult(lineItemId, memberId, _unitOfWork);
+
+            var result = lineItem.Results.FirstOrDefault(l => l.MembershipId == memberId && l.CourseLineItemId == lineItemId);
+
+            result.Score = score;
+            result.LastUpdated = DateTime.Now;
+
+            _unitOfWork.LineItemResults.Update(result);
+            _unitOfWork.Complete();
+            return result;
+        }
+        public CourseLineItem UpdateCourseLineItemInfo(Guid lineItemId, string name, string description)
+        {
+            CourseLineItem courseLineItem = GetCourseLineItem(lineItemId, true, true);
+            courseLineItem.Name = name;
+            courseLineItem.Description = description;
+
+            _unitOfWork.CourseLineItems.Update(courseLineItem);
+            _unitOfWork.Complete();
+            return courseLineItem;
+        }
+
+        public CourseLineItem DeleteCourseTaskResoruceLink(Guid courseTaskId, Guid resourceId)
+        {
+            var targetCourseTask = _unitOfWork.CourseLineItems.GetCourseLineItem(courseTaskId, true, true);
+            var targetResource = targetCourseTask.IMSLTIResourceLinks.FirstOrDefault(c => c.Id == resourceId);
+            targetCourseTask.IMSLTIResourceLinks.Remove(targetResource);
+
+            _unitOfWork.CourseLineItems.Update(targetCourseTask);
+            _unitOfWork.Complete();
+            return targetCourseTask;
+        }
+        public CourseLineItem DeleteCourseLineItem(Guid lineItemId)
+        {
+            var courseLineItem = GetCourseLineItem(lineItemId);
+
+            Guard.AgainstUnknownCourseLineItem(lineItemId, _unitOfWork);
+
+            _unitOfWork.CourseLineItems.Remove(courseLineItem);
+            _unitOfWork.Complete();
+            return courseLineItem;
         }
         public CourseLineItem.Result DeleteLineItemResult(Guid lineItemId, Guid memberId)
         {

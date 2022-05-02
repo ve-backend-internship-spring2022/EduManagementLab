@@ -15,16 +15,21 @@ namespace EduManagementLab.Web.Pages.Courses
         private readonly CourseService _courseService;
         private readonly UserService _userService;
         private readonly CourseLineItemService _courseLineItemService;
-        public DetailsModel(CourseService courseService, UserService userService, CourseLineItemService courseLineItemService)
+        private readonly ResourceLinkService _resourceLinkService;
+        public DetailsModel(CourseService courseService, UserService userService, CourseLineItemService courseLineItemService, ResourceLinkService resourceLinkService)
         {
             _courseService = courseService;
             _userService = userService;
             _courseLineItemService = courseLineItemService;
+            _resourceLinkService = resourceLinkService;
         }
         [BindProperty]
         public int SelectedIteminSortingList { get; set; }
         public List<SelectListItem> SortingList { get; set; }
         public List<Course.Membership> ListOfFilteredMembers { get; set; }
+        public List<SelectListItem> Resources { get; set; } = new List<SelectListItem>();
+
+
         [BindProperty]
         public Guid LoginUserId { get; set; }
         public Course Course { get; set; }
@@ -36,7 +41,7 @@ namespace EduManagementLab.Web.Pages.Courses
         [BindProperty]
         public DateTime EnrolledDate { get; set; }
         [BindProperty]
-        public LineItemInputModel lineItemInput { get; set; }
+        public LineItemInputModel lineItemInput { get; set; } = new LineItemInputModel();
         [BindProperty]
         public InputModel Input { get; set; }
         [BindProperties]
@@ -65,7 +70,7 @@ namespace EduManagementLab.Web.Pages.Courses
         }
 
         public async Task<IActionResult> OnGetAsync(Guid courseId)
-        {            
+        {
             try
             {
                 PopulateProperties(courseId);
@@ -80,6 +85,12 @@ namespace EduManagementLab.Web.Pages.Courses
         {
             LoginUserId = Guid.Parse(User?.GetSubjectId());
             Course = _courseService.GetCourse(courseId, true);
+
+            var resourceLinks = _resourceLinkService.GetResourceLinks();
+            foreach (var item in resourceLinks)
+            {
+                Resources.Add(new SelectListItem { Text = item.Title, Value = item.Id.ToString() });
+            }
 
             OnPostSortingListAsync(SelectedIteminSortingList, Course.Id);
 

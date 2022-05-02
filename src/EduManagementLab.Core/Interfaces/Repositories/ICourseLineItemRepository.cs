@@ -9,6 +9,6 @@ namespace EduManagementLab.Core.Interfaces.Repositories
 {
     public interface ICourseLineItemRepository : IGenericRepository<CourseLineItem>
     {
-        CourseLineItem? GetCourseLineItem(Guid lineItemId, bool includeResults);
+        CourseLineItem? GetCourseLineItem(Guid lineItemId, bool includeResults, bool includeResource);
     }
 }

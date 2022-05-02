@@ -1,5 +1,10 @@
-﻿using IdentityServer4;
+﻿using EduManagementLab.Core.Validation;
+using IdentityModel;
+using IdentityServer4;
+using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduManagementLab.IdentityServer
 {
@@ -31,12 +36,13 @@ namespace EduManagementLab.IdentityServer
                 ClientName = "ASP.NET Core EduManagementLab Api",
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
                 ClientSecrets = new List<Secret> {new Secret("TestEduApi".Sha256())},
-                AllowedScopes = new List<string> {"eduManagementLabApi.read"},
+                AllowedScopes = LtiScopes,
                 AllowedCorsOrigins = new List<string>
                 {
+                    "https://localhost:5002",
+                    "https://localhost:5001",
                     "https://localhost:7134",
-                    "https://localhost:7243",
-                    "https://localhost:7187"
+                    "http://localhost:5134"
                 }
             },
             new Client
@@ -48,7 +54,7 @@ namespace EduManagementLab.IdentityServer
                 AllowedGrantTypes = GrantTypes.Code,
                 AllowOfflineAccess = true,
                 RedirectUris = {"https://localhost:5002/signin-oidc"},
-                PostLogoutRedirectUris = { "https://localhost:5002/signout-callback-oidc" },
+                PostLogoutRedirectUris = { "https://localhost:5002/signout-callback-oidc"},
                 AllowedScopes = new List<string>
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
@@ -69,5 +75,70 @@ namespace EduManagementLab.IdentityServer
                 UserClaims = new List<string> {"role"}
             }
         };
+        public static ICollection<string> LtiScopes => new[]
+{
+            OidcConstants.StandardScopes.OpenId,
+            Constants.LtiScopes.Ags.LineItem,
+            Constants.LtiScopes.Ags.LineItemReadonly,
+            Constants.LtiScopes.Ags.ResultReadonly,
+            Constants.LtiScopes.Ags.Score,
+            Constants.LtiScopes.Ags.ScoreReadonly,
+            Constants.LtiScopes.Nrps.MembershipReadonly,
+            "eduManagementLabApi.read",
+            "eduManagementLabApi.write"
+        };
+
+        public static void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+
+                var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+                context.Database.Migrate();
+
+                if (!context.Clients.Any())
+                {
+                    foreach (var client in Clients)
+                    {
+                        context.Clients.Add(client.ToEntity());
+                    }
+
+                    context.SaveChanges();
+                }
+
+                // Define the identity resources that can be requested.
+                if (!context.IdentityResources.Any())
+                {
+                    foreach (var resource in IdentityResources)
+                    {
+                        context.IdentityResources.Add(resource.ToEntity());
+                    }
+
+                    context.SaveChanges();
+                }
+
+                // Define the API's that will be protected.
+                if (!context.ApiResources.Any())
+                {
+                    foreach (var resource in ApiResources)
+                    {
+                        context.ApiResources.Add(resource.ToEntity());
+                    }
+
+                    context.SaveChanges();
+                }
+
+                if (!context.ApiScopes.Any())
+                {
+                    foreach (var scope in ApiScopes)
+                    {
+                        context.ApiScopes.Add(scope.ToEntity());
+                    }
+
+                    context.SaveChanges();
+                }
+            }
+        }
     }
 }

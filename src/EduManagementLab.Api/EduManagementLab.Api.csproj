@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EduManagementLab.Core\EduManagementLab.Core.csproj" />
     <ProjectReference Include="..\EduManagementLab.EfRepository\EduManagementLab.EfRepository.csproj" />
+    <ProjectReference Include="..\EduManagementLab.IdentityServer4\EduManagementLab.IdentityServer4.csproj" />
   </ItemGroup>
 
 </Project>

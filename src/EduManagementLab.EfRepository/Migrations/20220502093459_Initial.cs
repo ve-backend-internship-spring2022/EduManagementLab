@@ -26,6 +26,24 @@ namespace EduManagementLab.EfRepository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tools",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeepLinkingLaunchUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DeploymentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IdentityServerClientId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LaunchUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LoginUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tools", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -50,6 +68,7 @@ namespace EduManagementLab.EfRepository.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IMSLTIResultResourceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CourseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -85,6 +104,33 @@ namespace EduManagementLab.EfRepository.Migrations
                         name: "FK_CourseMemberships_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IMSLTIResourceLinks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CustomProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ToolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CourseLineItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IMSLTIResourceLinks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IMSLTIResourceLinks_CourseLineItems_CourseLineItemId",
+                        column: x => x.CourseLineItemId,
+                        principalTable: "CourseLineItems",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_IMSLTIResourceLinks_Tools_ToolId",
+                        column: x => x.ToolId,
+                        principalTable: "Tools",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -132,6 +178,16 @@ namespace EduManagementLab.EfRepository.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_IMSLTIResourceLinks_CourseLineItemId",
+                table: "IMSLTIResourceLinks",
+                column: "CourseLineItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IMSLTIResourceLinks_ToolId",
+                table: "IMSLTIResourceLinks",
+                column: "ToolId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LineItemResults_CourseLineItemId",
                 table: "LineItemResults",
                 column: "CourseLineItemId");
@@ -145,7 +201,13 @@ namespace EduManagementLab.EfRepository.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "IMSLTIResourceLinks");
+
+            migrationBuilder.DropTable(
                 name: "LineItemResults");
+
+            migrationBuilder.DropTable(
+                name: "Tools");
 
             migrationBuilder.DropTable(
                 name: "CourseLineItems");

@@ -1,9 +1,12 @@
 ﻿using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Interfaces;
+using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +28,10 @@ namespace EduManagementLab.Core.Services
             return _unitOfWork.Users.GetAll();
         }
 
+        public Guid GetSubjectId(ClaimsPrincipal user)
+        {
+            return Guid.Parse(user.GetSubjectId().ToString());
+        }
         //public static string CreateSalt(int size)
         //{
         //    //Generate a cryptographic random number

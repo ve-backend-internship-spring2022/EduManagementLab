@@ -3,6 +3,7 @@ using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using IdentityServer4.Extensions;
 
 namespace EduManagementLab.Web.Pages.Students
 {
@@ -13,13 +14,19 @@ namespace EduManagementLab.Web.Pages.Students
         {
             _courseLineItemService = courseLineItemService;
         }
-        public CourseLineItem CourseLineItem { get; set; }
+        [BindProperty]
+        public CourseLineItem CourseLineItem { get; set; } = new CourseLineItem();
+        [BindProperty]
+        public Guid CourseId { get; set; }
+        public Guid UserId { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(Guid lineItemId)
+        public async Task<IActionResult> OnGetAsync(Guid lineItemId, Guid courseId)
         {
+            UserId = Guid.Parse(User?.GetSubjectId());
+            CourseId = courseId;
             try
             {
-                CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true);
+                CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true, true);
                 return Page();
             }
             catch (CourseLineItemNotFoundException)

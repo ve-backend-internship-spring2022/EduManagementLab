@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using static EduManagementLab.Api.Controllers.UsersController;
 using static EduManagementLab.Api.Controllers.CoursesController;
 using Microsoft.OpenApi.Models;
+using IdentityServer4.EntityFramework.Options;
+using EduManagementLab.IdentityServer4.Data;
+using EduManagementLab.IdentityServer4.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,7 +64,8 @@ builder.Services.AddSwaggerGen(c =>
                 TokenUrl = new Uri(configuration["ClientCredentials:TokenUrl"]),
                 Scopes = new Dictionary<string, string>
                 {
-                    { "eduManagementLabApi.read", "Reads the courses" }
+                    {"eduManagementLabApi.read", "Read Access to EduManagementLab API" },
+                    {"eduManagementLabApi.write", "Write Access to EduManagementLab API" },
                 }
             }
         }

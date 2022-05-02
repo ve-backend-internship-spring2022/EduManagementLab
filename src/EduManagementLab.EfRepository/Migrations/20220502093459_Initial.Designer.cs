@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduManagementLab.EfRepository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220408184556_Initial")]
+    [Migration("20220502093459_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,6 +91,9 @@ namespace EduManagementLab.EfRepository.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("IMSLTIResultResourceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
 
@@ -130,6 +133,75 @@ namespace EduManagementLab.EfRepository.Migrations
                     b.HasIndex("MembershipId");
 
                     b.ToTable("LineItemResults");
+                });
+
+            modelBuilder.Entity("EduManagementLab.Core.Entities.IMSLTIResourceLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CourseLineItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CustomProperties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ToolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseLineItemId");
+
+                    b.HasIndex("ToolId");
+
+                    b.ToTable("IMSLTIResourceLinks");
+                });
+
+            modelBuilder.Entity("EduManagementLab.Core.Entities.Tool", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CustomProperties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeepLinkingLaunchUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeploymentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentityServerClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LaunchUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LoginUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tools");
                 });
 
             modelBuilder.Entity("EduManagementLab.Core.Entities.User", b =>
@@ -212,6 +284,21 @@ namespace EduManagementLab.EfRepository.Migrations
                     b.Navigation("Membership");
                 });
 
+            modelBuilder.Entity("EduManagementLab.Core.Entities.IMSLTIResourceLink", b =>
+                {
+                    b.HasOne("EduManagementLab.Core.Entities.CourseLineItem", null)
+                        .WithMany("ResourceLinks")
+                        .HasForeignKey("CourseLineItemId");
+
+                    b.HasOne("EduManagementLab.Core.Entities.Tool", "Tool")
+                        .WithMany()
+                        .HasForeignKey("ToolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tool");
+                });
+
             modelBuilder.Entity("EduManagementLab.Core.Entities.Course", b =>
                 {
                     b.Navigation("CourseLineItems");
@@ -221,6 +308,8 @@ namespace EduManagementLab.EfRepository.Migrations
 
             modelBuilder.Entity("EduManagementLab.Core.Entities.CourseLineItem", b =>
                 {
+                    b.Navigation("ResourceLinks");
+
                     b.Navigation("Results");
                 });
 #pragma warning restore 612, 618

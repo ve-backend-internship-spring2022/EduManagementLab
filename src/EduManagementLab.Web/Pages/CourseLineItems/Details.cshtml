@@ -11,7 +11,8 @@
                 <h4>Course Line Item details</h4>
             </div>
             <div class="col-md-5 text-md-end">
-                <a asp-page="./EditCourseLineItemInfo" asp-route-id="@Model.CourseLineItem.Id" asp-route-courseId=@Model.Course.Id>Edit courselineitem info</a>
+                <a asp-page="./EditCourseLineItemInfo" asp-route-id="@Model.CourseLineItem.Id" asp-route-courseId=@Model.Course.Id>Edit courselineitem info</a>|
+                <a asp-page="./CourseTaskResourceLinks" asp-route-courseTaskId="@Model.CourseLineItem.Id">Resource Links</a>
             </div>
         </div>
         <hr />
@@ -22,6 +23,7 @@
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.CourseLineItem.Description)
             </dd>
+
         </dl>
     </div>
     <div class="row justify-content-between">

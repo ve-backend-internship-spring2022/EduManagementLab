@@ -20,7 +20,7 @@ namespace EduManagementLab.Api.Controllers
         private readonly CourseLineItemService _courseLineItemService;
         private readonly IMapper _mapper;
 
-        public CourseLineItemsController(CourseLineItemService courseLineItemService, CourseService courseService,IMapper mapper)
+        public CourseLineItemsController(CourseLineItemService courseLineItemService, CourseService courseService, IMapper mapper)
         {
             _courseLineItemService = courseLineItemService;
             _courseService = courseService;
@@ -118,7 +118,7 @@ namespace EduManagementLab.Api.Controllers
         {
             try
             {
-                var resultsList = _courseLineItemService.GetCourseLineItem(lineItemId,true).Results.ToList();
+                var resultsList = _courseLineItemService.GetCourseLineItem(lineItemId, true).Results.ToList();
                 var courseLineItemResultsDtoList = new List<CourseLineItemDto.ResultDto>();
 
                 foreach (var result in resultsList)
@@ -222,7 +222,7 @@ namespace EduManagementLab.Api.Controllers
                 public DateTime LastUpdated { get; set; }
             }
         }
-        
+
         public class CreateCourseLineItemRequest
         {
             public Guid CourseId { get; set; }

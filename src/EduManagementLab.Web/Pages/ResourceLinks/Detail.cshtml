@@ -1,0 +1,33 @@
+﻿@page
+@model EduManagementLab.Web.Pages.ResourceLinks.DetailModel
+@{
+}
+<div class="container-fluid">
+    <h4>ResourceLink Detail</h4>
+    <hr />
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <h5 class="card-header bg-secondary text-light">
+                    ResourceLink Settings
+                </h5>
+                <div class="card-body">
+                    <dl>
+                        <dt>@Html.DisplayNameFor(m => m.ResourceLink.Title)</dt>
+                        <dd>@Model.ResourceLink.Title</dd>
+                        <dt>@Html.DisplayNameFor(m => m.ResourceLink.Description)</dt>
+                        <dd>@Model.ResourceLink.Description</dd>
+                        <dt>@Html.DisplayNameFor(m => m.ResourceLink.Tool.Name)</dt>
+                        <dd>@Model.ResourceLink.Tool.Name</dd>
+                        <dt>@Html.DisplayNameFor(m => m.ResourceLink.CustomProperties)</dt>
+                        <dd><pre>@Model.ResourceLink.CustomProperties</pre></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <a asp-page="./Index">Back to resource list</a> | 
+        <a asp-page="Edit" asp-route-resourceId="@Model.ResourceLink.Id">Edit</a>
+    </div>
+</div>

@@ -10,6 +10,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EduManagementLab.Web.Pages.CourseLineItems
 {
+
+    [BindProperties]
     public class DetailsModel : PageModel
     {
         private readonly CourseService _courseService;
@@ -21,18 +23,15 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             _userService = userService;
             _courseLineItemService = courseLineItemService;
         }
-        [BindProperty]
         public List<SelectListItem> filterList { get; } = new List<SelectListItem>();
-        [BindProperty]
+
+        public List<IMSLTIResourceLink> ResourceLinks { get; } = new List<IMSLTIResourceLink>();
+
         public int selectedFilter { get; set; }
         public Course Course { get; set; }
         public CourseLineItem CourseLineItem { get; set; }
         public SelectList UserListItems { get; set; }
-        [BindProperty]
-        public bool IsChecked { get; set; }
-        [BindProperty]
         public List<UserScoreDto> userScoreList { get; set; } = new List<UserScoreDto>();
-        [BindProperty]
         public UserScoreDto userScore { get; set; }
         public class UserScoreDto
         {
@@ -96,6 +95,17 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         public IActionResult OnPostFilter(Guid lineItemId, Guid courseId)
         {
             PopulateProperties(lineItemId, courseId, selectedFilter);
+            return Page();
+        }
+        public IActionResult OnPost()
+        {
+            //List<ResourceLink> Resources = new List<ResourceLink>();
+
+            //for (int i = 0; i < selectedResources.Length; i++)
+            //{
+            //    var targetResource = _resourceLinkService.GetResourceLink(Guid.Parse(selectedResources[i].ToString()));
+            //    Resources.Add(targetResource);
+            //}
             return Page();
         }
         private void PopulateProperties(Guid lineItemId, Guid courseId, int selectedFilter)

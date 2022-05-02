@@ -45,9 +45,9 @@ namespace EduManagementLab.Core.Services
 
         public static void AgainstDuplicateCourseLineItemResult(Guid lineItemId, Guid memberId, IUnitOfWork unitOfWork)
         {
-            var courseLineItem = unitOfWork.CourseLineItems.GetCourseLineItem(lineItemId, true);
+            var courseLineItem = unitOfWork.CourseLineItems.GetCourseLineItem(lineItemId, true, false);
 
-            if(courseLineItem.Results.Any(c => c.MembershipId == memberId && c.CourseLineItemId == lineItemId))
+            if (courseLineItem.Results.Any(c => c.MembershipId == memberId && c.CourseLineItemId == lineItemId))
             {
                 throw new MemberInCourseLineItemResultAlreadyExistException(memberId);
             }
@@ -55,7 +55,7 @@ namespace EduManagementLab.Core.Services
 
         public static void AgainstUnknownMemberInCourseLineItemResult(Guid lineItemId, Guid memberId, IUnitOfWork unitOfWork)
         {
-            var courseLineItem = unitOfWork.CourseLineItems.GetCourseLineItem(lineItemId, true);
+            var courseLineItem = unitOfWork.CourseLineItems.GetCourseLineItem(lineItemId, true, false);
 
             if (!courseLineItem.Results.Any(c => c.MembershipId == memberId && c.CourseLineItemId == lineItemId))
             {
@@ -65,9 +65,9 @@ namespace EduManagementLab.Core.Services
 
         public static void AgainstUnknownCourseLineItem(Guid lineItemId, IUnitOfWork unitOfWork)
         {
-            var courseLineItem = unitOfWork.CourseLineItems.GetCourseLineItem(lineItemId, true);
+            var courseLineItem = unitOfWork.CourseLineItems.GetCourseLineItem(lineItemId, true, true);
 
-            if (!courseLineItem.Results.Any(x => x.CourseLineItemId == lineItemId))
+            if (courseLineItem == null)
             {
                 throw new CourseLineItemNotFoundException(lineItemId);
             }
