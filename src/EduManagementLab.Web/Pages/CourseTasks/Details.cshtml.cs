@@ -8,25 +8,25 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace EduManagementLab.Web.Pages.CourseLineItems
+namespace EduManagementLab.Web.Pages.CourseTasks
 {
     public class DetailsModel : PageModel
     {
         private readonly CourseService _courseService;
         private readonly UserService _userService;
-        private readonly CourseLineItemService _courseLineItemService;
-        public DetailsModel(CourseService courseService, UserService userService, CourseLineItemService courseLineItemService)
+        private readonly CourseTaskService _courseTaskService;
+        public DetailsModel(CourseService courseService, UserService userService, CourseTaskService courseTaskService)
         {
             _courseService = courseService;
             _userService = userService;
-            _courseLineItemService = courseLineItemService;
+            _courseTaskService = courseTaskService;
         }
         [BindProperty]
         public List<SelectListItem> filterList { get; } = new List<SelectListItem>();
         [BindProperty]
         public int selectedFilter { get; set; }
         public Course Course { get; set; }
-        public CourseLineItem CourseLineItem { get; set; }
+        public CourseTask CourseTask { get; set; }
         public SelectList UserListItems { get; set; }
         [BindProperty]
         public bool IsChecked { get; set; }
@@ -37,7 +37,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
         public class UserScoreDto
         {
             public Guid UserId { get; set; }
-            public Guid LineItemId { get; set; }
+            public Guid CourseTaskId { get; set; }
             public string Firstname { get; set; }
             public string Lastname { get; set; }
             public string? lastUpdated { get; set; }
@@ -45,14 +45,14 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             public DateTime? EndDate { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync(Guid lineItemId, Guid courseId)
+        public async Task<IActionResult> OnGetAsync(Guid courseTaskId, Guid courseId)
         {
             try
             {
-                PopulateProperties(lineItemId, courseId, selectedFilter);
+                PopulateProperties(courseTaskId, courseId, selectedFilter);
                 return Page();
             }
-            catch (CourseLineItemNotFoundException)
+            catch (CourseTaskNotFoundException)
             {
                 return NotFound();
             }
@@ -62,67 +62,67 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
             filterList.Add(new SelectListItem() { Text = "Active Members", Value = "0" });
             filterList.Add(new SelectListItem() { Text = "Completed Members", Value = "1" });
         }
-        public IActionResult OnPostUpdateScore(Guid lineItemId, Guid courseId)
+        public IActionResult OnPostUpdateScore(Guid courseTaskId, Guid courseId)
         {
             foreach (var userScore in userScoreList)
             {
                 var course = _courseService.GetCourse(courseId, true);
                 var member = course.Memperships.FirstOrDefault(x => x.UserId == userScore.UserId);
 
-                CourseLineItem = _courseLineItemService.GetCourseLineItem(userScore.LineItemId, true);
+                CourseTask = _courseTaskService.GetCourseTask(userScore.CourseTaskId, true);
                 try
                 {
-                    if (member != null && CourseLineItem.Results.Any(x => x.MembershipId == member.Id && x.CourseLineItemId == userScore.LineItemId) && userScore.Score != null)
+                    if (member != null && CourseTask.Results.Any(x => x.MembershipId == member.Id && x.CourseTaskId == userScore.CourseTaskId) && userScore.Score != null)
                     {
-                        var result = CourseLineItem.Results.FirstOrDefault(u => u.MembershipId == member.Id && u.CourseLineItemId == userScore.LineItemId);
+                        var result = CourseTask.Results.FirstOrDefault(u => u.MembershipId == member.Id && u.CourseTaskId == userScore.CourseTaskId);
                         if (userScore.Score != result.Score && userScore.Score != null)
                         {
-                            _courseLineItemService.UpdateLineItemResult(userScore.LineItemId, member.Id, userScore.Score.Value);
+                            _courseTaskService.UpdateCourseTaskResult(userScore.CourseTaskId, member.Id, userScore.Score.Value);
                         }
                     }
                     else if (userScore.Score != null)
                     {
-                        _courseLineItemService.CreateLineItemResult(userScore.LineItemId, member.Id, userScore.Score.Value);
+                        _courseTaskService.CreateCourseTaskResult(userScore.CourseTaskId, member.Id, userScore.Score.Value);
                     }
                 }
-                catch (CourseLineItemNotFoundException)
+                catch (CourseTaskNotFoundException)
                 {
                     return NotFound();
                 }
             }
-            PopulateProperties(lineItemId, courseId, selectedFilter);
+            PopulateProperties(courseTaskId, courseId, selectedFilter);
             return Page();
         }
-        public IActionResult OnPostFilter(Guid lineItemId, Guid courseId)
+        public IActionResult OnPostFilter(Guid courseTaskId, Guid courseId)
         {
-            PopulateProperties(lineItemId, courseId, selectedFilter);
+            PopulateProperties(courseTaskId, courseId, selectedFilter);
             return Page();
         }
-        private void PopulateProperties(Guid lineItemId, Guid courseId, int selectedFilter)
+        private void PopulateProperties(Guid courseTaskId, Guid courseId, int selectedFilter)
         {
             userScoreList.Clear();
-            CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true);
+            CourseTask = _courseTaskService.GetCourseTask(courseTaskId, true);
             Course = _courseService.GetCourse(courseId, true);
 
-            var courseLineItemResult = CourseLineItem.Results.Where(c => c.CourseLineItemId == lineItemId);
+            var courseTaskResult = CourseTask.Results.Where(c => c.CourseTaskId == courseTaskId);
 
             switch (selectedFilter)
             {
                 case 0:
                     var activeUsers = Course.Memperships.Where(s => s.EndDate == null);
-                    FillUserScoreList(lineItemId, activeUsers, courseLineItemResult);
+                    FillUserScoreList(courseTaskId, activeUsers, courseTaskResult);
                     break;
                 case 1:
                     var inactiveUsers = Course.Memperships.Where(s => s.EndDate != null);
-                    FillUserScoreList(lineItemId, inactiveUsers, courseLineItemResult);
+                    FillUserScoreList(courseTaskId, inactiveUsers, courseTaskResult);
                     break;
                 default:
-                    FillUserScoreList(lineItemId, Course.Memperships, courseLineItemResult);
+                    FillUserScoreList(courseTaskId, Course.Memperships, courseTaskResult);
                     break;
             }
             loadFilters();
         }
-        private void FillUserScoreList(Guid lineitemId, IEnumerable<Course.Membership> memberships, IEnumerable<CourseLineItem.Result> results)
+        private void FillUserScoreList(Guid courseTaskId, IEnumerable<Course.Membership> memberships, IEnumerable<CourseTask.Result> results)
         {
             foreach (var member in memberships)
             {
@@ -132,7 +132,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                     userScoreList.Add(new UserScoreDto
                     {
                         UserId = member.UserId,
-                        LineItemId = lineitemId,
+                        CourseTaskId = courseTaskId,
                         Firstname = member.User.FirstName,
                         Lastname = member.User.LastName,
                         lastUpdated = result.LastUpdated.ToString("f"),
@@ -145,7 +145,7 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                     userScoreList.Add(new UserScoreDto
                     {
                         UserId = member.UserId,
-                        LineItemId = lineitemId,
+                        CourseTaskId = courseTaskId,
                         Firstname = member.User.FirstName,
                         Lastname = member.User.LastName,
                         EndDate = member.EndDate

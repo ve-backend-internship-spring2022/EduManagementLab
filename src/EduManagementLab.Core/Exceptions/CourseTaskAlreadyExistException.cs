@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EduManagementLab.Core.Exceptions
 {
-    public class CourseLineItemAlreadyExistException : Exception
+    public class CourseTaskAlreadyExistException : Exception
     {
-        public CourseLineItemAlreadyExistException(string name) : base($"Course line item: {name} already exist")
+        public CourseTaskAlreadyExistException(string name) : base($"Course line item: {name} already exist")
         {
         }
     }

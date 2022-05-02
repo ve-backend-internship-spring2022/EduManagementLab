@@ -15,7 +15,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<CourseService>();
-builder.Services.AddTransient<CourseLineItemService>();
+builder.Services.AddTransient<CourseTaskService>();
 
 builder.Services.AddControllersWithViews();
 

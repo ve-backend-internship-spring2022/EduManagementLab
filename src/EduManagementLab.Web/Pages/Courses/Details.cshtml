@@ -265,31 +265,31 @@
     </tbody>
 </table>
 <div class="row">
-    <div class="col-md-10"><h4>Course Line Items</h4></div>
+    <div class="col-md-10"><h4>Course tasks</h4></div>
     <div class="col-md-2 text-md-end">
-        <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#createlineitem">
-            Add Course Line Item
+        <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#createCourseTask">
+            Add course task
         </button>
-        <div class="modal fade" id="createlineitem" tabindex="-1" aria-labelledby="createlineitem" aria-hidden="true">
+        <div class="modal fade" id="createCourseTask" tabindex="-1" aria-labelledby="createCourseTask" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="modal-title" id="createlineitem">Add Course Line Item</h2>
+                        <h2 class="modal-title" id="createCourseTask">Add course task</h2>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-md-start">
                         @Html.AntiForgeryToken()
-                        <h5 class="text-center">Create new Course Line Item</h5>
-                        <form method="post" asp-route-courseId="@Model.Course.Id" asp-page-handler="CreateLineItem">
+                        <h5 class="text-center">Create new Course Task</h5>
+                        <form method="post" asp-route-courseId="@Model.Course.Id" asp-page-handler="CreateCourseTask">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
-                                <label asp-for="lineItemInput.Name" class="control-label"></label>
-                                <input asp-for="lineItemInput.Name" class="form-control" />
-                                <span asp-validation-for="lineItemInput.Name" class="text-danger"></span>
+                                <label asp-for="courseTaskInput.Name" class="control-label"></label>
+                                <input asp-for="courseTaskInput.Name" class="form-control" />
+                                <span asp-validation-for="courseTaskInput.Name" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="lineItemInput.Description" class="control-label"></label>
-                                <input asp-for="lineItemInput.Description" class="form-control" />
+                                <label asp-for="courseTaskInput.Description" class="control-label"></label>
+                                <input asp-for="courseTaskInput.Description" class="form-control" />
                             </div>
                             <div class="form-group text-center">
                                 <input type="submit" value="Add to course" class="btn btn-primary" />
@@ -306,35 +306,35 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Course.CourseLineItems[0].Name)
+                @Html.DisplayNameFor(model => model.Course.CourseTasks[0].Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Course.CourseLineItems[0].Description)
+                @Html.DisplayNameFor(model => model.Course.CourseTasks[0].Description)
             </th>
         </tr>
     </thead>
     <tbody>
-        @if (Model.Course.CourseLineItems != null)
+        @if (Model.Course.CourseTasks != null)
         {
-            @foreach (var lineItem in Model.Course.CourseLineItems)
+            @foreach (var courseTask in Model.Course.CourseTasks)
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => lineItem.Name)
+                        @Html.DisplayFor(modelItem => courseTask.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => lineItem.Description)
+                        @Html.DisplayFor(modelItem => courseTask.Description)
                     </td>
                     <td>
-                        <a asp-page="../CourseLineItems/Details" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Details</a> |
-                        <a asp-page="../CourseLineItems/RemoveCourseLineItem" asp-route-courseId="@Model.Course.Id" asp-route-lineItemId="@lineItem.Id">Delete</a>
+                        <a asp-page="../CourseTasks/Details" asp-route-courseId="@Model.Course.Id" asp-route-courseTaskId="@courseTask.Id">Details</a> |
+                        <a asp-page="../CourseTasks/RemoveCourseTask" asp-route-courseId="@Model.Course.Id" asp-route-courseTaskId="@courseTask.Id">Delete</a>
                     </td>
                 </tr>
             }
         }
         else
         {
-            <h4>No Course Line Items for this course</h4>
+            <h4>No Course tasks for this course</h4>
         }
     </tbody>
 </table>
