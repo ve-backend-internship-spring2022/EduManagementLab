@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EduManagementLab.Core.Entities
 {
-    public class CourseLineItem
+    public class CourseTask
     {
         public Guid Id { get; set; }
         [Required]
@@ -19,9 +19,9 @@ namespace EduManagementLab.Core.Entities
             public Course.Membership? Membership { get; set; }
             [Required]
             public Guid MembershipId { get; set; }
-            public CourseLineItem? CourseLineItem { get; set; }
+            public CourseTask? CourseTask { get; set; }
             [Required]
-            public Guid CourseLineItemId { get; set; }
+            public Guid CourseTaskId { get; set; }
             [Column(TypeName = "decimal")]
             public decimal Score { get; set; }
             public DateTime LastUpdated { get; set; }

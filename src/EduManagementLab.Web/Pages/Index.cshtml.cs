@@ -14,9 +14,9 @@ namespace EduManagementLab.Web.Pages
         private readonly ILogger<IndexModel> _logger;
         private readonly UserService _userService;
         private readonly CourseService _courseService;
-        private readonly CourseLineItemService _courseLineItemService;
+        private readonly CourseTaskService _courseLineItemService;
 
-        public IndexModel(ILogger<IndexModel> logger, UserService userService, CourseService courseService, CourseLineItemService courseLineItemService)
+        public IndexModel(ILogger<IndexModel> logger, UserService userService, CourseService courseService, CourseTaskService courseLineItemService)
         {
             _logger = logger;
             _userService = userService;

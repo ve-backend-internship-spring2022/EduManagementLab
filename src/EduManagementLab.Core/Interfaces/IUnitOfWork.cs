@@ -7,6 +7,8 @@ namespace EduManagementLab.Core.Interfaces
     {
         IUserRepository Users { get; }
         ICourseRepository Courses { get; }
+        ICourseTaskRepository CourseTasks { get; }
+        ICourseTaskResultsRepository CourseTaskResults { get; }
         ICourseLineItemRepository CourseLineItems { get; }
         ILineItemResultsRepository LineItemResults { get; }
         IToolRepository Tools { get; }

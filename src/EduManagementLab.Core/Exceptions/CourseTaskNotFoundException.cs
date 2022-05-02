@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EduManagementLab.Core.Exceptions
 {
-    public class CourseLineItemNotFoundException : Exception
+    public class CourseTaskNotFoundException : Exception
     {
-        public CourseLineItemNotFoundException(Guid courseLineItemId) : base($"No Course Line Item found with id {courseLineItemId}")
+        public CourseTaskNotFoundException(Guid courseLineItemId) : base($"No Course Line Item found with id {courseLineItemId}")
         {
         }
     }

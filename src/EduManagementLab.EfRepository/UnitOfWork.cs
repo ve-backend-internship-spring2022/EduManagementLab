@@ -13,6 +13,8 @@ namespace EduManagementLab.EfRepository
 
             Users = new UserRepository(_context);
             Courses = new CourseRepository(_context);
+            CourseTasks = new CourseTaskRepository(_context);
+            CourseTaskResults = new CourseTaskResultsRepository(_context);
             CourseLineItems = new CourseLineItemRepository(_context);
             LineItemResults = new LineItemResultsRepository(_context);
             Tools = new ToolRepository(_context);
@@ -22,6 +24,8 @@ namespace EduManagementLab.EfRepository
 
         public IUserRepository Users { get; private set; }
         public ICourseRepository Courses { get; private set; }
+        public ICourseTaskRepository CourseTasks { get; set; }
+        public ICourseTaskResultsRepository CourseTaskResults { get; }
         public ICourseLineItemRepository CourseLineItems { get; set; }
         public ILineItemResultsRepository LineItemResults { get; }
         public IToolRepository Tools { get; }

@@ -2,7 +2,7 @@
 
 namespace EduManagementLab.Core.Interfaces.Repositories
 {
-    public interface ILineItemResultsRepository : IGenericRepository<CourseLineItem.Result>
+    public interface ICourseTaskResultsRepository : IGenericRepository<CourseTask.Result>
     {
     }
 }

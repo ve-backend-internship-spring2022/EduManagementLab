@@ -14,12 +14,15 @@ namespace EduManagementLab.Web.Pages.Courses
     {
         private readonly CourseService _courseService;
         private readonly UserService _userService;
+        private readonly CourseTaskService _courseTaskService;
+        public DetailsModel(CourseService courseService, UserService userService, CourseTaskService courseTaskService)
         private readonly CourseLineItemService _courseLineItemService;
         private readonly ResourceLinkService _resourceLinkService;
         public DetailsModel(CourseService courseService, UserService userService, CourseLineItemService courseLineItemService, ResourceLinkService resourceLinkService)
         {
             _courseService = courseService;
             _userService = userService;
+            _courseTaskService = courseTaskService;
             _courseLineItemService = courseLineItemService;
             _resourceLinkService = resourceLinkService;
         }
@@ -34,14 +37,14 @@ namespace EduManagementLab.Web.Pages.Courses
         public Guid LoginUserId { get; set; }
         public Course Course { get; set; }
         public SelectList UserListItems { get; set; }
-        public SelectList LineItemListItems { get; set; }
+        public SelectList CourseTaskListItems { get; set; }
         [BindProperty]
         public DateTime SelectedEndDate { get; set; }
         public int SelectedOption { get; set; }
         [BindProperty]
         public DateTime EnrolledDate { get; set; }
         [BindProperty]
-        public LineItemInputModel lineItemInput { get; set; } = new LineItemInputModel();
+        public CourseTaskInputModel courseTaskInput { get; set; }
         [BindProperty]
         public InputModel Input { get; set; }
         [BindProperties]
@@ -62,7 +65,7 @@ namespace EduManagementLab.Web.Pages.Courses
             [DataType(DataType.EmailAddress, ErrorMessage = "Please type a valid email address")]
             public string Email { get; set; }
         }
-        public class LineItemInputModel
+        public class CourseTaskInputModel
         {
             [Required]
             public string Name { get; set; }
@@ -70,7 +73,7 @@ namespace EduManagementLab.Web.Pages.Courses
         }
 
         public async Task<IActionResult> OnGetAsync(Guid courseId)
-        {
+        {            
             try
             {
                 PopulateProperties(courseId);
@@ -97,8 +100,8 @@ namespace EduManagementLab.Web.Pages.Courses
             UserListItems = new SelectList(_userService.GetUsers()
                 .Where(s => !Course.Memperships.Any(x => x.User.Email == s.Email)), "Id", "Email");
 
-            LineItemListItems = new SelectList(_courseLineItemService.GetCourseLineItems()
-               .Where(s => !Course.CourseLineItems.Any(x => x.Name == s.Name)), "Name", "Description");
+            CourseTaskListItems = new SelectList(_courseTaskService.GetCourseTasks()
+               .Where(s => !Course.CourseTasks.Any(x => x.Name == s.Name)), "Name", "Description");
         }
         public IActionResult OnPostSortingListAsync(int sortingId, Guid courseId)
         {
@@ -175,12 +178,12 @@ namespace EduManagementLab.Web.Pages.Courses
                 return Page();
             }
         }
-        public IActionResult OnPostCreateLineItem(Guid courseId)
+        public IActionResult OnPostCreateCourseTask(Guid courseId)
         {
             ICollection<ValidationResult> results = null;
-            if (Validate(lineItemInput, out results))
+            if (Validate(courseTaskInput, out results))
             {
-                _courseLineItemService.CreateCourseLineItem(courseId, lineItemInput.Name, lineItemInput.Description);
+                _courseTaskService.CreateCourseTask(courseId, courseTaskInput.Name, courseTaskInput.Description);
             }
             PopulateProperties(courseId);
             return RedirectToPage("./Details", new { courseId = courseId });

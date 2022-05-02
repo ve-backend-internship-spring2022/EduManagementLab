@@ -43,43 +43,43 @@ namespace EduManagementLab.Core.Services
             }
         }
 
-        public static void AgainstDuplicateCourseLineItemResult(Guid lineItemId, Guid memberId, IUnitOfWork unitOfWork)
+        public static void AgainstDuplicateCourseTaskResult(Guid lineItemId, Guid memberId, IUnitOfWork unitOfWork)
         {
-            var courseLineItem = unitOfWork.CourseLineItems.GetCourseLineItem(lineItemId, true, false);
+            var courseLineItem = unitOfWork.CourseTasks.GetCourseTask(lineItemId, true);
 
-            if (courseLineItem.Results.Any(c => c.MembershipId == memberId && c.CourseLineItemId == lineItemId))
+            if(courseLineItem.Results.Any(c => c.MembershipId == memberId && c.CourseTaskId == lineItemId))
             {
                 throw new MemberInCourseLineItemResultAlreadyExistException(memberId);
             }
         }
 
-        public static void AgainstUnknownMemberInCourseLineItemResult(Guid lineItemId, Guid memberId, IUnitOfWork unitOfWork)
+        public static void AgainstUnknownMemberInCourseTaskResult(Guid lineItemId, Guid memberId, IUnitOfWork unitOfWork)
         {
-            var courseLineItem = unitOfWork.CourseLineItems.GetCourseLineItem(lineItemId, true, false);
+            var courseLineItem = unitOfWork.CourseTasks.GetCourseTask(lineItemId, true);
 
-            if (!courseLineItem.Results.Any(c => c.MembershipId == memberId && c.CourseLineItemId == lineItemId))
+            if (!courseLineItem.Results.Any(c => c.MembershipId == memberId && c.CourseTaskId == lineItemId))
             {
-                throw new MemberInCourseLineItemResultNotFoundException(memberId);
+                throw new MemberInCourseTaskResultNotFoundException(memberId);
             }
         }
 
-        public static void AgainstUnknownCourseLineItem(Guid lineItemId, IUnitOfWork unitOfWork)
+        public static void AgainstUnknownCourseTask(Guid lineItemId, IUnitOfWork unitOfWork)
         {
-            var courseLineItem = unitOfWork.CourseLineItems.GetCourseLineItem(lineItemId, true, true);
+            var courseLineItem = unitOfWork.CourseTasks.GetCourseTask(lineItemId, true);
 
-            if (courseLineItem == null)
+            if (!courseLineItem.Results.Any(x => x.CourseTaskId == lineItemId))
             {
-                throw new CourseLineItemNotFoundException(lineItemId);
+                throw new CourseTaskNotFoundException(lineItemId);
             }
         }
 
-        public static void AgaintDuplicateNameInCourseLineItem(Guid courseId, string name, IUnitOfWork unitOfWork)
+        public static void AgaintDuplicateNameInCourseTask(Guid courseId, string name, IUnitOfWork unitOfWork)
         {
             var course = unitOfWork.Courses.GetCourse(courseId, true);
 
-            if (course.CourseLineItems.Any(x => x.Name == name))
+            if (course.CourseTasks.Any(x => x.Name == name))
             {
-                throw new CourseLineItemAlreadyExistException(name);
+                throw new CourseTaskAlreadyExistException(name);
             }
         }
     }

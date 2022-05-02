@@ -9,11 +9,12 @@ namespace EduManagementLab.Web.Pages.Students
 {
     public class AssignmentDetailsModel : PageModel
     {
-        private readonly CourseLineItemService _courseLineItemService;
-        public AssignmentDetailsModel(CourseLineItemService courseLineItemService)
+        private readonly CourseTaskService _courseLineItemService;
+        public AssignmentDetailsModel(CourseTaskService courseLineItemService)
         {
             _courseLineItemService = courseLineItemService;
         }
+        public CourseTask CourseLineItem { get; set; }
         [BindProperty]
         public CourseLineItem CourseLineItem { get; set; } = new CourseLineItem();
         [BindProperty]
@@ -26,10 +27,10 @@ namespace EduManagementLab.Web.Pages.Students
             CourseId = courseId;
             try
             {
-                CourseLineItem = _courseLineItemService.GetCourseLineItem(lineItemId, true, true);
+                CourseLineItem = _courseLineItemService.GetCourseTask(lineItemId, true);
                 return Page();
             }
-            catch (CourseLineItemNotFoundException)
+            catch (CourseTaskNotFoundException)
             {
                 return NotFound();
             }
