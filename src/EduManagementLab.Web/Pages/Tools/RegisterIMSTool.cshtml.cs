@@ -1,7 +1,6 @@
 using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
 using EduManagementLab.IdentityServer;
-using EduManagementLab.IdentityServer4.Interfaces;
 using IdentityModel;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
@@ -16,12 +15,14 @@ namespace EduManagementLab.Web.Pages.Tools
     {
         private readonly ToolService _ToolService;
         private readonly IConfiguration _configuration;
-        private readonly IConfigurationDbContext _identityConfig;
-        public RegisterIMSToolModel(ToolService IToolService, IConfiguration configuration, IConfigurationDbContext configurationDbContext)
+        private readonly OAuthClientService _oauthClientService;
+        public RegisterIMSToolModel(ToolService IToolService,
+            OAuthClientService oauthClientService,
+            IConfiguration configuration)
         {
             _ToolService = IToolService;
             _configuration = configuration;
-            _identityConfig = configurationDbContext;
+            _oauthClientService = oauthClientService;
         }
         [BindProperty]
         public ToolModel tool { get; set; } = new ToolModel();
@@ -104,36 +105,9 @@ namespace EduManagementLab.Web.Pages.Tools
         {
             if (ModelState.IsValid)
             {
-                if (!_identityConfig.Clients.Include(s => s.ClientSecrets).Include(r => r.RedirectUris).Any(c => c.ClientId == tool.ClientId && c.ClientSecrets.Any(c => c.Value == tool.PublicKey)))
+                if (!_oauthClientService.ValidateCredentials(tool.ClientId, tool.PublicKey))
                 {
-                    var client = new Client
-                    {
-                        ClientId = tool.ClientId,
-                        ClientName = tool.Name,
-                        AllowedGrantTypes = GrantTypes.ImplicitAndClientCredentials,
-                        AllowedScopes = Config.LtiScopes,
-                        ClientSecrets = new List<Secret>
-                        {
-                            new Secret
-                            {
-                                Type = Core.Validation.Constants.SecretTypes.PublicPemKey,
-                                Value = tool.PublicKey
-                            }
-                        },
-                        AllowedCorsOrigins = new List<string>
-                        {
-                            "https://localhost:5001",
-                            "https://localhost:5002",
-                            "https://localhost:44308",
-                            "https://localhost:44338"
-                        },
-                        RedirectUris = { tool.LaunchUrl },
-                        RequireConsent = false
-                    };
-
-                    var entity = client.ToEntity();
-                    _identityConfig.Clients.Add(entity);
-                    _identityConfig.SaveChanges();
+                    
 
                     var newTool = new Tool
                     {

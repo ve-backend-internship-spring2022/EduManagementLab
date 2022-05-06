@@ -1,7 +1,5 @@
 using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
-using EduManagementLab.IdentityServer4.Interfaces;
-using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +12,12 @@ namespace EduManagementLab.Web.Pages.Tools
     {
         private readonly ToolService _ToolService;
         private readonly IConfiguration _configuration;
-        private readonly IConfigurationDbContext _identityConfig;
-        public EditModel(ToolService IToolService, IConfiguration configuration, IConfigurationDbContext configurationDbContext)
+        private readonly OAuthClientService _OAuthClientService;
+        public EditModel(ToolService IToolService, IConfiguration configuration, OAuthClientService OAuthClientService)
         {
             _ToolService = IToolService;
             _configuration = configuration;
-            _identityConfig = configurationDbContext;
+            _OAuthClientService = OAuthClientService;
         }
         [BindProperty]
         public ToolModel tool { get; set; } = new ToolModel();
@@ -89,7 +87,7 @@ namespace EduManagementLab.Web.Pages.Tools
         public void loadStaticToolInfo(Guid toolId)
         {
             var targetTool = _ToolService.GetTool(toolId);
-            var targetClient = _identityConfig.Clients.Include(s => s.ClientSecrets).FirstOrDefault(c => c.ClientId == targetTool.IdentityServerClientId);
+            var targetClient = _OAuthClientService.GetOAuthClientById(targetTool.IdentityServerClientId);
 
             tool.Id = targetTool.Id;
             tool.Name = targetTool.Name;

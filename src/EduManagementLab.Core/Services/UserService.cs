@@ -1,7 +1,6 @@
 ﻿using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Interfaces;
-using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -26,11 +25,6 @@ namespace EduManagementLab.Core.Services
         public IEnumerable<User> GetUsers()
         {
             return _unitOfWork.Users.GetAll();
-        }
-
-        public Guid GetSubjectId(ClaimsPrincipal user)
-        {
-            return Guid.Parse(user.GetSubjectId().ToString());
         }
         //public static string CreateSalt(int size)
         //{

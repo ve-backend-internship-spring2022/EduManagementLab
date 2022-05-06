@@ -1,10 +1,7 @@
 using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
-using EduManagementLab.IdentityServer;
-using EduManagementLab.Core.Validation;
-using EduManagementLab.IdentityServer4.Interfaces;
+using EduManagementLab.IdentityServer4.Validation;
 using IdentityModel.Client;
-using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -16,20 +13,20 @@ namespace EduManagementLab.Web.Pages.Students
         private readonly ILogger<OidcLaunchModel> _logger;
         private readonly ResourceLinkService _resourceLinkService;
         private readonly ToolService _toolService;
-        private readonly IConfigurationDbContext _identityConfig;
+        private readonly OAuthClientService _oauthClientService;
         private readonly IConfiguration _configuration;
         public OidcLaunchModel(
             ILogger<OidcLaunchModel> logger,
             ResourceLinkService resourceLinkService,
             ToolService toolService,
-            IConfigurationDbContext configurationDbContext,
+            OAuthClientService oauthClientService,
             IConfiguration configuration)
         {
             _logger = logger;
             _resourceLinkService = resourceLinkService;
             _toolService = toolService;
-            _identityConfig = configurationDbContext;
             _configuration = configuration;
+            _oauthClientService = oauthClientService;
         }
         public async Task<IActionResult> OnGetAsync(Guid id, string messageType, string courseId, string personId)
         {
@@ -58,7 +55,7 @@ namespace EduManagementLab.Web.Pages.Students
             }
 
             //var client = Config.Clients.FirstOrDefault(t => t.ClientId == tool.IdentityServerClientId);
-            var client = _identityConfig.Clients.FirstOrDefault(c => c.ClientId == tool.IdentityServerClientId);
+            var client = _oauthClientService.GetOAuthClientById(tool.IdentityServerClientId);
             if (client == null)
             {
                 _logger.LogError("Client not found");

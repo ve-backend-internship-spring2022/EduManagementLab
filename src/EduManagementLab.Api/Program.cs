@@ -6,11 +6,9 @@ using static EduManagementLab.Api.Controllers.UsersController;
 using static EduManagementLab.Api.Controllers.CoursesController;
 using Microsoft.OpenApi.Models;
 using IdentityServer4.EntityFramework.Options;
-using EduManagementLab.IdentityServer4.Data;
-using EduManagementLab.IdentityServer4.Interfaces;
+using IdentityServer4.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
 ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
@@ -84,11 +82,12 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "EduManagementLab.IdentityServer4 v1");
     });
 }
-app.UseCors();
 
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();

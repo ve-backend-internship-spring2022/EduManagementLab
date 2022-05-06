@@ -1,5 +1,4 @@
 using EduManagementLab.Core.Services;
-using EduManagementLab.IdentityServer4.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -11,12 +10,12 @@ namespace EduManagementLab.Web.Pages.Tools
     {
         private readonly ToolService _ToolService;
         private readonly IConfiguration _configuration;
-        private readonly IConfigurationDbContext _identityConfig;
-        public DetailModel(ToolService IToolService, IConfiguration configuration, IConfigurationDbContext configurationDbContext)
+        private readonly OAuthClientService _OAuthClientService;
+        public DetailModel(ToolService IToolService, IConfiguration configuration, OAuthClientService OAuthClientService)
         {
             _ToolService = IToolService;
             _configuration = configuration;
-            _identityConfig = configurationDbContext;
+            _OAuthClientService = OAuthClientService;
         }
         [BindProperty]
         public ToolModel Tool { get; set; } = new ToolModel();
@@ -70,12 +69,12 @@ namespace EduManagementLab.Web.Pages.Tools
 
         public void OnGet(Guid toolId)
         {
-            loadStaticToolInfo(toolId);
+            loadToolInfo(toolId);
         }
-        public void loadStaticToolInfo(Guid toolId)
+        public void loadToolInfo(Guid toolId)
         {
             var targetTool = _ToolService.GetTool(toolId);
-            var targetClient = _identityConfig.Clients.Include(s => s.ClientSecrets).FirstOrDefault(c => c.ClientId == targetTool.IdentityServerClientId);
+            var targetClient = _OAuthClientService.GetOAuthClientById(targetTool.IdentityServerClientId);
 
             Tool.Name = targetTool.Name;
             Tool.LaunchUrl = targetTool.LaunchUrl;

@@ -1,5 +1,6 @@
-﻿using EduManagementLab.Core.Configuration;
-using EduManagementLab.Core.Entities;
+﻿using EduManagementLab.Core.Entities;
+using EduManagementLab.Core.Services;
+using EduManagementLab.IdentityServer4.Configuration;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -9,14 +10,11 @@ using LtiAdvantage.AssignmentGradeServices;
 using LtiAdvantage.DeepLinking;
 using LtiAdvantage.Lti;
 using LtiAdvantage.NamesRoleProvisioningService;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Security.Claims;
 
-namespace EduManagementLab.Core.Services
+namespace EduManagementLab.IdentityServer4.Services
 {
     public class CustomProfileService : IProfileService
     {

@@ -1,9 +1,8 @@
-﻿using EduManagementLab.Core.Validation;
+﻿using EduManagementLab.IdentityServer4.Validation;
 using IdentityServer4.Validation;
-using LtiAdvantage.Core.Validation;
-using Microsoft.Extensions.DependencyInjection;
+using LtiAdvantage.IdentityServer4.Validation;
 
-namespace EduManagementLab.Core.Configuration
+namespace EduManagementLab.IdentityServer4.Configuration
 {
     public static class DependencyInjectionExtensions
     {
@@ -16,9 +15,7 @@ namespace EduManagementLab.Core.Configuration
         public static IIdentityServerBuilder AddImpersonationSupport(this IIdentityServerBuilder builder)
         {
             builder.Services.AddLogging();
-
             builder.AddCustomAuthorizeRequestValidator<ImpersonationAuthorizeRequestValidator>();
-            builder.AddSecretValidator<PrivatePemKeyJwtSecretValidator>();
 
             return builder;
         }

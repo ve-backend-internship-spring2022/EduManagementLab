@@ -11,6 +11,7 @@ namespace EduManagementLab.Core.Interfaces
         ICourseTaskResultsRepository CourseTaskResults { get; }
         IToolRepository Tools { get; }
         IResourceLinkRepository ResourceLinks { get; }
+        IOAuthClientRepository OAuthClients { get; }
         int Complete();
     }
 }

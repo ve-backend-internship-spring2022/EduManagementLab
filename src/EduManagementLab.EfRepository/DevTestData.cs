@@ -1,12 +1,8 @@
 ﻿using EduManagementLab.Core.Entities;
+using EduManagementLab.Core.Entities.client;
 using EduManagementLab.Core.Interfaces;
 using EduManagementLab.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+using IdentityServer4.Models;
 
 namespace EduManagementLab.EfRepository
 {
@@ -17,6 +13,7 @@ namespace EduManagementLab.EfRepository
             var unitOfWork = new UnitOfWork(dataContext);
             unitOfWork.Users.AddRange(GetDevTestUsers(unitOfWork).ToList());
             unitOfWork.Courses.AddRange(GetDevTestCourses().ToList());
+            unitOfWork.OAuthClients.AddRange(GetClients().ToList());
             unitOfWork.Complete();
         }
 
@@ -90,6 +87,91 @@ namespace EduManagementLab.EfRepository
                 new Course() { Id = Guid.Parse("{7659C805-D968-4910-BDF6-6936FAB38FC3}"), Code = "POL1", Name = "Public Administration 1", Description = "Course specializing in public management and administration.", StartDate = DateTime.Now.AddDays(-27), EndDate = DateTime.Now.AddDays(26), }
             };
 
+        }
+        public static IEnumerable<OAuthClient> GetClients()
+        {
+            return new List<OAuthClient>
+            {
+                new OAuthClient
+                {
+                    //OAuth2 
+                    ClientId = "eduManagementLabApi",
+                    ClientName = "ASP.NET Core EduManagementLab Api",
+                    AllowedGrantTypes = new List<ClientGrantType>
+                    {
+                        new ClientGrantType
+                        {
+                            GrantType = "ClientCredentials"
+                        }
+                    },
+                    ClientSecrets = new List<ClientSecret>
+                    {
+                        new ClientSecret { Value = "TestEduApi".Sha256() }
+                    },
+                    AllowedScopes = new List<ClientScope>()
+                    {
+                        new ClientScope { Scope = "eduManagementLabApi.read" },
+                        new ClientScope { Scope = "eduManagementLabApi.write" },
+                        new ClientScope { Scope = "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem" },
+                        new ClientScope { Scope = "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly" },
+                        new ClientScope { Scope = "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly" },
+                        new ClientScope { Scope = "https://purl.imsglobal.org/spec/lti-ags/scope/score" },
+                        new ClientScope { Scope = "https://purl.imsglobal.org/spec/lti-ags/scope/score.readonly" },
+                        new ClientScope { Scope = "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly" },
+                        new ClientScope { Scope = "openid" },
+                    },
+                    AllowedCorsOrigins = new List<ClientCorsOrigin>
+                    {
+                        new ClientCorsOrigin{Origin= "https://localhost:5001"},
+                        new ClientCorsOrigin{Origin= "https://localhost:5002"},
+                        new ClientCorsOrigin{Origin= "https://localhost:44308"},
+                        new ClientCorsOrigin{Origin= "https://localhost:44338"},
+                    },
+                },
+                new OAuthClient
+                {
+                    //OpenID Connect
+                    ClientId = "oidcEduWebApp",
+                    ClientName = "ASP.NET Core EduManagementLab Web",
+                    ClientSecrets = new List<ClientSecret>
+                    {
+                        new ClientSecret { Value = "TestEduApi".Sha256() }
+                    },
+                    AllowedGrantTypes = new List<ClientGrantType>
+                    {
+                        new ClientGrantType
+                        {
+                            GrantType = "authorization_code"
+                        }
+                    },
+                    AllowOfflineAccess = true,
+                    RedirectUris = new List<ClientRedirectUri>
+                    {
+                        new ClientRedirectUri
+                        {
+                            RedirectUri = "https://localhost:5002/signin-oidc"
+                        }
+                    },
+                    PostLogoutRedirectUris = new List<ClientPostLogoutRedirectUri>
+                    {
+                        new ClientPostLogoutRedirectUri
+                        {
+                            PostLogoutRedirectUri = "https://localhost:5002/signout-callback-oidc"
+                        }
+                    },
+                    AllowedScopes = new List<ClientScope>
+                    {
+                        new ClientScope
+                        {
+                            Scope = "OpenId"
+                        },
+                        new ClientScope
+                        {
+                            Scope = "profile"
+                        }
+                    }
+                }
+            };
         }
     }
 }

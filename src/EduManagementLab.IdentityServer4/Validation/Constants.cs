@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EduManagementLab.Core.Validation
+namespace EduManagementLab.IdentityServer4.Validation
 {
     /// <summary>
     /// Identity Server constants used by <see cref="PrivatePemKeyJwtSecretValidator"/>.

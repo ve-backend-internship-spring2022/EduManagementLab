@@ -3,12 +3,12 @@ using EduManagementLab.Core.Interfaces;
 using EduManagementLab.Core.Services;
 using EduManagementLab.EfRepository;
 using EduManagementLab.IdentityServer;
-using EduManagementLab.IdentityServer4.Interfaces;
-using EduManagementLab.IdentityServer4.Data;
-using EduManagementLab.Core.Configuration;
+using EduManagementLab.IdentityServer4.Configuration;
 using IdentityServer4.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using EduManagementLab.IdentityServer4.Services;
+using IdentityServer4.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,50 +26,38 @@ builder.Services.AddTransient<CourseService>();
 builder.Services.AddTransient<CourseTaskService>();
 builder.Services.AddTransient<ToolService>();
 builder.Services.AddTransient<ResourceLinkService>();
+builder.Services.AddTransient<OAuthClientService>();
 
-//-- Specification to use custom IdentityServerDbContext insted of inMemory --
-var identity = builder.Configuration.GetConnectionString("IdentityServerDbContext");
-builder.Services.AddDbContext<ConfigDbContext>(options =>
-    options.UseSqlServer(identity));
-
-builder.Services.AddDbContext<PersistedDbContext>(options =>
-    options.UseSqlServer(identity));
-
-builder.Services.AddTransient<IConfigurationDbContext, ConfigDbContext>();
-builder.Services.AddTransient<IPersistedGrantDbContext, PersistedDbContext>();
+builder.Services.AddSingleton<ICorsPolicyService>((container) =>
+{
+    //Solution for API Authorization http://docs.identityserver.io/en/latest/topics/cors.html
+    var logger = container.GetRequiredService<ILogger<DefaultCorsPolicyService>>();
+    return new DefaultCorsPolicyService(logger)
+    {
+        AllowedOrigins = { "https://localhost:7134" }
+    };
+});
 
 builder.Services.AddIdentityServer()
     .AddDeveloperSigningCredential()
-    .AddConfigurationStore(options =>
-    {
-        options.ConfigureDbContext = build =>
-            build.UseSqlServer(builder.Configuration.GetConnectionString("IdentityServerDbContext"),
-                sql => sql.MigrationsAssembly(assembly));
-    })
-    .AddOperationalStore(options =>
-    {
-        options.ConfigureDbContext = build =>
-             build.UseSqlServer(builder.Configuration.GetConnectionString("IdentityServerDbContext"),
-                 sql => sql.MigrationsAssembly(assembly));
-        // Clean up expired tokens
-        options.EnableTokenCleanup = true;
-        options.EnableTokenCleanup = false;
-        options.TokenCleanupInterval = 30;
-    })
+    .AddInMemoryIdentityResources(Config.IdentityResources)
+    .AddInMemoryApiResources(Config.ApiResources)
+    //.AddInMemoryClients(Config.Clients)
+    .AddInMemoryApiScopes(Config.ApiScopes)
     .AddImpersonationSupport()
     .AddProfileService<CustomProfileService>()
     .AddResourceOwnerValidator<CustomResourceOwnerPasswordValidator>()
+    .AddClientStore<CustomClientStore>()
     .AddLtiJwtBearerClientAuthentication();
 
 builder.Services.AddAuthentication();
 //-- End --
 
 var app = builder.Build();
-Config.InitializeDatabase(app);
+
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseIdentityServer();
 
 app.UseAuthentication();

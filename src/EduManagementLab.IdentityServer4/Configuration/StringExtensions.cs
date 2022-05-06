@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
-using IdentityServer4.Extensions;
 
-namespace EduManagementLab.Core.Configuration
+namespace EduManagementLab.IdentityServer4.Configuration
 {
     /// <summary>
     /// Local version of Identity Server 4 internal static class StringExtensions

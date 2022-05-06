@@ -1,4 +1,5 @@
-﻿using EduManagementLab.Core.Validation;
+﻿using EduManagementLab.EfRepository;
+using EduManagementLab.IdentityServer4.Validation;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.EntityFramework.DbContexts;
@@ -35,15 +36,8 @@ namespace EduManagementLab.IdentityServer
                 ClientId = "eduManagementLabApi",
                 ClientName = "ASP.NET Core EduManagementLab Api",
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
-                ClientSecrets = new List<Secret> {new Secret("TestEduApi".Sha256())},
-                AllowedScopes = LtiScopes,
-                AllowedCorsOrigins = new List<string>
-                {
-                    "https://localhost:5002",
-                    "https://localhost:5001",
-                    "https://localhost:7134",
-                    "http://localhost:5134"
-                }
+                ClientSecrets = new List<Secret> { new Secret("TestEduApi".Sha256()) },
+                AllowedScopes = LtiScopes
             },
             new Client
             {
@@ -76,7 +70,7 @@ namespace EduManagementLab.IdentityServer
             }
         };
         public static ICollection<string> LtiScopes => new[]
-{
+        {
             OidcConstants.StandardScopes.OpenId,
             Constants.LtiScopes.Ags.LineItem,
             Constants.LtiScopes.Ags.LineItemReadonly,
@@ -87,58 +81,5 @@ namespace EduManagementLab.IdentityServer
             "eduManagementLabApi.read",
             "eduManagementLabApi.write"
         };
-
-        public static void InitializeDatabase(IApplicationBuilder app)
-        {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-
-                var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-                context.Database.Migrate();
-
-                if (!context.Clients.Any())
-                {
-                    foreach (var client in Clients)
-                    {
-                        context.Clients.Add(client.ToEntity());
-                    }
-
-                    context.SaveChanges();
-                }
-
-                // Define the identity resources that can be requested.
-                if (!context.IdentityResources.Any())
-                {
-                    foreach (var resource in IdentityResources)
-                    {
-                        context.IdentityResources.Add(resource.ToEntity());
-                    }
-
-                    context.SaveChanges();
-                }
-
-                // Define the API's that will be protected.
-                if (!context.ApiResources.Any())
-                {
-                    foreach (var resource in ApiResources)
-                    {
-                        context.ApiResources.Add(resource.ToEntity());
-                    }
-
-                    context.SaveChanges();
-                }
-
-                if (!context.ApiScopes.Any())
-                {
-                    foreach (var scope in ApiScopes)
-                    {
-                        context.ApiScopes.Add(scope.ToEntity());
-                    }
-
-                    context.SaveChanges();
-                }
-            }
-        }
     }
 }

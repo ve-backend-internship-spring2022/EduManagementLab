@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
-using EduManagementLab.Core.Configuration;
+using EduManagementLab.Core.Services;
+using EduManagementLab.IdentityServer4.Configuration;
 using IdentityModel;
 using IdentityServer4.EntityFramework.Interfaces;
 using IdentityServer4.Models;
@@ -7,7 +8,7 @@ using IdentityServer4.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace LtiAdvantage.Core.Validation
+namespace LtiAdvantage.IdentityServer4.Validation
 {
     /// <inheritdoc />
     /// <summary>
@@ -19,12 +20,12 @@ namespace LtiAdvantage.Core.Validation
         private readonly ILogger<ImpersonationAuthorizeRequestValidator> _logger;
 
         public const string AuthenticationType = @"Impersonation";
-        private readonly IConfigurationDbContext _config;
+        private readonly OAuthClientService _OAuthClientService;
 
-        public ImpersonationAuthorizeRequestValidator(ILogger<ImpersonationAuthorizeRequestValidator> logger, IConfigurationDbContext configurationDbContext)
+        public ImpersonationAuthorizeRequestValidator(ILogger<ImpersonationAuthorizeRequestValidator> logger, OAuthClientService OAuthClientService)
         {
             _logger = logger;
-            _config = configurationDbContext;
+            _OAuthClientService = OAuthClientService;
         }
 
         public Task ValidateAsync(CustomAuthorizeRequestValidationContext context)

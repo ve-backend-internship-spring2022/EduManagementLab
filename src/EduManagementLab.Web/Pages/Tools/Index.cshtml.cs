@@ -1,6 +1,5 @@
 using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
-using EduManagementLab.IdentityServer4.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,11 +8,11 @@ namespace EduManagementLab.Web.Pages.Tools
     public class IndexModel : PageModel
     {
         private readonly ToolService _ToolService;
-        private readonly IConfigurationDbContext _identityConfig;
-        public IndexModel(ToolService iMSToolService, IConfigurationDbContext configurationDbContext)
+        private readonly OAuthClientService _OAuthClientService;
+        public IndexModel(ToolService iMSToolService, OAuthClientService OAuthClientService)
         {
             _ToolService = iMSToolService;
-            _identityConfig = configurationDbContext;
+            _OAuthClientService = OAuthClientService;
         }
         public List<Tool> Tools { get; set; } = new List<Tool>();
         public void OnGet()
@@ -24,11 +23,10 @@ namespace EduManagementLab.Web.Pages.Tools
         {
             var targetTool = _ToolService.GetTool(toolId);
 
-            var targetClient = _identityConfig.Clients.FirstOrDefault(c => c.ClientId == targetTool.IdentityServerClientId);
+            var targetClient = _OAuthClientService.GetOAuthClientById(targetTool.IdentityServerClientId);
             if (targetClient != null)
             {
-                _identityConfig.Clients.Remove(targetClient);
-                _identityConfig.SaveChanges();
+                _OAuthClientService.DeleteOAuthClientById(targetClient.Id);
             }
             _ToolService.DeleteTool(toolId);
             Tools = _ToolService.GetTools().ToList();

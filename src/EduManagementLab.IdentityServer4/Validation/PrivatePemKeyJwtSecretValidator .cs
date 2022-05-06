@@ -1,19 +1,15 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
-using System.Text;
-using System.Xml.Serialization;
-using EduManagementLab.Core.Configuration;
+using EduManagementLab.IdentityServer4.Configuration;
 using IdentityServer4;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.OpenSsl;
 
-namespace EduManagementLab.Core.Validation
+namespace EduManagementLab.IdentityServer4.Validation
 {
     public class PrivatePemKeyJwtSecretValidator : ISecretValidator
     {

@@ -17,13 +17,14 @@ namespace EduManagementLab.EfRepository
             CourseTaskResults = new CourseTaskResultsRepository(_context);
             Tools = new ToolRepository(_context);
             ResourceLinks = new ResourceLinkRepository(_context);
-
+            OAuthClients = new OAuthClientRepository(_context);
         }
 
         public IUserRepository Users { get; private set; }
         public ICourseRepository Courses { get; private set; }
         public ICourseTaskRepository CourseTasks { get; set; }
         public ICourseTaskResultsRepository CourseTaskResults { get; }
+        public IOAuthClientRepository OAuthClients { get; }
         public IToolRepository Tools { get; }
         public IResourceLinkRepository ResourceLinks { get; }
 

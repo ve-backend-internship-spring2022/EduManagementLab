@@ -1,4 +1,5 @@
 ﻿using EduManagementLab.Core.Entities;
+using EduManagementLab.Core.Entities.client;
 using Microsoft.EntityFrameworkCore;
 
 namespace EduManagementLab.EfRepository
@@ -16,5 +17,6 @@ namespace EduManagementLab.EfRepository
         public DbSet<CourseTask.Result> CourseTaskResults { get; set; }
         public DbSet<Tool> Tools { get; set; }
         public DbSet<IMSLTIResourceLink> IMSLTIResourceLinks { get; set; }
+        public DbSet<OAuthClient> OAuthClients { get; set; }
     }
 }
