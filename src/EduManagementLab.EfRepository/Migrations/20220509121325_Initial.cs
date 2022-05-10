@@ -106,15 +106,14 @@ namespace EduManagementLab.EfRepository.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientClaim", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientClaim_OAuthClients_ClientId1",
-                        column: x => x.ClientId1,
+                        name: "FK_ClientClaim_OAuthClients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "OAuthClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -127,15 +126,14 @@ namespace EduManagementLab.EfRepository.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Origin = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientCorsOrigin", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientCorsOrigin_OAuthClients_ClientId1",
-                        column: x => x.ClientId1,
+                        name: "FK_ClientCorsOrigin_OAuthClients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "OAuthClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -148,15 +146,14 @@ namespace EduManagementLab.EfRepository.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GrantType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientGrantType", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientGrantType_OAuthClients_ClientId1",
-                        column: x => x.ClientId1,
+                        name: "FK_ClientGrantType_OAuthClients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "OAuthClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -169,15 +166,14 @@ namespace EduManagementLab.EfRepository.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Provider = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientIdPRestriction", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientIdPRestriction_OAuthClients_ClientId1",
-                        column: x => x.ClientId1,
+                        name: "FK_ClientIdPRestriction_OAuthClients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "OAuthClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -190,15 +186,14 @@ namespace EduManagementLab.EfRepository.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PostLogoutRedirectUri = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientPostLogoutRedirectUri", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientPostLogoutRedirectUri_OAuthClients_ClientId1",
-                        column: x => x.ClientId1,
+                        name: "FK_ClientPostLogoutRedirectUri_OAuthClients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "OAuthClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -210,8 +205,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -219,8 +213,8 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     table.PrimaryKey("PK_ClientProperty", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientProperty_OAuthClients_ClientId1",
-                        column: x => x.ClientId1,
+                        name: "FK_ClientProperty_OAuthClients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "OAuthClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -233,15 +227,14 @@ namespace EduManagementLab.EfRepository.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RedirectUri = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientRedirectUri", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientRedirectUri_OAuthClients_ClientId1",
-                        column: x => x.ClientId1,
+                        name: "FK_ClientRedirectUri_OAuthClients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "OAuthClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -254,15 +247,14 @@ namespace EduManagementLab.EfRepository.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Scope = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientScope", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientScope_OAuthClients_ClientId1",
-                        column: x => x.ClientId1,
+                        name: "FK_ClientScope_OAuthClients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "OAuthClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -274,8 +266,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Expiration = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -285,8 +276,8 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     table.PrimaryKey("PK_ClientSecret", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientSecret_OAuthClients_ClientId1",
-                        column: x => x.ClientId1,
+                        name: "FK_ClientSecret_OAuthClients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "OAuthClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -374,49 +365,49 @@ namespace EduManagementLab.EfRepository.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientClaim_ClientId1",
+                name: "IX_ClientClaim_ClientId",
                 table: "ClientClaim",
-                column: "ClientId1");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientCorsOrigin_ClientId1",
+                name: "IX_ClientCorsOrigin_ClientId",
                 table: "ClientCorsOrigin",
-                column: "ClientId1");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientGrantType_ClientId1",
+                name: "IX_ClientGrantType_ClientId",
                 table: "ClientGrantType",
-                column: "ClientId1");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientIdPRestriction_ClientId1",
+                name: "IX_ClientIdPRestriction_ClientId",
                 table: "ClientIdPRestriction",
-                column: "ClientId1");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientPostLogoutRedirectUri_ClientId1",
+                name: "IX_ClientPostLogoutRedirectUri_ClientId",
                 table: "ClientPostLogoutRedirectUri",
-                column: "ClientId1");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientProperty_ClientId1",
+                name: "IX_ClientProperty_ClientId",
                 table: "ClientProperty",
-                column: "ClientId1");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientRedirectUri_ClientId1",
+                name: "IX_ClientRedirectUri_ClientId",
                 table: "ClientRedirectUri",
-                column: "ClientId1");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientScope_ClientId1",
+                name: "IX_ClientScope_ClientId",
                 table: "ClientScope",
-                column: "ClientId1");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientSecret_ClientId1",
+                name: "IX_ClientSecret_ClientId",
                 table: "ClientSecret",
-                column: "ClientId1");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CourseMemberships_CourseId",

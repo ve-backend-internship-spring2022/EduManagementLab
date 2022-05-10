@@ -107,8 +107,7 @@ namespace EduManagementLab.Web.Pages.Tools
             {
                 if (!_oauthClientService.ValidateCredentials(tool.ClientId, tool.PublicKey))
                 {
-                    
-
+                    _oauthClientService.CreateOAuthClient(tool.ClientId, tool.Name, tool.LaunchUrl, tool.PublicKey);
                     var newTool = new Tool
                     {
                         CustomProperties = tool.CustomProperties,
@@ -120,7 +119,6 @@ namespace EduManagementLab.Web.Pages.Tools
                         LoginUrl = tool.LoginUrl,
                     };
                     _ToolService.CreateTool(newTool);
-
                     return RedirectToPage("./Index");
                 }
                 else

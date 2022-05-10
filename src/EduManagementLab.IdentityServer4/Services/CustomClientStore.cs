@@ -6,6 +6,7 @@ using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using IdentityServer4.Validation;
+using IDS4Secret = IdentityServer4.Models.Secret;
 
 namespace EduManagementLab.IdentityServer4.Services
 {
@@ -19,23 +20,20 @@ namespace EduManagementLab.IdentityServer4.Services
 
         public Task<Client> FindClientByIdAsync(string clientId)
         {
-            //var result = _oauthClientService.GetOAuthClientById(clientId);
-            //var newClient = new Client
-            //{
+            var result = _oauthClientService.FindClientByClientId(clientId);
+            var newClient = new Client
+            {
+                ClientId = clientId,
+                ClientName = result.ClientName,
+                ClientSecrets = result.ClientSecrets.Select(c => new IDS4Secret(c.Value)).ToList(),
+                AllowedGrantTypes = result.AllowedGrantTypes.Select(c => c.GrantType).ToList(),
+                AllowedScopes = result.AllowedScopes.Select(c => c.Scope).ToList(),
+                AllowedCorsOrigins = result.AllowedCorsOrigins.Select(c => c.Origin).ToList(),
+                RedirectUris = result.RedirectUris.Select(c => c.RedirectUri).ToList(),
+                RequireConsent = false
+            }; 
 
-            //};
-            return Task.FromResult(Config.Clients.FirstOrDefault(c => c.ClientId == clientId));
+            return Task.FromResult(newClient);
         }
-
-        //public Task ValidateAsync(ClientConfigurationValidationContext context)
-        //{
-        //    if (_oauthClientService.ValidateCredentials(
-        //        context.Client.ClientId, context.Client.ClientSecrets.First(c => c.Type == "PublicKey").Value))
-        //    {
-        //        var result = _oauthClientService.GetOAuthClientById(Guid.Parse(context.Client.ClientId));
-        //    }
-
-        //    return Task.FromResult(0);
-        //}
     }
 }

@@ -18,11 +18,11 @@ namespace EduManagementLab.Core.Services
 
         public IEnumerable<OAuthClient> GetOAuthClients()
         {
-            return _unitOfWork.OAuthClients.GetAll();
+            return _unitOfWork.OAuthClients.GetOAuthClients();
         }
-        public OAuthClient GetOAuthClientById(string clientId)
+        public OAuthClient FindClientByClientId(string clientId)
         {
-            return _unitOfWork.OAuthClients.GetById(Guid.Parse(clientId));
+            return _unitOfWork.OAuthClients.FindClientByClientId(clientId);
         }
         public OAuthClient DeleteOAuthClientById(Guid Id)
         {
@@ -36,7 +36,12 @@ namespace EduManagementLab.Core.Services
             {
                 ClientId = ClientId,
                 ClientName = clientName,
-                AllowedGrantTypes = new List<ClientGrantType>() { new ClientGrantType { GrantType = "ImplicitAndClientCredentials" } },
+                AllowedGrantTypes = new List<ClientGrantType>() 
+                { 
+                    new ClientGrantType { GrantType = "implicit" },
+                    new ClientGrantType { GrantType = "client_credentials" },
+                    new ClientGrantType { GrantType = "authorization_code" },
+                },
                 AllowedScopes = new List<ClientScope>() {
                     new ClientScope { Scope = "eduManagementLabApi.read" },
                     new ClientScope { Scope = "eduManagementLabApi.write" },
@@ -54,15 +59,14 @@ namespace EduManagementLab.Core.Services
                 },
                 AllowedCorsOrigins = new List<ClientCorsOrigin>
                 {
-                    new ClientCorsOrigin{Origin= "https://localhost:5001"},
-                    new ClientCorsOrigin{Origin= "https://localhost:5002"},
-                    new ClientCorsOrigin{Origin= "https://localhost:44308"},
-                    new ClientCorsOrigin{Origin= "https://localhost:44338"},
+                    new ClientCorsOrigin { Origin= "https://localhost:5001" },
+                    new ClientCorsOrigin { Origin= "https://localhost:5002" },
+                    new ClientCorsOrigin { Origin= "https://localhost:44308" },
+                    new ClientCorsOrigin { Origin= "https://localhost:44338" },
                 },
                 RedirectUris = new List<ClientRedirectUri> { new ClientRedirectUri { RedirectUri = launchUrl } },
                 RequireConsent = false
-            };
-
+            };  
 
             _unitOfWork.OAuthClients.Add(newOAuthClient);
             _unitOfWork.Complete();
@@ -72,7 +76,7 @@ namespace EduManagementLab.Core.Services
 
         public bool ValidateCredentials(string clientId, string secret)
         {
-            var targetClient = GetOAuthClientById(clientId);
+            var targetClient = FindClientByClientId(clientId);
             if (targetClient != null)
             {
                 return targetClient.ClientSecrets.Equals(secret);

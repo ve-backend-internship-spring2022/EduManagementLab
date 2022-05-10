@@ -2,7 +2,7 @@
 
 namespace EduManagementLab.Core.Entities.client
 {
-    public abstract class Secret
+    public class Secret
     {
         public int Id { get; set; }
         public string Value { get; set; }

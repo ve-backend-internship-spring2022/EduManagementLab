@@ -92,16 +92,15 @@ namespace EduManagementLab.IdentityServer4.Validation
         private static List<RsaSecurityKey> GetPemKeys(IEnumerable<Secret> secrets)
         {
             var pemKeys = secrets
-                .Where(s => s.Type.Contains(Constants.SecretTypes.PublicPemKey))
                 .Select(s => s.Value)
                 .ToList();
 
             var rsaSecurityKeys = new List<RsaSecurityKey>();
 
-            foreach (var item in rsaSecurityKeys)
-            {
+            //foreach (var item in rsaSecurityKeys)
+            //{
 
-            }
+            //}
 
             foreach (var pemKey in pemKeys)
             {

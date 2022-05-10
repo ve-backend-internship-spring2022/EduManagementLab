@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduManagementLab.EfRepository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220506130234_Initial")]
+    [Migration("20220509121325_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,10 +32,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ClientId1")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Type")
@@ -48,7 +45,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId1");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientClaim");
                 });
@@ -61,10 +58,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ClientId1")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Origin")
@@ -73,7 +67,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId1");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientCorsOrigin");
                 });
@@ -86,10 +80,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ClientId1")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("GrantType")
@@ -98,7 +89,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId1");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientGrantType");
                 });
@@ -111,10 +102,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ClientId1")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Provider")
@@ -123,7 +111,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId1");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientIdPRestriction");
                 });
@@ -136,10 +124,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ClientId1")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PostLogoutRedirectUri")
@@ -148,7 +133,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId1");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientPostLogoutRedirectUri");
                 });
@@ -161,10 +146,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ClientId1")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Key")
@@ -177,7 +159,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId1");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientProperty");
                 });
@@ -190,10 +172,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ClientId1")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("RedirectUri")
@@ -202,7 +181,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId1");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientRedirectUri");
                 });
@@ -215,10 +194,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ClientId1")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Scope")
@@ -227,7 +203,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId1");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientScope");
                 });
@@ -240,10 +216,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ClientId1")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
@@ -262,7 +235,7 @@ namespace EduManagementLab.EfRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId1");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientSecret");
                 });
@@ -518,7 +491,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     b.HasOne("EduManagementLab.Core.Entities.client.OAuthClient", "Client")
                         .WithMany("Claims")
-                        .HasForeignKey("ClientId1")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -529,7 +502,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     b.HasOne("EduManagementLab.Core.Entities.client.OAuthClient", "Client")
                         .WithMany("AllowedCorsOrigins")
-                        .HasForeignKey("ClientId1")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -540,7 +513,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     b.HasOne("EduManagementLab.Core.Entities.client.OAuthClient", "Client")
                         .WithMany("AllowedGrantTypes")
-                        .HasForeignKey("ClientId1")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -551,7 +524,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     b.HasOne("EduManagementLab.Core.Entities.client.OAuthClient", "Client")
                         .WithMany("IdentityProviderRestrictions")
-                        .HasForeignKey("ClientId1")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -562,7 +535,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     b.HasOne("EduManagementLab.Core.Entities.client.OAuthClient", "Client")
                         .WithMany("PostLogoutRedirectUris")
-                        .HasForeignKey("ClientId1")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -573,7 +546,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     b.HasOne("EduManagementLab.Core.Entities.client.OAuthClient", "Client")
                         .WithMany("Properties")
-                        .HasForeignKey("ClientId1")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -584,7 +557,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     b.HasOne("EduManagementLab.Core.Entities.client.OAuthClient", "Client")
                         .WithMany("RedirectUris")
-                        .HasForeignKey("ClientId1")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -595,7 +568,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     b.HasOne("EduManagementLab.Core.Entities.client.OAuthClient", "Client")
                         .WithMany("AllowedScopes")
-                        .HasForeignKey("ClientId1")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -606,7 +579,7 @@ namespace EduManagementLab.EfRepository.Migrations
                 {
                     b.HasOne("EduManagementLab.Core.Entities.client.OAuthClient", "Client")
                         .WithMany("ClientSecrets")
-                        .HasForeignKey("ClientId1")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

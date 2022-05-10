@@ -187,12 +187,15 @@ namespace EduManagementLab.IdentityServer4.Services
                 {
                     Scope = new List<string>
                     {
-                        Constants.LtiScopes.Ags.LineItem
+                        Constants.LtiScopes.Ags.LineItem,
                     },
-                    LineItemUrl = gradebookColumn == null ? null : _linkGenerator.GetUriByRouteValues(Constants.ServiceEndpoints.Ags.LineItemService,
-                        new { contextId = course.Id, lineItemId = gradebookColumn.Id }, httpRequest.Scheme, httpRequest.Host),
+                    LineItemUrl = gradebookColumn == null ? null : 
+                        _linkGenerator.GetUriByRouteValues(Constants.ServiceEndpoints.Ags.LineItemService,
+                        new { contextId = course.Id, lineItemId = gradebookColumn.Id }, 
+                        httpRequest.Scheme, httpRequest.Host),
                     LineItemsUrl = _linkGenerator.GetUriByRouteValues(Constants.ServiceEndpoints.Ags.LineItemsService,
-                        new { contextId = course.Id }, httpRequest.Scheme, httpRequest.Host)
+                        new { contextId = course.Id }, 
+                        httpRequest.Scheme, httpRequest.Host)
                 };
 
                 request.NamesRoleService = new NamesRoleServiceClaimValueType

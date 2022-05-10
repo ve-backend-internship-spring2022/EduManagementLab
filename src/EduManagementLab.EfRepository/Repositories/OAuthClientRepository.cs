@@ -18,14 +18,23 @@ namespace EduManagementLab.EfRepository.Repositories
         }
         public IEnumerable<OAuthClient> GetOAuthClients()
         {
-            return _context.OAuthClients.ToList();
+            return _context.OAuthClients
+                .Include(s => s.ClientSecrets)
+                .Include(s => s.RedirectUris)
+                .Include(s => s.AllowedGrantTypes)
+                .Include(s => s.AllowedScopes)
+                .Include(s => s.AllowedCorsOrigins)
+                .ToList();
         }
-        public OAuthClient GetOAuthClientById(string oauthClientId, Secret secret)
+        public OAuthClient FindClientByClientId(string oauthClientId)
         {
             return _context.OAuthClients
                 .Include(s => s.ClientSecrets)
                 .Include(s => s.RedirectUris)
-                .FirstOrDefault(c => c.ClientId == oauthClientId && c.ClientSecrets.Any(c => c.Value == secret.Value && c.Type == secret.Type));
+                .Include(s => s.AllowedGrantTypes)
+                .Include(s => s.AllowedScopes)
+                .Include(s => s.AllowedCorsOrigins)
+                .FirstOrDefault(c => c.ClientId == oauthClientId);
         }
     }
 }

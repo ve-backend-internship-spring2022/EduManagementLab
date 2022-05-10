@@ -8,7 +8,6 @@ namespace EduManagementLab.Core.Entities.client
 {
     public class ClientSecret : Secret
     {
-        public int ClientId { get; set; }
         public OAuthClient Client { get; set; }
     }
 }

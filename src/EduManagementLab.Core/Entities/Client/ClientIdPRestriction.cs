@@ -10,8 +10,6 @@ namespace EduManagementLab.Core.Entities.client
     {
         public int Id { get; set; }
         public string Provider { get; set; }
-
-        public int ClientId { get; set; }
         public OAuthClient Client { get; set; }
     }
 }

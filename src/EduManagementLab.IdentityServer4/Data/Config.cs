@@ -22,40 +22,14 @@ namespace EduManagementLab.IdentityServer
                 UserClaims = new List<string> {"role"}
             }
         };
+
         public static IEnumerable<ApiScope> ApiScopes => new List<ApiScope>
         {
             //used to specify what actions authorized user can perform at the level of the API
              new ApiScope("eduManagementLabApi.read", "Read Access to EduManagementLab API"),
              new ApiScope("eduManagementLabApi.write", "Write Access to EduManagementLab API"),
         };
-        public static IEnumerable<Client> Clients => new List<Client>
-        {
-            new Client
-            {
-                //OAuth2 
-                ClientId = "eduManagementLabApi",
-                ClientName = "ASP.NET Core EduManagementLab Api",
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
-                ClientSecrets = new List<Secret> { new Secret("TestEduApi".Sha256()) },
-                AllowedScopes = LtiScopes
-            },
-            new Client
-            {
-                //OpenID Connect
-                ClientId = "oidcEduWebApp",
-                ClientName = "ASP.NET Core EduManagementLab Web",
-                ClientSecrets =  {new Secret("TestEduApi".Sha256())},
-                AllowedGrantTypes = GrantTypes.Code,
-                AllowOfflineAccess = true,
-                RedirectUris = {"https://localhost:5002/signin-oidc"},
-                PostLogoutRedirectUris = { "https://localhost:5002/signout-callback-oidc"},
-                AllowedScopes = new List<string>
-                {
-                    IdentityServerConstants.StandardScopes.OpenId,
-                    IdentityServerConstants.StandardScopes.Profile
-                }
-            }
-        };
+
         public static IEnumerable<ApiResource> ApiResources => new List<ApiResource>
         {
             //used to define the API that the identity server is protecting 
@@ -69,6 +43,7 @@ namespace EduManagementLab.IdentityServer
                 UserClaims = new List<string> {"role"}
             }
         };
+
         public static ICollection<string> LtiScopes => new[]
         {
             OidcConstants.StandardScopes.OpenId,

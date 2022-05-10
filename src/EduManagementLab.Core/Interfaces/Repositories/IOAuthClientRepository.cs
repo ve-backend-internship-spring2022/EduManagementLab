@@ -10,6 +10,6 @@ namespace EduManagementLab.Core.Interfaces.Repositories
     public interface IOAuthClientRepository : IGenericRepository<OAuthClient>
     {
         IEnumerable<OAuthClient> GetOAuthClients();
-        OAuthClient GetOAuthClientById(string oauthClientId, Secret secret);
+        OAuthClient FindClientByClientId(string oauthClientId);
     }
 }

@@ -87,7 +87,7 @@ namespace EduManagementLab.Web.Pages.Tools
         public void loadStaticToolInfo(Guid toolId)
         {
             var targetTool = _ToolService.GetTool(toolId);
-            var targetClient = _OAuthClientService.GetOAuthClientById(targetTool.IdentityServerClientId);
+            var targetClient = _OAuthClientService.FindClientByClientId(targetTool.IdentityServerClientId);
 
             tool.Id = targetTool.Id;
             tool.Name = targetTool.Name;

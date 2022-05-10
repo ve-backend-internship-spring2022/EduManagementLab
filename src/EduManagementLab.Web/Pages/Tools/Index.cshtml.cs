@@ -23,7 +23,7 @@ namespace EduManagementLab.Web.Pages.Tools
         {
             var targetTool = _ToolService.GetTool(toolId);
 
-            var targetClient = _OAuthClientService.GetOAuthClientById(targetTool.IdentityServerClientId);
+            var targetClient = _OAuthClientService.FindClientByClientId(targetTool.IdentityServerClientId);
             if (targetClient != null)
             {
                 _OAuthClientService.DeleteOAuthClientById(targetClient.Id);

@@ -3,6 +3,7 @@ using EduManagementLab.Core.Entities.client;
 using EduManagementLab.Core.Interfaces;
 using EduManagementLab.Core.Services;
 using IdentityServer4.Models;
+using IDS4Secret = IdentityServer4.Models.Secret;
 
 namespace EduManagementLab.EfRepository
 {
@@ -99,10 +100,8 @@ namespace EduManagementLab.EfRepository
                     ClientName = "ASP.NET Core EduManagementLab Api",
                     AllowedGrantTypes = new List<ClientGrantType>
                     {
-                        new ClientGrantType
-                        {
-                            GrantType = "ClientCredentials"
-                        }
+                        new ClientGrantType { GrantType = "client_credentials" },
+                        new ClientGrantType { GrantType = "implicit" },
                     },
                     ClientSecrets = new List<ClientSecret>
                     {
@@ -161,14 +160,8 @@ namespace EduManagementLab.EfRepository
                     },
                     AllowedScopes = new List<ClientScope>
                     {
-                        new ClientScope
-                        {
-                            Scope = "OpenId"
-                        },
-                        new ClientScope
-                        {
-                            Scope = "profile"
-                        }
+                        new ClientScope { Scope = "openid" },
+                        new ClientScope { Scope = "profile" }
                     }
                 }
             };

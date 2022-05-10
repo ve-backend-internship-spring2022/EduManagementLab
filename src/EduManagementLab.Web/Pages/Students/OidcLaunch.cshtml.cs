@@ -55,7 +55,7 @@ namespace EduManagementLab.Web.Pages.Students
             }
 
             //var client = Config.Clients.FirstOrDefault(t => t.ClientId == tool.IdentityServerClientId);
-            var client = _oauthClientService.GetOAuthClientById(tool.IdentityServerClientId);
+            var client = _oauthClientService.FindClientByClientId(tool.IdentityServerClientId);
             if (client == null)
             {
                 _logger.LogError("Client not found");
