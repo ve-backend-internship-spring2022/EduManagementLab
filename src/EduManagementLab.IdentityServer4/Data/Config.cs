@@ -28,6 +28,9 @@ namespace EduManagementLab.IdentityServer
             //used to specify what actions authorized user can perform at the level of the API
              new ApiScope("eduManagementLabApi.read", "Read Access to EduManagementLab API"),
              new ApiScope("eduManagementLabApi.write", "Write Access to EduManagementLab API"),
+             new ApiScope("https://purl.imsglobal.org/spec/lti-ags/scope/lineitem", "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem"),
+             new ApiScope("https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly", "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly"),
+             new ApiScope("https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly", "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"),
         };
 
         public static IEnumerable<ApiResource> ApiResources => new List<ApiResource>
