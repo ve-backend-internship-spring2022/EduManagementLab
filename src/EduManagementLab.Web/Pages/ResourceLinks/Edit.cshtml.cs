@@ -29,8 +29,10 @@ namespace EduManagementLab.Web.Pages.ResourceLinks
             public Guid selectedTool { get; set; }
             public List<SelectListItem> tools { get; set; } = new List<SelectListItem>();
         }
-        public void OnGet(Guid resourceId)
+        public Guid CourseTaskId { get; set; }
+        public void OnGet(Guid resourceId, Guid courseTaskId)
         {
+            CourseTaskId = courseTaskId;
             var targetResource = _resourceLinkService.GetResourceLink(resourceId);
             ResourceLink.Id = targetResource.Id;
             ResourceLink.CustomProperties = targetResource.CustomProperties;
@@ -44,7 +46,7 @@ namespace EduManagementLab.Web.Pages.ResourceLinks
                 ResourceLink.tools.Add(new SelectListItem { Text = tool.Name, Value = tool.Id.ToString() });
             }
         }
-        public IActionResult OnPost(Guid id)
+        public IActionResult OnPost(Guid id, Guid courseTaskId)
         {
             if (ModelState.IsValid)
             {
@@ -62,13 +64,12 @@ namespace EduManagementLab.Web.Pages.ResourceLinks
                     try
                     {
                         _resourceLinkService.UpdateResourceLink(id, newResource);
+                        return RedirectToPage("/CourseTasks/CourseTaskResourceLinks", new { courseTaskId = courseTaskId });
                     }
                     catch (IMSLTIResourceLinkNotFoundException)
                     {
                         return NotFound();
                     }
-
-                    return RedirectToPage("./Index");
                 }
             }
             return Page();

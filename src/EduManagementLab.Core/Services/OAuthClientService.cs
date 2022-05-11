@@ -36,11 +36,10 @@ namespace EduManagementLab.Core.Services
             {
                 ClientId = ClientId,
                 ClientName = clientName,
-                AllowedGrantTypes = new List<ClientGrantType>() 
-                { 
+                AllowedGrantTypes = new List<ClientGrantType>()
+                {
                     new ClientGrantType { GrantType = "implicit" },
                     new ClientGrantType { GrantType = "client_credentials" },
-                    new ClientGrantType { GrantType = "authorization_code" },
                 },
                 AllowedScopes = new List<ClientScope>() {
                     new ClientScope { Scope = "eduManagementLabApi.read" },
@@ -66,7 +65,7 @@ namespace EduManagementLab.Core.Services
                 },
                 RedirectUris = new List<ClientRedirectUri> { new ClientRedirectUri { RedirectUri = launchUrl } },
                 RequireConsent = false
-            };  
+            };
 
             _unitOfWork.OAuthClients.Add(newOAuthClient);
             _unitOfWork.Complete();

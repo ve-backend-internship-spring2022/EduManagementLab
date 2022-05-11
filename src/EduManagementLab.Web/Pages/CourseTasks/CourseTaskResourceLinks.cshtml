@@ -11,7 +11,7 @@
             Add Resource Link
         </button>
         <!-- Modal -->
-        <form method="post" asp-page-handler="AddResourceLinkToCourseTask" asp-route-courseTaskId="@Model.courseTask.Id">
+        <form method="post" asp-route-courseTaskId="@Model.courseTask.Id">
             <div class="modal fade" id="resourcesModal" tabindex="-1" aria-labelledby="resourcesModal" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -19,14 +19,34 @@
                             <h5 class="modal-title" id="resourcesModal">Add Resource</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
-                            <select asp-for="@Model.SelctedResource" asp-items="@Model.ResourceLinkSelectList" class="form-select" aria-label="Default select example">
-                                <option value="">Select a resource</option>
-                            </select>
+                        <div class="modal-body text-start">
+                            <div class="form-group">
+                                <label asp-for="ResourceLink.Title"></label>
+                                <input asp-for="ResourceLink.Title" class="form-control" />
+                                <span asp-validation-for="ResourceLink.Title" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ResourceLink.Description"></label>
+                                <textarea class="form-control" asp-for="ResourceLink.Description" rows="3"></textarea>
+                                <span asp-validation-for="ResourceLink.Description" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Select Tool</label>
+                                <select asp-for="ResourceLink.selectedTool" asp-items="Model.tools" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                                    <option value="">Select a Tool</option>
+                                </select>
+                                <span asp-validation-for="ResourceLink.selectedTool" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ResourceLink.CustomProperties"></label>
+                                <tooltip asp-for="ResourceLink.CustomProperties" html="true"></tooltip>
+                                <textarea asp-for="ResourceLink.CustomProperties" class="form-control text-monospace" rows="3"></textarea>
+                                <span asp-validation-for="ResourceLink.CustomProperties" class="text-danger"></span>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </div>
                     </div>
                 </div>
@@ -52,15 +72,16 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in @Model.courseTask.IMSLTIResourceLinks)
+            @foreach (var resource in @Model.courseTask.IMSLTIResourceLinks)
             {
                 <tr>
-                    <td>@item.Title</td>
-                    <td>@item.Description</td>
-                    <td>
-                        <a class="btn btn-primary m-2" asp-page="/ResourceLinks/Detail" asp-route-resourceId="@item.Id">Detail</a>
-                        <form method="post" asp-page-handler="RemoveResourceLinkFromCourseTask" asp-route-resourceId="@item.Id" asp-route-courseTaskId="@Model.courseTask.Id">
-                            <button type="submit" class="btn btn-danger">Delete resource from this task</button>
+                    <td>@resource.Title</td>
+                    <td>@resource.Description</td>
+                    <td class="d-inline-flex">
+                        <a class="btn btn-primary m-2" asp-page="/ResourceLinks/Detail" asp-route-resourceId="@resource.Id" asp-route-courseTaskId="@Model.courseTask.Id">Detail</a>
+                        <a class="btn btn-primary m-2" asp-page="/ResourceLinks/Edit" asp-route-resourceId="@resource.Id" asp-route-courseTaskId="@Model.courseTask.Id">Edit</a>
+                        <form method="post" asp-page-handler="RemoveResourceLink" asp-route-resourceId="@resource.Id" asp-route-courseTaskId="@Model.courseTask.Id">
+                            <button type="submit" class="btn btn-danger m-2">Delete resource</button>
                         </form>
                     </td>
                 </tr>

@@ -67,14 +67,13 @@ namespace EduManagementLab.Core.Services
             return courseTask;
         }
 
-        public CourseTask AddResouceLinkToCourseTask(Guid courseTaskId, Guid resouceLinkId)
+        public CourseTask AddResouceLinkToCourseTask(Guid courseTaskId, IMSLTIResourceLink resourceLink)
         {
             var targetCourseTask = GetCourseTask(courseTaskId, true, true);
 
-            if (!targetCourseTask.IMSLTIResourceLinks.Any(r => r.Id == resouceLinkId))
+            if (!targetCourseTask.IMSLTIResourceLinks.Any(r => r.Title == resourceLink.Title))
             {
-                var targetResourceLink = _unitOfWork.ResourceLinks.GetById(resouceLinkId);
-                targetCourseTask.IMSLTIResourceLinks.Add(targetResourceLink);
+                targetCourseTask.IMSLTIResourceLinks.Add(resourceLink);
 
                 _unitOfWork.CourseTasks.Update(targetCourseTask);
                 _unitOfWork.Complete();

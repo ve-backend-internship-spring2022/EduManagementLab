@@ -15,8 +15,11 @@ namespace EduManagementLab.Web.Pages.ResourceLinks
         }
         [BindProperty]
         public IMSLTIResourceLink ResourceLink { get; set; } = new IMSLTIResourceLink();
-        public IActionResult OnGet(Guid resourceId)
+        [BindProperty]
+        public Guid CourseTaskId { get; set; }
+        public IActionResult OnGet(Guid resourceId, Guid courseTaskId)
         {
+            CourseTaskId = courseTaskId;
             try
             {
                 ResourceLink = _resourceLinkService.GetResourceLink(resourceId);

@@ -32,7 +32,7 @@ namespace EduManagementLab.Core.Services
         }
         public IMSLTIResourceLink CreateResourceLink(IMSLTIResourceLink resourceLink)
         {
-            if (!_unitOfWork.ResourceLinks.GetResourceLinks(true).Any(c => c.Tool.Id == resourceLink.Tool.Id || c.Title == resourceLink.Title))
+            if (!_unitOfWork.ResourceLinks.GetResourceLinks(true).Any(c => c.Title == resourceLink.Title))
             {
                 _unitOfWork.ResourceLinks.Add(resourceLink);
                 _unitOfWork.Complete();
@@ -40,7 +40,7 @@ namespace EduManagementLab.Core.Services
             }
             else
             {
-                throw new IMSLTIResourceLinkToolDublicatedException(resourceLink.Tool.Name);
+                throw new IMSLTIResourceLinkAlreadyExistException(resourceLink.Title);
             }
 
         }

@@ -27,7 +27,6 @@
         </div>
     </div>
     <div>
-        <a asp-page="./Index">Back to resource list</a> | 
-        <a asp-page="Edit" asp-route-resourceId="@Model.ResourceLink.Id">Edit</a>
+        <a class="btn btn-primary m-2" asp-page="Edit" asp-route-resourceId="@Model.ResourceLink.Id" asp-route-courseTaskId="@Model.CourseTaskId">Edit</a>
     </div>
 </div>
