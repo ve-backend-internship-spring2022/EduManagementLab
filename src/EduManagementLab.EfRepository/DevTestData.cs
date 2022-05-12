@@ -101,7 +101,6 @@ namespace EduManagementLab.EfRepository
                     AllowedGrantTypes = new List<ClientGrantType>
                     {
                         new ClientGrantType { GrantType = "client_credentials" },
-                        new ClientGrantType { GrantType = "implicit" },
                     },
                     ClientSecrets = new List<ClientSecret>
                     {
