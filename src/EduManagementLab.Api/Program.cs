@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using static EduManagementLab.Api.Controllers.UsersController;
 using static EduManagementLab.Api.Controllers.CoursesController;
 using Microsoft.OpenApi.Models;
-using IdentityServer4.EntityFramework.Options;
-using IdentityServer4.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -31,6 +29,7 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 builder.Services.AddControllers();
+builder.Services.AddLtiAdvantagePolicies();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -64,6 +63,9 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     {"eduManagementLabApi.read", "Read Access to EduManagementLab API" },
                     {"eduManagementLabApi.write", "Write Access to EduManagementLab API" },
+                    {"https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly", "ReadOnly lineitem" },
+                    {"https://purl.imsglobal.org/spec/lti-ags/scope/lineitem","LineItem Access" },
+                    {"https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly","ReadOnly Result" },
                 }
             }
         }

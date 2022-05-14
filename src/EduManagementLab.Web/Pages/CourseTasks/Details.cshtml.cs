@@ -29,7 +29,7 @@ namespace EduManagementLab.Web.Pages.CourseTasks
         public int selectedFilter { get; set; }
         public Course Course { get; set; }
         public CourseTask CourseTask { get; set; }
-        public SelectList UserListItems { get; set; }
+        //public SelectList UserListItems { get; set; }
         public List<UserScoreDto> userScoreList { get; set; } = new List<UserScoreDto>();
         public UserScoreDto userScore { get; set; }
         public class UserScoreDto

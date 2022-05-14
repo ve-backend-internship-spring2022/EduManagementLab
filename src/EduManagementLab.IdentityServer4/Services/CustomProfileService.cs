@@ -19,7 +19,6 @@ namespace EduManagementLab.IdentityServer4.Services
     public class CustomProfileService : IProfileService
     {
         protected readonly ILogger _logger;
-
         private readonly UserService _userService;
         private readonly CourseService _courseService;
         private readonly ToolService _toolService;
@@ -127,7 +126,7 @@ namespace EduManagementLab.IdentityServer4.Services
             var user = _userService.GetUser(Guid.Parse(context.Subject.GetSubjectId()));
             context.IsActive = user != null;
         }
-        private List<Claim> GetResourceLinkRequestClaims(IMSLTIResourceLink resourceLink, CourseTask gradebookColumn, User person, Course course)
+        private List<Claim> GetResourceLinkRequestClaims(IMSLTIResourceLink resourceLink, CourseTask courseTask, User person, Course course)
         {
             var httpRequest = _httpContextAccessor.HttpContext.Request;
 
@@ -189,13 +188,8 @@ namespace EduManagementLab.IdentityServer4.Services
                     {
                         Constants.LtiScopes.Ags.LineItem,
                     },
-                    LineItemUrl = gradebookColumn == null ? null : 
-                        _linkGenerator.GetUriByRouteValues(Constants.ServiceEndpoints.Ags.LineItemService,
-                        new { contextId = course.Id, lineItemId = gradebookColumn.Id }, 
-                        httpRequest.Scheme, httpRequest.Host),
-                    LineItemsUrl = _linkGenerator.GetUriByRouteValues(Constants.ServiceEndpoints.Ags.LineItemsService,
-                        new { contextId = course.Id }, 
-                        httpRequest.Scheme, httpRequest.Host)
+                    LineItemUrl = $"https://localhost:7134/LTILineItems/{course.Id}/LTILineItem/{courseTask.Id}",
+                    LineItemsUrl = $"https://localhost:7134/LTILineItems/{course.Id}/LTILineItems"
                 };
 
                 request.NamesRoleService = new NamesRoleServiceClaimValueType
