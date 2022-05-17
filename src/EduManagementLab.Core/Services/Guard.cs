@@ -67,7 +67,7 @@ namespace EduManagementLab.Core.Services
         {
             var courseTask = unitOfWork.CourseTasks.GetCourseTask(courseTaskId, true, false);
 
-            if (!courseTask.Results.Any(x => x.CourseTaskId == courseTaskId))
+            if (courseTask == null)
             {
                 throw new CourseTaskNotFoundException(courseTaskId);
             }

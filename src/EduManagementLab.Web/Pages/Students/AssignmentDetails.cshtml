@@ -25,7 +25,7 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CourseTask.LastUpdate)
         </dd>
-         <dt class="col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CourseTask.Results.FirstOrDefault(p => p.CourseTaskId == @Model.CourseTask.Id).Score)
         </dt>
         <dd class="col-sm-10">
@@ -54,7 +54,7 @@
             <div class="w-100">
                 <h4>@resource.Title</h4>
                 <p>@resource.Description</p>
-                <a href="@url">
+                <a href="@url" target="_blank">
                     Launch @resource.Title
                 </a>
             </div>

@@ -42,7 +42,7 @@ namespace EduManagementLab.Api.Controllers
                     Comment = "This is comment",
                     ResultMaximum = 100,
                     ResultScore = (double)courseTaskResult.Score,
-                    UserId = courseTaskResult.MembershipId.ToString(),
+                    UserId = courseTaskResult.Membership.UserId.ToString(),
                     ScoreOf = $"https://localhost:7134/LTILineItems/{courseId}/LTILineItem/{courseTaskResult.Id}"
                 });
             }

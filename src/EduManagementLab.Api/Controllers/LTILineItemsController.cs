@@ -31,17 +31,20 @@ namespace EduManagementLab.Api.Controllers
             List<LineItem> lineItems = new List<LineItem>();
             foreach (var courseTask in courseTaskList)
             {
-                //var coursetaskresult = _courseTaskService.GetCourseTask(courseTask.Id, true, true).Results;
-                lineItems.Add(new LineItem
+                LineItem lineItem = new LineItem()
                 {
-                    Id = courseTask.Id.ToString(),
+                    Id = $"https://localhost:7134/LTIResults/{courseId}/LTILineItem/{courseTask.Id}",
                     ScoreMaximum = 100.00,
                     StartDateTime = courseTask.LastUpdate,
                     Label = courseTask.Name,
                     Tag = "Score",
                     ResourceId = courseTask.IMSLTIResultResourceId.ToString(),
-                    ResourceLinkId = null,
-                });
+                };
+                foreach (var resourceLink in courseTask.IMSLTIResourceLinks)
+                {
+                    lineItem.ResourceLinkId = resourceLink.Id.ToString();
+                }
+                lineItems.Add(lineItem);
             }
 
             return lineItems;
@@ -64,8 +67,14 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpPost]
+        [Consumes(Constants.MediaTypes.LineItem)]
+        [Produces(Constants.MediaTypes.LineItem)]
+        [ProducesResponseType(typeof(LineItem), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.LineItem)]
-        [Route("{courseId}/LTILineItem")]
+        [Route("{courseId}/LTILineItems")]
         public LineItem AddLTILineItem(Guid courseId, LineItem lineItem)
         {
             _courseTaskService.CreateCourseTask(courseId, lineItem.Label, "");
@@ -74,7 +83,7 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpPut]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.LineItem)]
-        [Route("{courseId}/LTILineItem/{LTILineItemId}")]
+        [Route("{courseId}/LTILineItems/{LTILineItemId}")]
         public LineItem UpdateLineItem(Guid courseId, Guid LTILineItemId, LineItem lineItem)
         {
             var result = _courseTaskService.UpdateCourseTask(LTILineItemId, lineItem.Label, "");
@@ -91,7 +100,7 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpDelete]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.LineItem)]
-        [Route("{courseId}/LTILineItem/{LTILineItemId}")]
+        [Route("{courseId}/LTILineItems/{LTILineItemId}")]
         public LineItem DeleteLineItem(Guid courseId, Guid LTILineItemId)
         {
             var targetCourseTask = _courseTaskService.DeleteCourseTask(LTILineItemId);
