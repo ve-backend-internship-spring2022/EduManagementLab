@@ -3,6 +3,12 @@ using EduManagementLab.Core.Interfaces;
 using EduManagementLab.Core.Services;
 using EduManagementLab.EfRepository;
 using EduManagementLab.IdentityServer;
+using EduManagementLab.IdentityServer4.Configuration;
+using IdentityServer4.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
+using EduManagementLab.IdentityServer4.Services;
+using IdentityServer4.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,30 +18,49 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(connectionString, opt => opt.MigrationsAssembly(assembly)));
 
-builder.Services.AddControllersWithViews(); 
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<UserService>();
+builder.Services.AddTransient<CourseService>();
+builder.Services.AddTransient<CourseTaskService>();
+builder.Services.AddTransient<ToolService>();
+builder.Services.AddTransient<ResourceLinkService>();
+builder.Services.AddTransient<OAuthClientService>();
+
+builder.Services.AddSingleton<ICorsPolicyService>((container) =>
+{
+    //Solution for API Authorization http://docs.identityserver.io/en/latest/topics/cors.html
+    var logger = container.GetRequiredService<ILogger<DefaultCorsPolicyService>>();
+    return new DefaultCorsPolicyService(logger)
+    {
+        AllowedOrigins = { "https://localhost:7134" }
+    };
+});
 
 builder.Services.AddIdentityServer()
+    .AddDeveloperSigningCredential()
     .AddInMemoryIdentityResources(Config.IdentityResources)
     .AddInMemoryApiResources(Config.ApiResources)
-    .AddInMemoryClients(Config.Clients)
+    //.AddInMemoryClients(Config.Clients)
     .AddInMemoryApiScopes(Config.ApiScopes)
+    .AddImpersonationSupport()
     .AddProfileService<CustomProfileService>()
     .AddResourceOwnerValidator<CustomResourceOwnerPasswordValidator>()
-    .AddDeveloperSigningCredential();
+    .AddClientStore<CustomClientStore>()
+    .AddLtiJwtBearerClientAuthentication();
 
 builder.Services.AddAuthentication();
+//-- End --
 
 var app = builder.Build();
 
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseIdentityServer();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>

@@ -7,7 +7,6 @@ using static EduManagementLab.Api.Controllers.CoursesController;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
 ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
@@ -30,6 +29,7 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 builder.Services.AddControllers();
+builder.Services.AddLtiAdvantagePolicies();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -61,7 +61,11 @@ builder.Services.AddSwaggerGen(c =>
                 TokenUrl = new Uri(configuration["ClientCredentials:TokenUrl"]),
                 Scopes = new Dictionary<string, string>
                 {
-                    { "eduManagementLabApi.read", "Reads the courses" }
+                    {"eduManagementLabApi.read", "Read Access to EduManagementLab API" },
+                    {"eduManagementLabApi.write", "Write Access to EduManagementLab API" },
+                    {"https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly", "ReadOnly lineitem" },
+                    {"https://purl.imsglobal.org/spec/lti-ags/scope/lineitem","LineItem Access" },
+                    {"https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly","ReadOnly Result" },
                 }
             }
         }
@@ -80,11 +84,12 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "EduManagementLab.IdentityServer4 v1");
     });
 }
-app.UseCors();
 
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();

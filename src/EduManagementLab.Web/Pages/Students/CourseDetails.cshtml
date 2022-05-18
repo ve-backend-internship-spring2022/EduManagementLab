@@ -44,7 +44,7 @@
 </div>
 
 <div class="row">
-    <div class="text-left"><h4>Course Line Items</h4></div>
+    <div class="text-left"><h4>Course Task</h4></div>
 </div>
 <hr />
 <table class="table">
@@ -61,24 +61,24 @@
     <tbody>
         @if (Model.Course.CourseTasks != null)
         {
-            @foreach (var lineItem in Model.Course.CourseTasks)
+            @foreach (var courseTask in Model.Course.CourseTasks)
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => lineItem.Name)
+                        @Html.DisplayFor(modelItem => courseTask.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => lineItem.Description)
+                        @Html.DisplayFor(modelItem => courseTask.Description)
                     </td>
                     <td>
-                        <a asp-page="../Students/AssignmentDetails" asp-route-lineItemId="@lineItem.Id">Details</a>
+                        <a asp-page="../Students/AssignmentDetails" asp-route-courseTaskId="@courseTask.Id" asp-route-courseId="@Model.Course.Id">Details</a>
                     </td>
                 </tr>
             }
         }
         else
         {
-            <h4>No Course Line Items for this course</h4>
+            <h4>No Course Task Items for this course</h4>
         }
     </tbody>
 </table>

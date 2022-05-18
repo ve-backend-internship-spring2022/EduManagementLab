@@ -1,13 +1,10 @@
 ﻿using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Exceptions;
 using EduManagementLab.Core.Services;
-using EduManagementLab.EfRepository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 
 namespace EduManagementLab.Api.Controllers
 {
@@ -20,7 +17,7 @@ namespace EduManagementLab.Api.Controllers
         private readonly CourseTaskService _courseTaskService;
         private readonly IMapper _mapper;
 
-        public CourseTasksController(CourseTaskService courseTaskService, CourseService courseService,IMapper mapper)
+        public CourseTasksController(CourseTaskService courseTaskService, CourseService courseService, IMapper mapper)
         {
             _courseTaskService = courseTaskService;
             _courseService = courseService;
@@ -118,7 +115,7 @@ namespace EduManagementLab.Api.Controllers
         {
             try
             {
-                var resultsList = _courseTaskService.GetCourseTask(courseTaskId,true).Results.ToList();
+                var resultsList = _courseTaskService.GetCourseTask(courseTaskId, true).Results.ToList();
                 var courseTaskResultsDtoList = new List<CourseTaskDto.ResultDto>();
 
                 foreach (var result in resultsList)
@@ -222,7 +219,7 @@ namespace EduManagementLab.Api.Controllers
                 public DateTime LastUpdated { get; set; }
             }
         }
-        
+
         public class CreateCourseTaskRequest
         {
             public Guid CourseId { get; set; }

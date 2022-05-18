@@ -10,6 +10,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EduManagementLab.Web.Pages.CourseTasks
 {
+
+    [BindProperties]
     public class DetailsModel : PageModel
     {
         private readonly CourseService _courseService;
@@ -21,18 +23,14 @@ namespace EduManagementLab.Web.Pages.CourseTasks
             _userService = userService;
             _courseTaskService = courseTaskService;
         }
-        [BindProperty]
         public List<SelectListItem> filterList { get; } = new List<SelectListItem>();
-        [BindProperty]
+        public List<IMSLTIResourceLink> ResourceLinks { get; } = new List<IMSLTIResourceLink>();
+
         public int selectedFilter { get; set; }
         public Course Course { get; set; }
         public CourseTask CourseTask { get; set; }
-        public SelectList UserListItems { get; set; }
-        [BindProperty]
-        public bool IsChecked { get; set; }
-        [BindProperty]
+        //public SelectList UserListItems { get; set; }
         public List<UserScoreDto> userScoreList { get; set; } = new List<UserScoreDto>();
-        [BindProperty]
         public UserScoreDto userScore { get; set; }
         public class UserScoreDto
         {

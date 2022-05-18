@@ -1,6 +1,11 @@
 using EduManagementLab.Core.Interfaces;
 using EduManagementLab.Core.Services;
 using EduManagementLab.EfRepository;
+using IdentityServer4.Configuration;
+using IdentityServer4.EntityFramework.Options;
+using IdentityServer4.EntityFramework.Stores;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,6 +21,10 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<CourseService>();
 builder.Services.AddTransient<CourseTaskService>();
+builder.Services.AddTransient<ToolService>();
+builder.Services.AddTransient<ResourceLinkService>();
+builder.Services.AddTransient<OAuthClientService>();
+
 
 builder.Services.AddControllersWithViews();
 
@@ -25,6 +34,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "Cookies";
     options.DefaultChallengeScheme = "oidc";
+})
+.AddJwtBearer(options =>
+{
+    options.Authority = builder.Configuration["OpenIdConnect:Authority"];
+    options.Audience = builder.Configuration["OpenIdConnect:Authority"];
 })
 .AddCookie("Cookies")
 .AddOpenIdConnect("oidc", options =>

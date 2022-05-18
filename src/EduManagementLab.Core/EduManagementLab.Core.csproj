@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityServer4" Version="4.1.2" />
+    <PackageReference Include="BouncyCastle.NetCore" Version="1.8.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LtiAdvantage\LtiAdvantage.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,6 +11,8 @@ namespace EduManagementLab.Core.Entities
         public string? Description { get; set; }
         public DateTime LastUpdate { get; set; }
         public List<Result> Results { get; set; } = new List<Result>();
+        public List<IMSLTIResourceLink> IMSLTIResourceLinks { get; set; } = new List<IMSLTIResourceLink>();
+        public Guid IMSLTIResultResourceId { get; set; }
         public class Result
         {
             public Guid Id { get; set; }

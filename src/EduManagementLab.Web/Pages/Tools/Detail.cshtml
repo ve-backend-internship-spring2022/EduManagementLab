@@ -1,0 +1,78 @@
+﻿@page
+@model EduManagementLab.Web.Pages.Tools.DetailModel
+@{
+}
+<div class="container-fluid">
+    <h4>Tool Registration Details</h4>
+    <hr />
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <h5 class="card-header bg-secondary text-light">
+                    Tool Settings
+                </h5>
+                <div class="card-body">
+                    <dl>
+                        <dt>@Html.DisplayNameFor(m => m.Tool.Name)</dt>
+                        <dd>@Model.Tool.Name</dd>
+                        <dt>
+                            @Html.DisplayNameFor(m => m.Tool.LoginUrl)
+                            <tooltip asp-for="Tool.LoginUrl"></tooltip>
+                        </dt>
+                        <dd>@Model.Tool.LoginUrl</dd>
+                        <dt>
+                            @Html.DisplayNameFor(m => m.Tool.LaunchUrl)
+                            <tooltip asp-for="Tool.LaunchUrl"></tooltip>
+                        </dt>
+                        <dd>@Model.Tool.LaunchUrl</dd>
+                        <dt>
+                            @Html.DisplayNameFor(m => m.Tool.DeepLinkingLaunchUrl)
+                            <tooltip asp-for="Tool.DeepLinkingLaunchUrl"></tooltip>
+                        </dt>
+                        <dd>@Model.Tool.DeepLinkingLaunchUrl</dd>
+                        <dt>
+                            @Html.DisplayNameFor(m => m.Tool.CustomProperties)
+                            <tooltip asp-for="Tool.CustomProperties"></tooltip>
+                        </dt>
+                        <dd><pre>@Model.Tool.CustomProperties</pre></dd>
+                        <dt>@Html.DisplayNameFor(m => m.Tool.ClientId)</dt>
+                        <dd>@Model.Tool.ClientId</dd>
+                        <dt>
+                            @Html.DisplayNameFor(m => m.Tool.PublicKey)
+                            <tooltip asp-for="Tool.PublicKey"></tooltip>
+                        </dt>
+                        <dd><pre class="key">@Model.Tool.PublicKey</pre></dd>
+                        <dt>
+                            @Html.DisplayNameFor(m => m.Tool.DeploymentId)
+                            <tooltip asp-for="Tool.DeploymentId"></tooltip>
+                        </dt>
+                        <dd>@Model.Tool.DeploymentId</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <h5 class="card-header bg-secondary text-light">
+                    Platform Settings
+                </h5>
+                <div class="card-body">
+                    <p>For reference when you register this platform in your tool.</p>
+                    <dl>
+                        <dt>@Html.DisplayNameFor(m => m.IdentityServer.Issuer)</dt>
+                        <dd>@Model.IdentityServer.Issuer</dd>
+                        <dt>@Html.DisplayNameFor(m => m.IdentityServer.TokenUrl)</dt>
+                        <dd>@Model.IdentityServer.TokenUrl</dd>
+                        <dt>@Html.DisplayNameFor(m => m.IdentityServer.AuthorizeUrl)</dt>
+                        <dd>@Model.IdentityServer.AuthorizeUrl</dd>
+                        <dt>@Html.DisplayNameFor(m => m.IdentityServer.JwkSetUrl)</dt>
+                        <dd>@Model.IdentityServer.JwkSetUrl</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <a asp-page="./Index">Back to List</a>
+    </div>
+</div>
