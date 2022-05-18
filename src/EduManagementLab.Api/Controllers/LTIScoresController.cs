@@ -20,33 +20,33 @@ namespace EduManagementLab.Api.Controllers
             _courseService = courseService;
         }
 
-        [HttpPost]
-        [Consumes(Constants.MediaTypes.Score)]
-        [Produces(Constants.MediaTypes.Score)]
-        [ProducesResponseType(typeof(Score), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.Score)]
-        [Route("{courseId}/LTILineItem/{LTILineItemId}/scores", Name = Constants.ServiceEndpoints.Ags.ScoresService)]
-        public ActionResult<Score> AddLTIScore(Guid courseId, Guid LTILineItemId, Guid memberId, double score)
-        {
-            var courseTaskResult = _courseService.GetCourse(courseId, true).CourseTasks.FirstOrDefault(c => c.Id == LTILineItemId).Results.FirstOrDefault(c => c.MembershipId == memberId);
+        //[HttpPost]
+        //[Consumes(Constants.MediaTypes.Score)]
+        //[Produces(Constants.MediaTypes.Score)]
+        //[ProducesResponseType(typeof(Score), StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.Score)]
+        //[Route("{courseId}/LTILineItem/{LTILineItemId}/scores", Name = Constants.ServiceEndpoints.Ags.ScoresService)]
+        //public ActionResult<Score> AddLTIScore(Guid courseId, Guid LTILineItemId, Guid memberId, double score)
+        //{
+        //    var courseTaskResult = _courseService.GetCourse(courseId, true).CourseTasks.FirstOrDefault(c => c.Id == LTILineItemId).Results.FirstOrDefault(c => c.MembershipId == memberId);
 
-            //var lineItemsResults = new List<Score>();
-            Score scoreResult = new Score();
-            scoreResult = new Score
-            {
-                UserId = courseTaskResult.MembershipId.ToString(),
-                ScoreGiven = score,
-                ScoreMaximum = 100,
-                Comment = courseTaskResult.Score > 60 ? "Good job!" : "Work harder..",
-                ActivityProgress = ActivityProgress.InProgress,
-                GradingProgress = GradingProgess.Pending,
-                TimeStamp = DateTime.Now
-            };
-            return scoreResult;
-        }
+        //    //var lineItemsResults = new List<Score>();
+        //    Score scoreResult = new Score();
+        //    scoreResult = new Score
+        //    {
+        //        UserId = courseTaskResult.MembershipId.ToString(),
+        //        ScoreGiven = score,
+        //        ScoreMaximum = 100,
+        //        Comment = courseTaskResult.Score > 60 ? "Good job!" : "Work harder..",
+        //        ActivityProgress = ActivityProgress.InProgress,
+        //        GradingProgress = GradingProgess.Pending,
+        //        TimeStamp = DateTime.Now
+        //    };
+        //    return scoreResult;
+        //}
 
         [HttpGet]
         [Produces(Constants.MediaTypes.Score)]

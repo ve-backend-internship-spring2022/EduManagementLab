@@ -66,7 +66,7 @@ namespace EduManagementLab.Api.Controllers
             var courseTask = _courseService.GetCourse(courseId).CourseTasks.FirstOrDefault(c => c.Id == LTILineItemId);
             LineItem newLineItem = new LineItem()
             {
-                Id = courseTask.Id.ToString(),
+                Id = $"https://localhost:7134/LTIScores/{courseId}/LTILineItem/{courseTask.Id}",
                 Label = courseTask.Name,
                 ResourceId = courseTask.IMSLTIResultResourceId.ToString(),
             };
