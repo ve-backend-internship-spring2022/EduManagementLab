@@ -21,12 +21,18 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpGet]
+        [Produces(Constants.MediaTypes.LineItemContainer)]
+        [ProducesResponseType(typeof(LineItemContainer), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = Constants.LtiScopes.Ags.LineItem + " " + Constants.LtiScopes.Ags.LineItemReadonly)]
         [Route("{courseId}/LTILineItems", Name = Constants.ServiceEndpoints.Ags.LineItemsService)]
-        public IEnumerable<LineItem> GetLineItems(Guid courseId)
+        public LineItemContainer GetLineItems(Guid courseId)
         {
             var courseTaskList = _courseService.GetCourse(courseId, true).CourseTasks;
+            LineItemContainer newcontaint = new LineItemContainer();
 
             List<LineItem> lineItems = new List<LineItem>();
             foreach (var courseTask in courseTaskList)
@@ -46,8 +52,9 @@ namespace EduManagementLab.Api.Controllers
                 }
                 lineItems.Add(lineItem);
             }
+            newcontaint.AddRange(lineItems);
 
-            return lineItems;
+            return newcontaint;
         }
 
         [HttpGet]

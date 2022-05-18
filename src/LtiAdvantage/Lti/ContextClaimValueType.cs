@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace LtiAdvantage.Lti
 {
@@ -11,18 +13,21 @@ namespace LtiAdvantage.Lti
         /// An opaque identifier that identifies the context where the launch originated. Must be
         /// unique within the scope of the tool_consumer_instance_guid.
         /// </summary>
-        [JsonProperty("id", Required = Required.Always)]
+        [JsonPropertyName("id")]
+        [JsonProperty("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// A plain text label for the context.
         /// </summary>
+        [JsonPropertyName("label")]
         [JsonProperty("label")]
         public string Label { get; set; }
 
         /// <summary>
         /// A plain text title of the context.
         /// </summary>
+        [JsonPropertyName("title")]
         [JsonProperty("title")]
         public string Title { get; set; }
 
@@ -33,6 +38,7 @@ namespace LtiAdvantage.Lti
         /// type. If the Platform wants to include a context type from another namespace, a fully
         /// qualified URN should be used.
         /// </summary>
+        [JsonPropertyName("type")]
         [JsonProperty("type")]
         public ContextType[] Type { get; set; }
     }

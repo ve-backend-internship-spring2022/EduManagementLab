@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace LtiAdvantage.DeepLinking
@@ -19,6 +21,7 @@ namespace LtiAdvantage.DeepLinking
         /// Indicates the initial start and end time this activity should be made
         /// available to learners.
         /// </summary>
+        [JsonPropertyName("available")]
         [JsonProperty("available")]
         public StartEndProperty Available { get; set; }
 
@@ -26,6 +29,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// Key/value custom parameters.
         /// </summary>
+        [JsonPropertyName("custom")]
         [JsonProperty("custom")]
         public Dictionary<string, string> Custom { get; set; }
 
@@ -33,6 +37,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// HTML embed code.
         /// </summary>
+        [JsonPropertyName("embed")]
         [JsonProperty("embed")]
         public string Embed { get; set; }
 
@@ -52,6 +57,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// HTML fragment to embed.
         /// </summary>
+        [JsonPropertyName("html")]
         [JsonProperty("html")]
         public string Html { get; set; }
 
@@ -62,6 +68,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// URL of an icon image.
         /// </summary>
+        [JsonPropertyName("icon")]
         [JsonProperty("icon")]
         public ImageProperty Icon { get; set; }
 
@@ -70,6 +77,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// iframe properties for embedding the item.
         /// </summary>
+        [JsonPropertyName("iframe")]
         [JsonProperty("iframe")]
         public IframeProperty Iframe { get; set; }
         
@@ -77,6 +85,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// Indicates this item is expected to receive scores.
         /// </summary>
+        [JsonPropertyName("lineItem")]
         [JsonProperty("lineItem")]
         public LineItemProperty LineItem { get; set; }
 
@@ -84,6 +93,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// Start and end date and time for submissions.
         /// </summary>
+        [JsonPropertyName("submission")]
         [JsonProperty("submission")]
         public StartEndProperty Submission { get; set; }
 
@@ -95,6 +105,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// Plain text description.
         /// </summary>
+        [JsonPropertyName("text")]
         [JsonProperty("text")]
         public string Text { get; set; }
 
@@ -105,6 +116,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// URL of a thumbnail image.
         /// </summary>
+        [JsonPropertyName("thumbnail")]
         [JsonProperty("thumbnail")]
         public ImageProperty Thumbnail { get; set; }
         
@@ -115,12 +127,14 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// Plain text title.
         /// </summary>
+        [JsonPropertyName("title")]
         [JsonProperty("title")]
         public string Title { get; set; }
 
         /// <summary>
         /// The item type.
         /// </summary>
+        [JsonPropertyName("type")]
         [JsonProperty("type")]
         public string Type { get; set; }
 
@@ -131,6 +145,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// URL of the resource.
         /// </summary>
+        [JsonPropertyName("url")]
         [JsonProperty("url")]
         public string Url { get; set; }
 
@@ -145,6 +160,7 @@ namespace LtiAdvantage.DeepLinking
         /// <summary>
         /// Window properties for a new window/tab.
         /// </summary>
+        [JsonPropertyName("window")]
         [JsonProperty("window")]
         public WindowProperty Window { get; set; }
     }
