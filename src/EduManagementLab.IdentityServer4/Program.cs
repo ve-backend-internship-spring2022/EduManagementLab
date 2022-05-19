@@ -38,7 +38,7 @@ builder.Services.AddSingleton<ICorsPolicyService>((container) =>
     };
 });
 
-builder.Services.AddIdentityServer()
+builder.Services.AddIdentityServer(x => x.InputLengthRestrictions.Scope = 500)
     .AddDeveloperSigningCredential()
     .AddInMemoryIdentityResources(Config.IdentityResources)
     .AddInMemoryApiResources(Config.ApiResources)

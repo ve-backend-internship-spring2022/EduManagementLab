@@ -129,7 +129,7 @@ namespace EduManagementLab.IdentityServer4.Services
         private List<Claim> GetResourceLinkRequestClaims(IMSLTIResourceLink resourceLink, CourseTask courseTask, User person, Course course)
         {
             var httpRequest = _httpContextAccessor.HttpContext.Request;
-
+            HostString newHost = new HostString("localhost", 44308);
             var request = new LtiResourceLinkRequest
             {
                 DeploymentId = resourceLink.Tool.DeploymentId,
@@ -139,7 +139,7 @@ namespace EduManagementLab.IdentityServer4.Services
                 {
                     DocumentTarget = DocumentTarget.Window,
                     Locale = CultureInfo.CurrentUICulture.Name,
-                    ReturnUrl = $"{httpRequest.Scheme}://{httpRequest.Host}"
+                    ReturnUrl = $"{httpRequest.Scheme}://{newHost}"
                 },
                 Lis = new LisClaimValueType
                 {
@@ -151,10 +151,10 @@ namespace EduManagementLab.IdentityServer4.Services
                 {
                     ContactEmail = "edulab@email.com",
                     Description = "Implementing LTI in Edu platform",
-                    Guid = "localhost:5001",
+                    Guid = "localhost:5002",
                     Name = "EduLabPlatform",
                     ProductFamilyCode = "LTI Advantage",
-                    Url = "https://localhost:5001",
+                    Url = "https://localhost:5002",
                     Version = "LTI Specification 1.3"
                 },
                 ResourceLink = new ResourceLinkClaimValueType

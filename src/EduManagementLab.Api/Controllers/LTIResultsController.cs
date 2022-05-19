@@ -1,3 +1,4 @@
+using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
 using LtiAdvantage;
 using LtiAdvantage.AssignmentGradeServices;
@@ -60,49 +61,35 @@ namespace EduManagementLab.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.Score)]
         [Route("{courseId}/LTILineItem/{LTILineItemId}/scores", Name = Constants.ServiceEndpoints.Ags.ScoresService)]
-        public ActionResult<Score> AddLTIScore(Guid courseId, Guid LTILineItemId, object score)
+        public void AddLTIScore(Guid courseId, Guid LTILineItemId, [FromBody] string score)
         {
-            //var courseTaskResult = _courseService.GetCourse(courseId, true).CourseTasks.FirstOrDefault(c => c.Id == LTILineItemId).Results.FirstOrDefault(c => c.MembershipId == Guid.Parse(score.UserId));
-
-
-            ////courseTaskResult.Score = (decimal)score.ScoreGiven;
-
-            Score scores = JsonConvert.DeserializeObject<Score>(score.ToString());
+            Score scores = JsonConvert.DeserializeObject<Score>(score);
 
 
             var memberId = _courseService.GetCourse(courseId, true).Memperships.FirstOrDefault(u => u.UserId == Guid.Parse(scores.UserId)).Id;
+            var result = _courseService.GetCourse(courseId, true).CourseTasks.FirstOrDefault(c => c.Id == LTILineItemId).Results.FirstOrDefault(c => c.MembershipId == memberId);
 
-            var updatedScore = _courseTaskService.UpdateCourseTaskResult(LTILineItemId, memberId, (decimal)scores.ScoreGiven);
-
-            var newScore = new Score
+            if (result != null)
             {
-                ScoreGiven = (double)updatedScore.Score,
-                Comment = updatedScore.Score > 75 ? "Good job!" : "Work harder..",
-                UserId = updatedScore.MembershipId.ToString(),
-                ScoreMaximum = 100,
-                ActivityProgress = ActivityProgress.Submitted,
-                GradingProgress = GradingProgess.FullyGraded,
-                TimeStamp = DateTime.Now,
-            };
+                _courseTaskService.UpdateCourseTaskResult(LTILineItemId, memberId, (decimal)scores.ScoreGiven);
+            }
+            else
+            {
+                _courseTaskService.CreateCourseTaskResult(LTILineItemId, memberId, (decimal)scores.ScoreGiven);
+            }
 
-            //var lineItemsResults = new List<Score>();
-            //Score scoreResult = new Score();
-            //scoreResult = new Score
+            //var newScore = new Score
             //{
-            //    UserId = courseTaskResult.MembershipId.ToString(),
-            //    ScoreGiven = score,
+            //    ScoreGiven = (double)updatedScore.Score,
+            //    Comment = updatedScore.Score > 75 ? "Good job!" : "Work harder..",
+            //    UserId = updatedScore.MembershipId.ToString(),
             //    ScoreMaximum = 100,
-            //    Comment = courseTaskResult.Score > 60 ? "Good job!" : "Work harder..",
-            //    ActivityProgress = ActivityProgress.InProgress,
-            //    GradingProgress = GradingProgess.Pending,
-            //    TimeStamp = DateTime.Now
+            //    ActivityProgress = ActivityProgress.Submitted,
+            //    GradingProgress = GradingProgess.FullyGraded,
+            //    TimeStamp = DateTime.Now,
             //};
-            //var url = $"https://localhost:7134/LTIResults/{courseId}/LTILineItem/{LTILineItemId}/results/{updatedScore.Id}";
 
-            //// Save the score
-            //return Created(url, newScore);
-
-            return newScore;
+            ////return newScore;
         }
 
         [HttpGet]
