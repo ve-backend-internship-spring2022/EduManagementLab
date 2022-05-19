@@ -57,7 +57,7 @@ namespace IdentityServerHost.Quickstart.UI
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> Login(string returnUrl)
-        {            
+        {
             // build a model so we know what to show on the login page
             var vm = await BuildLoginViewModelAsync(returnUrl);
 
@@ -110,7 +110,7 @@ namespace IdentityServerHost.Quickstart.UI
             if (ModelState.IsValid)
             {
                 // validate username/password against in-memory store
-                
+
                 if (_userService.ValidateCredentials(model.Username, model.Password))
                 {
                     //var user = _users.FindByUsername(model.Username);
@@ -223,9 +223,10 @@ namespace IdentityServerHost.Quickstart.UI
                 string url = Url.Action("Logout", new { logoutId = vm.LogoutId });
 
                 // this triggers a redirect to the external provider for sign-out
-                return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
+                //return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
+                return Redirect(vm.PostLogoutRedirectUri);
             }
-
+            ViewData["LoginReturnUrl"] = vm.PostLogoutRedirectUri;
             return View("LoggedOut", vm);
         }
 

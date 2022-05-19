@@ -1,4 +1,5 @@
-﻿using EduManagementLab.Core.Services;
+﻿using EduManagementLab.Core.Exceptions;
+using EduManagementLab.Core.Services;
 using EduManagementLab.IdentityServer4.Validation;
 using LtiAdvantage.AssignmentGradeServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,10 +27,9 @@ namespace EduManagementLab.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = Constants.LtiScopes.Ags.LineItem + " " + Constants.LtiScopes.Ags.LineItemReadonly)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.LineItem + " " + Constants.LtiScopes.Ags.LineItemReadonly)]
         [Route("{courseId}/LTILineItems", Name = Constants.ServiceEndpoints.Ags.LineItemsService)]
-        public LineItemContainer GetLineItems(Guid courseId)
+        public ActionResult<LineItemContainer> GetLineItems(Guid courseId)
         {
             var courseTaskList = _courseService.GetCourse(courseId, true).CourseTasks;
             LineItemContainer newcontaint = new LineItemContainer();
@@ -54,14 +54,13 @@ namespace EduManagementLab.Api.Controllers
             }
             newcontaint.AddRange(lineItems);
 
-            return newcontaint;
+            return Ok(newcontaint);
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = Constants.LtiScopes.Ags.LineItem + " " + Constants.LtiScopes.Ags.LineItemReadonly)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.LineItem + " " + Constants.LtiScopes.Ags.LineItemReadonly)]
         [Route("{courseId}/LTILineItem/{LTILineItemId}", Name = Constants.ServiceEndpoints.Ags.LineItemService)]
-        public LineItem GetLineItem(Guid courseId, Guid LTILineItemId)
+        public ActionResult<LineItem> GetLineItem(Guid courseId, Guid LTILineItemId)
         {
             var courseTask = _courseService.GetCourse(courseId).CourseTasks.FirstOrDefault(c => c.Id == LTILineItemId);
             LineItem newLineItem = new LineItem()
@@ -70,7 +69,7 @@ namespace EduManagementLab.Api.Controllers
                 Label = courseTask.Name,
                 ResourceId = courseTask.IMSLTIResultResourceId.ToString(),
             };
-            return newLineItem;
+            return Ok(newLineItem);
         }
 
         [HttpPost]
@@ -81,14 +80,26 @@ namespace EduManagementLab.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.LineItem)]
-        [Route("{courseId}/LTILineItems")]
-        public LineItem AddLTILineItem(Guid courseId, LineItem lineItem)
+        [Route("{courseId}/LTILineItems", Name = Constants.ServiceEndpoints.Ags.LineItemsService)]
+        public ActionResult<LineItem> AddLTILineItem(Guid courseId, LineItem lineItem)
         {
-            _courseTaskService.CreateCourseTask(courseId, lineItem.Label, "");
-            return lineItem;
+            try
+            {
+                _courseTaskService.CreateCourseTask(courseId, lineItem.Label, "");
+            }
+            catch (CourseTaskAlreadyExistException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Created("", lineItem);
         }
 
         [HttpPut]
+        [Consumes(Constants.MediaTypes.LineItem)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.LineItem)]
         [Route("{courseId}/LTILineItems/{LTILineItemId}")]
         public LineItem UpdateLineItem(Guid courseId, Guid LTILineItemId, LineItem lineItem)
@@ -106,6 +117,10 @@ namespace EduManagementLab.Api.Controllers
         }
 
         [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Ags.LineItem)]
         [Route("{courseId}/LTILineItems/{LTILineItemId}")]
         public LineItem DeleteLineItem(Guid courseId, Guid LTILineItemId)

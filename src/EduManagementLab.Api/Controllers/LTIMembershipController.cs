@@ -38,6 +38,7 @@ namespace EduManagementLab.Api.Controllers
                 Title = targetCourse.Name,
                 Label = targetCourse.Name
             };
+
             List<Member> memberlist = new List<Member>();
             foreach (var member in targetMemberships)
             {

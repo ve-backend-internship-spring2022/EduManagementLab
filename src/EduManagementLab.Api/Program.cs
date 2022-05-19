@@ -62,6 +62,8 @@ builder.Services.AddSwaggerGen(c =>
                 TokenUrl = new Uri(configuration["ClientCredentials:TokenUrl"]),
                 Scopes = new Dictionary<string, string>
                 {
+                    {"eduManagementLabApi.read","Read Access API" },
+                    {"eduManagementLabApi.write","Write Access API" },
                     {Constants.LtiScopes.Ags.Score,"Score Access" },
                     {Constants.LtiScopes.Ags.ScoreReadonly,"ReadOnly Score" },
                     {Constants.LtiScopes.Ags.LineItemReadonly, "ReadOnly lineitem" },

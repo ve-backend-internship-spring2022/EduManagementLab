@@ -11,6 +11,8 @@
         <small>You are now logged out</small>
     </h1>
 
+    <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="@Model.PostLogoutRedirectUri">Back to login</a>
+
     @if (Model.PostLogoutRedirectUri != null)
     {
         <div>

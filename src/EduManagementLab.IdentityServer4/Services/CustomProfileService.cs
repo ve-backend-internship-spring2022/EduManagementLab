@@ -1,5 +1,6 @@
 ﻿using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
+using EduManagementLab.IdentityServer;
 using EduManagementLab.IdentityServer4.Configuration;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -135,6 +136,7 @@ namespace EduManagementLab.IdentityServer4.Services
                 DeploymentId = resourceLink.Tool.DeploymentId,
                 FamilyName = person.LastName,
                 GivenName = person.FirstName,
+                Email = person.Email,
                 LaunchPresentation = new LaunchPresentationClaimValueType
                 {
                     DocumentTarget = DocumentTarget.Window,
@@ -161,7 +163,7 @@ namespace EduManagementLab.IdentityServer4.Services
                 {
                     Id = resourceLink.Id.ToString(),
                     Title = resourceLink.Title,
-                    Description = resourceLink.Description
+                    Description = resourceLink.Description,
                 },
                 Roles = ParsePersonRoles("ContextAdministrator, Administrator"),
                 TargetLinkUri = resourceLink.Tool.LaunchUrl
@@ -179,15 +181,13 @@ namespace EduManagementLab.IdentityServer4.Services
                 {
                     Id = course.Id.ToString(),
                     Title = course.Name,
-                    Type = new[] { ContextType.CourseSection }
+                    Type = new[] { ContextType.CourseSection },
+                    Label = course.Code
                 };
 
                 request.AssignmentGradeServices = new AssignmentGradeServicesClaimValueType
                 {
-                    Scope = new List<string>
-                    {
-                        Constants.LtiScopes.Ags.LineItem,
-                    },
+                    Scope = (IList<string>)Config.LtiScopes,
                     LineItemUrl = $"https://localhost:7134/LTILineItems/{course.Id}/LTILineItem/{courseTask.Id}",
                     LineItemsUrl = $"https://localhost:7134/LTILineItems/{course.Id}/LTILineItems"
                 };
