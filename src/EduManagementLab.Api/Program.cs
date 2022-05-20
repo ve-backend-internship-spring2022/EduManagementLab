@@ -31,11 +31,11 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddControllers();
 builder.Services.AddLtiAdvantagePolicies();
-
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(c =>
 {
+    c.CustomSchemaIds(type => type.FullName);
     c.AddSecurityRequirement(new OpenApiSecurityRequirement{
         {
             new OpenApiSecurityScheme

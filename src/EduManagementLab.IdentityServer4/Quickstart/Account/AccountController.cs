@@ -184,7 +184,7 @@ namespace IdentityServerHost.Quickstart.UI
         {
             // build a model so the logout page knows what to display
             var vm = await BuildLogoutViewModelAsync(logoutId);
-
+            ViewData["LoginUrl"] = "https://localhost:5002";
             if (vm.ShowLogoutPrompt == false)
             {
                 // if the request for logout was properly authenticated from IdentityServer, then
@@ -223,10 +223,9 @@ namespace IdentityServerHost.Quickstart.UI
                 string url = Url.Action("Logout", new { logoutId = vm.LogoutId });
 
                 // this triggers a redirect to the external provider for sign-out
-                //return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
-                return Redirect(vm.PostLogoutRedirectUri);
+                return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
             }
-            ViewData["LoginReturnUrl"] = vm.PostLogoutRedirectUri;
+
             return View("LoggedOut", vm);
         }
 

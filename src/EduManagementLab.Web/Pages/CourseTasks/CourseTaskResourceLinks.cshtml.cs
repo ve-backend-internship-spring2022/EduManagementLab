@@ -80,9 +80,9 @@ namespace EduManagementLab.Web.Pages.CourseLineItems
                     _resourceLinkService.CreateResourceLink(newResource);
                     _courseTaskService.AddResouceLinkToCourseTask(courseTaskId, newResource);
                 }
-                catch (CourseTaskNotFoundException ex)
+                catch (IMSLTIResourceLinkAlreadyExistException ex)
                 {
-                    return NotFound(ex.Message);
+                    return BadRequest(ex.Message);
                 }
             }
 

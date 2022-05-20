@@ -1,6 +1,6 @@
 ﻿@model LoggedOutViewModel
 
-@{ 
+@{
     // set this so the layout rendering sees an anonymous user
     ViewData["signed-out"] = true;
 }
@@ -10,8 +10,6 @@
         Logout
         <small>You are now logged out</small>
     </h1>
-
-    <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="@Model.PostLogoutRedirectUri">Back to login</a>
 
     @if (Model.PostLogoutRedirectUri != null)
     {
@@ -28,7 +26,7 @@
 </div>
 
 @section scripts
-{
+    {
     @if (Model.AutomaticRedirectAfterSignOut)
     {
         <script src="~/js/signout-redirect.js"></script>

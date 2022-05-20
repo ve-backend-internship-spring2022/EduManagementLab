@@ -24,6 +24,7 @@ namespace EduManagementLab.EfRepository.Repositories
                 .Include(s => s.AllowedGrantTypes)
                 .Include(s => s.AllowedScopes)
                 .Include(s => s.AllowedCorsOrigins)
+                .Include(s => s.PostLogoutRedirectUris)
                 .ToList();
         }
         public OAuthClient FindClientByClientId(string oauthClientId)
@@ -34,6 +35,7 @@ namespace EduManagementLab.EfRepository.Repositories
                 .Include(s => s.AllowedGrantTypes)
                 .Include(s => s.AllowedScopes)
                 .Include(s => s.AllowedCorsOrigins)
+                .Include(s => s.PostLogoutRedirectUris)
                 .FirstOrDefault(c => c.ClientId == oauthClientId);
         }
     }

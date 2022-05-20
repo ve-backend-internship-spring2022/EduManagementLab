@@ -21,13 +21,13 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpGet]
         [Produces(Constants.MediaTypes.MembershipContainer)]
-        [ProducesResponseType(typeof(MembershipContainer), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(MembershipContainer), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Constants.LtiScopes.Nrps.MembershipReadonly)]
         [Route("{courseId}/LTIMembership", Name = Constants.ServiceEndpoints.Nrps.MembershipService)]
-        public MembershipContainer GetMembership(Guid courseId)
+        public ActionResult<MembershipContainer> GetMembership(Guid courseId)
         {
             var targetMemberships = _courseService.GetCourse(courseId, true).Memperships;
             var targetCourse = targetMemberships.FirstOrDefault(c => c.Course.Id == courseId).Course;
@@ -64,7 +64,7 @@ namespace EduManagementLab.Api.Controllers
             membershipContainer.Id = Constants.ServiceEndpoints.Nrps.MembershipService;
             membershipContainer.Members = memberlist;
 
-            return membershipContainer;
+            return Ok(membershipContainer);
         }
     }
 }

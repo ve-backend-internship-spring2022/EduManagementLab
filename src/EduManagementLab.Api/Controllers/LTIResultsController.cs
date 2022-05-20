@@ -51,7 +51,7 @@ namespace EduManagementLab.Api.Controllers
         [HttpPost]
         [Consumes(Constants.MediaTypes.Score)]
         [Produces(Constants.MediaTypes.Score)]
-        [ProducesResponseType(typeof(Score), StatusCodes.Status201Created)]
+        //[ProducesResponseType(typeof(Score), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -75,7 +75,7 @@ namespace EduManagementLab.Api.Controllers
 
         [HttpGet]
         [Produces(Constants.MediaTypes.Score)]
-        [ProducesResponseType(typeof(Score), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(Score), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]

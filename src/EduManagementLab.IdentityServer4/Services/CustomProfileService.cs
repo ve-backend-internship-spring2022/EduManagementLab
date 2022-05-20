@@ -195,8 +195,6 @@ namespace EduManagementLab.IdentityServer4.Services
                 request.NamesRoleService = new NamesRoleServiceClaimValueType
                 {
                     ContextMembershipUrl = $"https://localhost:7134/LTIMemberships/{course.Id}/LTIMembership"
-                    //ContextMembershipUrl = _linkGenerator.GetUriByRouteValues(Constants.ServiceEndpoints.Nrps.MembershipService,
-                    //    new { contextId = course.Id }, httpRequest.Scheme, httpRequest.Host)
                 };
             }
 
