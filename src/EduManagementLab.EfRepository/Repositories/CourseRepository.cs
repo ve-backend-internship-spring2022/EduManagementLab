@@ -25,6 +25,8 @@ namespace EduManagementLab.EfRepository.Repositories
                     .ThenInclude(r => r.Results)
                     .Include(m => m.Memperships)
                     .ThenInclude(u => u.User)
+                    .Include(c => c.CourseTasks)
+                    .ThenInclude(c => c.IMSLTIResourceLinks)
                     .FirstOrDefault(m => m.Id == courseId);
             }
             else

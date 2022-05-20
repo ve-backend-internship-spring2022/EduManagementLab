@@ -1,5 +1,6 @@
 ﻿using EduManagementLab.Core.Entities;
 using EduManagementLab.Core.Services;
+using EduManagementLab.IdentityServer;
 using EduManagementLab.IdentityServer4.Configuration;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -129,17 +130,18 @@ namespace EduManagementLab.IdentityServer4.Services
         private List<Claim> GetResourceLinkRequestClaims(IMSLTIResourceLink resourceLink, CourseTask courseTask, User person, Course course)
         {
             var httpRequest = _httpContextAccessor.HttpContext.Request;
-
+            HostString newHost = new HostString("localhost", 44308);
             var request = new LtiResourceLinkRequest
             {
                 DeploymentId = resourceLink.Tool.DeploymentId,
                 FamilyName = person.LastName,
                 GivenName = person.FirstName,
+                Email = person.Email,
                 LaunchPresentation = new LaunchPresentationClaimValueType
                 {
                     DocumentTarget = DocumentTarget.Window,
                     Locale = CultureInfo.CurrentUICulture.Name,
-                    ReturnUrl = $"{httpRequest.Scheme}://{httpRequest.Host}"
+                    ReturnUrl = $"{httpRequest.Scheme}://{newHost}"
                 },
                 Lis = new LisClaimValueType
                 {
@@ -151,17 +153,17 @@ namespace EduManagementLab.IdentityServer4.Services
                 {
                     ContactEmail = "edulab@email.com",
                     Description = "Implementing LTI in Edu platform",
-                    Guid = "localhost:5001",
+                    Guid = "localhost:5002",
                     Name = "EduLabPlatform",
                     ProductFamilyCode = "LTI Advantage",
-                    Url = "https://localhost:5001",
+                    Url = "https://localhost:5002",
                     Version = "LTI Specification 1.3"
                 },
                 ResourceLink = new ResourceLinkClaimValueType
                 {
                     Id = resourceLink.Id.ToString(),
                     Title = resourceLink.Title,
-                    Description = resourceLink.Description
+                    Description = resourceLink.Description,
                 },
                 Roles = ParsePersonRoles("ContextAdministrator, Administrator"),
                 TargetLinkUri = resourceLink.Tool.LaunchUrl
@@ -179,23 +181,20 @@ namespace EduManagementLab.IdentityServer4.Services
                 {
                     Id = course.Id.ToString(),
                     Title = course.Name,
-                    Type = new[] { ContextType.CourseSection }
+                    Type = new[] { ContextType.CourseSection },
+                    Label = course.Code
                 };
 
                 request.AssignmentGradeServices = new AssignmentGradeServicesClaimValueType
                 {
-                    Scope = new List<string>
-                    {
-                        Constants.LtiScopes.Ags.LineItem,
-                    },
+                    Scope = (IList<string>)Config.LtiScopes,
                     LineItemUrl = $"https://localhost:7134/LTILineItems/{course.Id}/LTILineItem/{courseTask.Id}",
                     LineItemsUrl = $"https://localhost:7134/LTILineItems/{course.Id}/LTILineItems"
                 };
 
                 request.NamesRoleService = new NamesRoleServiceClaimValueType
                 {
-                    ContextMembershipUrl = _linkGenerator.GetUriByRouteValues(Constants.ServiceEndpoints.Nrps.MembershipService,
-                        new { contextId = course.Id }, httpRequest.Scheme, httpRequest.Host)
+                    ContextMembershipUrl = $"https://localhost:7134/LTIMemberships/{course.Id}/LTIMembership"
                 };
             }
 

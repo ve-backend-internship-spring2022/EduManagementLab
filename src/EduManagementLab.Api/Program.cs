@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using static EduManagementLab.Api.Controllers.UsersController;
 using static EduManagementLab.Api.Controllers.CoursesController;
 using Microsoft.OpenApi.Models;
+using LtiAdvantage;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -30,11 +31,11 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddControllers();
 builder.Services.AddLtiAdvantagePolicies();
-
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(c =>
 {
+    c.CustomSchemaIds(type => type.FullName);
     c.AddSecurityRequirement(new OpenApiSecurityRequirement{
         {
             new OpenApiSecurityScheme
@@ -61,11 +62,14 @@ builder.Services.AddSwaggerGen(c =>
                 TokenUrl = new Uri(configuration["ClientCredentials:TokenUrl"]),
                 Scopes = new Dictionary<string, string>
                 {
-                    {"eduManagementLabApi.read", "Read Access to EduManagementLab API" },
-                    {"eduManagementLabApi.write", "Write Access to EduManagementLab API" },
-                    {"https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly", "ReadOnly lineitem" },
-                    {"https://purl.imsglobal.org/spec/lti-ags/scope/lineitem","LineItem Access" },
-                    {"https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly","ReadOnly Result" },
+                    {"eduManagementLabApi.read","Read Access API" },
+                    {"eduManagementLabApi.write","Write Access API" },
+                    {Constants.LtiScopes.Ags.Score,"Score Access" },
+                    {Constants.LtiScopes.Ags.ScoreReadonly,"ReadOnly Score" },
+                    {Constants.LtiScopes.Ags.LineItemReadonly, "ReadOnly lineitem" },
+                    {Constants.LtiScopes.Ags.LineItem,"LineItem Access" },
+                    {Constants.LtiScopes.Ags.ResultReadonly,"ReadOnly Result" },
+                    {Constants.LtiScopes.Nrps.MembershipReadonly,"ReadOnly Membership" }
                 }
             }
         }

@@ -28,10 +28,12 @@ namespace EduManagementLab.IdentityServer
             //used to specify what actions authorized user can perform at the level of the API
              new ApiScope("eduManagementLabApi.read", "Read Access to EduManagementLab API"),
              new ApiScope("eduManagementLabApi.write", "Write Access to EduManagementLab API"),
-             new ApiScope("https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly", "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly"),
-             new ApiScope("https://purl.imsglobal.org/spec/lti-ags/scope/lineitem", "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem"),
-             new ApiScope("https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly", "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly"),
-             new ApiScope("https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly", "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"),
+             new ApiScope(Constants.LtiScopes.Ags.LineItemReadonly, "Read Access to EduManagementLab LineItems"),
+             new ApiScope(Constants.LtiScopes.Ags.LineItem, "Write Access to EduManagementLab LineItems"),
+             new ApiScope(Constants.LtiScopes.Ags.ResultReadonly, "Read Access to EduManagement Results"),
+             new ApiScope(Constants.LtiScopes.Nrps.MembershipReadonly, "Read Access to EduManagement Memberships"),
+             new ApiScope(Constants.LtiScopes.Ags.Score, "Write Access to EduManagement Score"),
+             new ApiScope(Constants.LtiScopes.Ags.ScoreReadonly, "Read Access to EduManagement Score"),
         };
 
         public static IEnumerable<ApiResource> ApiResources => new List<ApiResource>
@@ -42,14 +44,7 @@ namespace EduManagementLab.IdentityServer
                 Name = "eduManagementLabApi",
                 DisplayName = "EduManagementLab Api",
                 Description = "Allow the application to access EduManagementLab Api on your behalf",
-                Scopes = new List<string>
-                {
-                    "eduManagementLabApi.read", 
-                    "eduManagementLabApi.write",
-                    "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly",
-                    "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
-                    "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly"
-                },
+                Scopes = LtiScopes,
                 ApiSecrets = new List<Secret> {new Secret("TestEduApi".Sha256())},
                 UserClaims = new List<string> {"role"}
             }
@@ -57,7 +52,6 @@ namespace EduManagementLab.IdentityServer
 
         public static ICollection<string> LtiScopes => new[]
         {
-            OidcConstants.StandardScopes.OpenId,
             Constants.LtiScopes.Ags.LineItem,
             Constants.LtiScopes.Ags.LineItemReadonly,
             Constants.LtiScopes.Ags.ResultReadonly,

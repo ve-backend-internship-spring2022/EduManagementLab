@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using LtiAdvantage.Lti;
 using Newtonsoft.Json;
 
@@ -20,6 +22,7 @@ namespace LtiAdvantage.NamesRoleProvisioningService
         /// The primary email address for the person.
         /// Not specified if not included in a basic launch from same context.
         /// </summary>
+        [JsonPropertyName("email")]
         [JsonProperty("email")]
         public string Email { get; set; }
 
@@ -27,6 +30,7 @@ namespace LtiAdvantage.NamesRoleProvisioningService
         /// The person's assigned family name.
         /// Not specified  if not included in a basic launch from same context. 
         /// </summary>
+        [JsonPropertyName("family_name")]
         [JsonProperty("family_name")]
         public string FamilyName { get; set; }
 
@@ -34,6 +38,7 @@ namespace LtiAdvantage.NamesRoleProvisioningService
         /// The person's assigned first name.
         /// Not specified  if not included in a basic launch from same context. 
         /// </summary>
+        [JsonPropertyName("given_name")]
         [JsonProperty("given_name")]
         public string GivenName { get; set; }
 
@@ -45,6 +50,7 @@ namespace LtiAdvantage.NamesRoleProvisioningService
         /// users who can access a specific resource link.
         /// See https://www.imsglobal.org/spec/lti-nrps/v2p0#membership-container-media-type.
         /// </remarks>
+        [JsonPropertyName("message")]
         [JsonProperty("message")]
         public LtiResourceLinkRequest[] Message { get; set; }
 
@@ -53,6 +59,7 @@ namespace LtiAdvantage.NamesRoleProvisioningService
         /// by their family name separated with a space).
         /// Not specified  if not included in a basic launch from same context. 
         /// </summary>
+        [JsonPropertyName("name")]
         [JsonProperty("name")]
         public string Name { get; set; }
 
@@ -60,18 +67,21 @@ namespace LtiAdvantage.NamesRoleProvisioningService
         /// A URL to an image for the person.
         /// Not specified  if not included in a basic launch from same context. 
         /// </summary>
+        [JsonPropertyName("picture")]
         [JsonProperty("picture")]
         public Uri Picture { get; set; }
 
         /// <summary>
         /// The role/s this member has in the context. Does not include non-context roles.
         /// </summary>
+        [JsonPropertyName("roles")]
         [JsonProperty("roles")]
         public Role[] Roles { get; set; }
 
         /// <summary>
         /// A unique identifier for the person as provisioned by an external system such as an SIS.
         /// </summary>
+        [JsonPropertyName("lis_person_sourcedid")]
         [JsonProperty("lis_person_sourcedid")]
         public string LisPersonSourcedId { get; set; }
 
@@ -82,7 +92,8 @@ namespace LtiAdvantage.NamesRoleProvisioningService
         /// Use Deleted when reporting differences if membership no longer exists.
         /// See https://www.imsglobal.org/spec/lti-nrps/v2p0#membership-status.
         /// </remarks>
-        [JsonProperty("status", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [JsonPropertyName("status")]
+        [JsonProperty("status")]
         [DefaultValue(MemberStatus.Active)]
         public MemberStatus? Status { get; set; }
 
@@ -90,6 +101,7 @@ namespace LtiAdvantage.NamesRoleProvisioningService
         /// A unique identifier for the person.
         /// Corresponds to the "sub" claim.
         /// </summary>
+        [JsonPropertyName("user_id")]
         [JsonProperty("user_id")]
         public string UserId { get; set; }
 
@@ -98,6 +110,7 @@ namespace LtiAdvantage.NamesRoleProvisioningService
         /// as an additional member attribute. It should contain the userId value from LTI 1.1 Names and Roles Provisioning
         /// Service 1.0 for that same user.
         /// </summary>
+        [JsonPropertyName("lti11_legacy_user_id")]
         [JsonProperty("lti11_legacy_user_id")]
         public string Lti11LegacyUserId { get; set; }
     }

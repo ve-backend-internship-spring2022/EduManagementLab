@@ -56,17 +56,6 @@ namespace EduManagementLab.Core.Services
             return newCourseTask;
 
         }
-        public CourseTask UpdateCourseTask(Guid courseTaskId, string name, string description)
-        {
-            CourseTask courseTask = GetCourseTask(courseTaskId);
-            courseTask.Name = name;
-            courseTask.Description = description;
-
-            _unitOfWork.CourseTasks.Update(courseTask);
-            _unitOfWork.Complete();
-            return courseTask;
-        }
-
         public CourseTask AddResouceLinkToCourseTask(Guid courseTaskId, IMSLTIResourceLink resourceLink)
         {
             var targetCourseTask = GetCourseTask(courseTaskId, true, true);
@@ -94,7 +83,6 @@ namespace EduManagementLab.Core.Services
             }
             return targetCourseTask;
         }
-
         public CourseTask DeleteCourseTask(Guid courseTaskId)
         {
             var courseTask = GetCourseTask(courseTaskId);
@@ -105,6 +93,17 @@ namespace EduManagementLab.Core.Services
             _unitOfWork.Complete();
             return courseTask;
         }
+        public CourseTask UpdateCourseTask(Guid courseTaskId, string name, string description)
+        {
+            CourseTask courseTask = GetCourseTask(courseTaskId);
+            courseTask.Name = name;
+            courseTask.Description = description;
+
+            _unitOfWork.CourseTasks.Update(courseTask);
+            _unitOfWork.Complete();
+            return courseTask;
+        }
+
         public CourseTask.Result UpdateCourseTaskResult(Guid courseTaskId, Guid memberId, decimal score)
         {
             var courseTask = GetCourseTask(courseTaskId, true);

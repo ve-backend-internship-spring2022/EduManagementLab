@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace LtiAdvantage.Lti
 {
@@ -10,12 +12,14 @@ namespace LtiAdvantage.Lti
         /// <summary>
         /// An email contact for the platform.
         /// </summary>
+        [JsonPropertyName("contact_email")]
         [JsonProperty("contact_email")]
         public string ContactEmail { get; set; }
 
         /// <summary>
         /// This is a plain text user friendly field which describes the platform.
         /// </summary>
+        [JsonPropertyName("description")]
         [JsonProperty("description")]
         public string Description { get; set; }
 
@@ -25,30 +29,35 @@ namespace LtiAdvantage.Lti
         /// or the subdomain of the platform instance within the institution's overall domain
         /// (especially if the institution has multiple platforms within its domain).
         /// </summary>
+        [JsonPropertyName("guid")]
         [JsonProperty("guid")]
         public string Guid { get; set; }
 
         /// <summary>
         /// This is a plain text user visible field to identify the platform.
         /// </summary>
+        [JsonPropertyName("name")]
         [JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// A code to identify the tool platform's software.
         /// </summary>
+        [JsonPropertyName("product_family_code")]
         [JsonProperty("product_family_code")]
         public string ProductFamilyCode { get; set; }
 
         /// <summary>
         /// Common home HTTPS URL for the platform instance.
         /// </summary>
+        [JsonPropertyName("url")]
         [JsonProperty("url")]
         public string Url { get; set; }
 
         /// <summary>
         /// The version of the software the platform is currently running on.
         /// </summary>
+        [JsonPropertyName("version")]
         [JsonProperty("version")]
         public string Version { get; set; }
     }

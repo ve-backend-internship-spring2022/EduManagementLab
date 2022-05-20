@@ -29,6 +29,7 @@ namespace EduManagementLab.IdentityServer4.Services
                 AllowedGrantTypes = result.AllowedGrantTypes.Select(c => c.GrantType).ToList(),
                 AllowedScopes = result.AllowedScopes.Select(c => c.Scope).ToList(),
                 AllowedCorsOrigins = result.AllowedCorsOrigins.Select(c => c.Origin).ToList(),
+                PostLogoutRedirectUris = result.PostLogoutRedirectUris.Select(c => c.PostLogoutRedirectUri).ToList(),
                 RedirectUris = result.RedirectUris.Select(c => c.RedirectUri).ToList(),
                 RequireConsent = false
             }; 
